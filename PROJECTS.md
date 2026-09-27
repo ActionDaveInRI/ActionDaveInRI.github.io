@@ -4,8 +4,8 @@
 
 | Project | Description | Details |
 |---|---|---|
-| [Wayfarer](https://actiondaveinri.github.io/spaceship/wayfarer/) | Walk your freighter, work with your crew, and fly cargo between frontier ports and an asteroid outpost. | [About](https://actiondaveinri.github.io/spaceship/wayfarer/about.html) |
-| [Silt + Signal](https://actiondaveinri.github.io/spaceship/silt-and-signal/) | A hand-drawn survival RPG. Scavenge, fight, and rebuild a life from almost nothing. | [About](https://actiondaveinri.github.io/spaceship/silt-and-signal/about.html) |
+| [Wayfarer](https://actiondaveinri.github.io/spaceship/wayfarer/) | Walk your freighter, work with your crew, and fly cargo between frontier ports and an asteroid outpost. | [Source](https://github.com/ActionDaveInRI/spaceship/tree/main/wayfarer) |
+| [Silt + Signal](https://actiondaveinri.github.io/spaceship/silt-and-signal/) | A hand-drawn survival RPG. Scavenge, fight, and rebuild a life from almost nothing. | [Source](https://github.com/ActionDaveInRI/spaceship/tree/main/silt-and-signal) |
 | [PETRI: Living Lineages](https://actiondaveinri.github.io/petri/living-lineages/) | A living pond of evolving organisms. Inspect their anatomy, inherited genes, and family histories. | [Source](https://github.com/ActionDaveInRI/petri/tree/main/living-lineages) |
 | [Inkdrift](https://actiondaveinri.github.io/spaceship/inkdrift/) | Pilot a small cartoon ship through a procedural asteroid field and land on illustrated worlds. | [Source](https://github.com/ActionDaveInRI/spaceship/tree/main/inkdrift) |
 | [Petri Classic](https://actiondaveinri.github.io/petri/classic/) | The original petri-dish experiments in population, diet, evolving traits, and radiation. | [Source](https://github.com/ActionDaveInRI/petri/tree/main/classic) |
@@ -22,10 +22,12 @@
 
 Inkstar is the early generation of Inkdrift. [Play current Inkdrift](inkdrift/) or [open its archive](inkdrift/archive/). Historical game files and launch links are preserved.
 
+Wayfarer and Silt + Signal include their complete recovered game source and original Git histories. [Wayfarer history](wayfarer/history/) preserves 30 source commits; [Silt + Signal history](silt-and-signal/history/) preserves 3. Each history includes a version manifest and a downloadable Git bundle.
+
 ## Access and previews
 
-Wayfarer and Silt + Signal open their current live Sites and require an authorized ChatGPT sign-in. Their access settings and canonical source repositories remain unchanged.
+Wayfarer v30 and Silt + Signal v3 run directly on GitHub Pages without ChatGPT sign-in. All runtime assets are local. Their original Sites builds remain available with their existing access settings. Browser saves remain local to each website address.
 
 5 current gallery projects have actual screenshots; 8 await a usable capture. The Inkstar screenshot is also preserved in the Inkdrift archive.
 
-Seven older previews require WebGL graphics support unavailable in this capture browser. Silt + Signal requires sign-in for a fresh gameplay capture.
+Remaining previews are pending usable graphics captures. See [standalone migration verification](STANDALONE-QA.md) for the recovered games.

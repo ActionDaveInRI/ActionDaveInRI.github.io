@@ -1,1 +1,150 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Silt + Signal</title><link rel="canonical" href="https://silt-and-signal.x-nihilo.chatgpt.site"><meta http-equiv="refresh" content="0;url=https://silt-and-signal.x-nihilo.chatgpt.site"></head><body><p><a href="https://silt-and-signal.x-nihilo.chatgpt.site">Silt + Signal</a></p><script>location.replace("https://silt-and-signal.x-nihilo.chatgpt.site" + location.search + location.hash);</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#17151f">
+  <meta name="description" content="Silt & Signal — a hand-drawn procedural survival RPG about becoming capable, not invincible.">
+  <title>Silt & Signal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="game-shell" aria-label="Silt & Signal game">
+    <canvas id="game" aria-label="Top-down survival game world"></canvas>
+
+    <header id="hud" class="hidden" aria-live="polite">
+      <div class="brand-plate">
+        <span class="sun-mark" aria-hidden="true"><i></i></span>
+        <span><strong>SILT &amp; SIGNAL</strong><small id="area-label">THE LOWLAND</small></span>
+      </div>
+      <div class="vitals">
+        <div class="meter"><span>BODY</span><b><i id="hp-fill"></i></b><em id="hp-text">100</em></div>
+        <div class="meter"><span>BREATH</span><b><i id="stamina-fill"></i></b><em id="stamina-text">100</em></div>
+        <div class="meter exposure"><span>EXPOSURE</span><b><i id="exposure-fill"></i></b><em id="exposure-text">0</em></div>
+      </div>
+      <div class="objective-card">
+        <small id="day-label">DAY 01 · 08:10</small>
+        <strong id="objective-label">Find shelter</strong>
+        <span id="objective-detail">Follow the survey stakes east.</span>
+      </div>
+    </header>
+
+    <div id="weapon-hud" class="hidden">
+      <div class="weapon-drawing" id="weapon-icon" aria-hidden="true"></div>
+      <div><small id="weapon-condition">SERVICEABLE</small><strong id="weapon-label">PRY BAR</strong></div>
+      <div class="ammo"><b id="ammo-mag">—</b><span>/</span><em id="ammo-reserve">—</em></div>
+    </div>
+
+    <button id="pause-btn" class="pause-toggle hidden" aria-label="Pause and show controls">Ⅱ <span>CONTROLS</span></button>
+
+    <div id="prompt" class="hidden" aria-live="polite"><kbd id="prompt-key">E</kbd><span id="prompt-text">SEARCH</span></div>
+    <div id="toast" class="hidden" aria-live="assertive"></div>
+
+    <section id="title-screen" class="screen active" aria-labelledby="game-title">
+      <div class="title-seal" aria-hidden="true"><span></span><i></i><b></b></div>
+      <p class="eyebrow">LOWLAND CIVIL DISTRICT · YEAR 19</p>
+      <h1 id="game-title">SILT <i>&amp;</i> SIGNAL</h1>
+      <p class="title-copy">You begin with clothes, a torn map, and one bandage.<br>What lasts is what you learn to keep alive.</p>
+      <div class="title-actions">
+        <button id="continue-btn" class="primary hidden">CONTINUE <span id="continue-detail"></span></button>
+        <button id="new-btn" class="secondary">NEW SURVIVOR</button>
+        <button id="controls-btn" class="quiet">CONTROLS &amp; CONTROLLER</button>
+      </div>
+      <div class="control-legend">
+        <span class="keyboard-only"><b>WASD</b> MOVE</span><span class="keyboard-only"><b>MOUSE / ARROWS</b> AIM</span><span class="keyboard-only"><b>CLICK / SPACE</b> ATTACK</span><span class="keyboard-only"><b>SHIFT</b> SPRINT</span><span class="keyboard-only"><b>Q · E · R · TAB</b> SWAP · USE · RELOAD · PACK</span><span class="controller-only"><b>LEFT / RIGHT STICK</b> MOVE / AIM</span><span class="controller-only"><b>RT · LT</b> ATTACK · SPRINT</span><span class="controller-only"><b>A · X · Y · VIEW</b> USE · RELOAD · SWAP · PACK</span><span class="touch-only"><b>DUAL STICKS</b> MOVE · AIM · ATTACK</span><span class="touch-only"><b>EDGE PUSH</b> SPRINT · BUTTONS USE / RELOAD / SWAP / PACK</span>
+      </div>
+      <p id="controller-intro" class="controller-intro">Controller: click the game, then press a button.</p>
+      <button id="sound-btn" class="sound-toggle" aria-pressed="true">SOUND ON</button>
+      <p class="save-note">Progress is kept on this device.</p>
+    </section>
+
+    <section id="pause-screen" class="screen" aria-labelledby="pause-title">
+      <div class="pause-card">
+        <p class="eyebrow" id="pause-kicker">FIELD CONTROLS · TIME STOPPED</p>
+        <h2 id="pause-title">Keep your hands honest.</h2>
+        <p id="pause-copy">Input is paused. Held buttons must be released before they can act again.</p>
+        <div class="control-grid" aria-label="Control reference">
+          <div><b>Move</b><span>WASD · left stick · left touch stick</span></div>
+          <div><b>Aim</b><span>Mouse / arrows · right stick · right touch stick</span></div>
+          <div><b>Attack</b><span>Click / Space · RT · push right touch stick</span></div>
+          <div><b>Sprint</b><span>Shift · LT · push move stick to the rim</span></div>
+          <div><b>Use</b><span>E · A / ✕ · USE</span></div>
+          <div><b>Reload / swap</b><span>R / Q · X / Y · touch buttons</span></div>
+          <div><b>Pack</b><span>Tab · View / Select · PACK</span></div>
+          <div><b>Pause / back</b><span>Esc · Menu / Start · B / ○</span></div>
+        </div>
+        <section class="controller-panel" aria-label="Controller connection">
+          <p class="eyebrow">CONTROLLER</p>
+          <p id="controller-status" role="status">Click inside the game, then press a controller button.</p>
+          <p id="controller-device"></p>
+          <output id="controller-live" aria-label="Live controller inputs"></output>
+          <label id="controller-raw-label" class="controller-option hidden"><input id="controller-raw" type="checkbox"> Try standard button order</label>
+          <div id="firefox-buttons" class="firefox-setup hidden">
+            <p id="firefox-setup-prep">This exact Firefox/macOS SN30 report needs measured buttons. Tap the D-pad and both triggers, release everything, then begin.</p>
+            <button id="firefox-setup" class="secondary">SET UP FIREFOX BUTTONS</button>
+            <div id="firefox-setup-progress" class="hidden">
+              <p id="firefox-setup-prompt" role="status" aria-live="polite"></p>
+              <p id="firefox-setup-message"></p>
+              <button id="firefox-setup-released" class="secondary hidden">I'VE RELEASED IT · NEXT</button>
+              <button id="firefox-setup-cancel" class="quiet">CANCEL SETUP</button>
+            </div>
+            <p id="firefox-setup-note" role="status"></p>
+          </div>
+          <p class="controller-help">Unknown layouts stay inert until you explicitly try the standard order. The Firefox SN30 correction is limited to its observed desktop Firefox/macOS hardware signature; Safari and ordinary pads are unchanged.</p>
+        </section>
+        <button id="resume-btn" class="primary">BACK TO THE LOWLAND</button>
+      </div>
+    </section>
+
+    <section id="story-screen" class="screen" aria-labelledby="story-title">
+      <div class="briefing">
+        <p class="eyebrow">FIELD NOTICE · UNFILED</p>
+        <h2 id="story-title">Nothing is coming to save the Lowland.</h2>
+        <p id="story-copy">The flood took the road. The fever took the town. Last night, the relay went quiet. You have no rifle, no shelter, and no one expecting you.</p>
+        <div class="starting-kit"><span>WORN COAT</span><span>TORN MAP</span><span>1 BANDAGE</span></div>
+        <button id="begin-btn" class="primary">GET UP</button>
+      </div>
+    </section>
+
+    <section id="panel" class="panel hidden" aria-modal="true" role="dialog" aria-labelledby="panel-title">
+      <div class="panel-head">
+        <div><p class="eyebrow" id="panel-kicker">FIELD KIT</p><h2 id="panel-title">Pack</h2></div>
+        <button id="panel-close" class="icon-btn" aria-label="Close panel">×</button>
+      </div>
+      <div id="panel-body"></div>
+    </section>
+
+    <section id="choice-screen" class="screen" aria-labelledby="choice-title">
+      <div class="choice-card">
+        <p class="eyebrow">THE REGULATOR WORKS · ONCE</p>
+        <h2 id="choice-title">Who gets the water?</h2>
+        <p>You carried the old pressure regulator home. It can restart one system before its ceramic seals fail.</p>
+        <div class="choice-grid">
+          <button class="choice" data-choice="commons"><span>LOWLAND COMMONS</span><b>Restart the clinic cistern</b><small>Reliable medicine · stronger community ties</small></button>
+          <button class="choice" data-choice="relay"><span>THE RELAY CREW</span><b>Cool the hill transmitter</b><small>Mapped danger · radio intelligence</small></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="death-screen" class="screen" aria-labelledby="death-title">
+      <div class="death-card">
+        <p class="eyebrow">FIELD RECORD ENDS</p>
+        <h2 id="death-title">The Lowland keeps what you carried.</h2>
+        <p>Your banked supplies, shelter, knowledge, and secured sidearm remain.</p>
+        <button id="retry-btn" class="primary">WAKE AT SHELTER</button>
+      </div>
+    </section>
+
+    <nav id="touch-ui" class="hidden" aria-label="Touch controls">
+      <div id="move-stick" class="stick left" aria-label="Movement stick"><i></i></div>
+      <div id="aim-stick" class="stick right" aria-label="Aim and fire stick"><i></i></div>
+      <button id="touch-use" class="touch-button use">USE</button>
+      <button id="touch-reload" class="touch-button reload">R</button>
+      <button id="touch-swap" class="touch-button swap">SWAP</button>
+      <button id="touch-pack" class="touch-button pack">PACK</button>
+    </nav>
+  </main>
+  <script src="control-core.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "title": "Silt + Signal",
+  "sites_version": 3,
+  "source_commit": "9f2fcf390a0da78f054fd87bdc5259a3560098d0",
+  "source_directory": "dist",
+  "original_site": "https://silt-and-signal.x-nihilo.chatgpt.site",
+  "recovered_on": "2026-09-27",
+  "runtime_files": [
+    {
+      "path": "control-core.js",
+      "source_path": "dist/control-core.js",
+      "source_sha256": "acf7985d3e8367118cddec30145521c4eb529279205179177b7d2d3c303c0d6d",
+      "sha256": "acf7985d3e8367118cddec30145521c4eb529279205179177b7d2d3c303c0d6d",
+      "change": null
+    },
+    {
+      "path": "game.js",
+      "source_path": "dist/game.js",
+      "source_sha256": "7e62a566d5e0cab425a7d359a118d660f524f30f670a02f69dacea07f9a96395",
+      "sha256": "7e62a566d5e0cab425a7d359a118d660f524f30f670a02f69dacea07f9a96395",
+      "change": null
+    },
+    {
+      "path": "index.html",
+      "source_path": "dist/index.html",
+      "source_sha256": "c067d6a6e0d9b93b1b85691e10d05fe655a81a041dc6dbb06337d4dd46bdfe34",
+      "sha256": "c067d6a6e0d9b93b1b85691e10d05fe655a81a041dc6dbb06337d4dd46bdfe34",
+      "change": null
+    },
+    {
+      "path": "style.css",
+      "source_path": "dist/style.css",
+      "source_sha256": "0dc11e94f6cb097a18e7ef87a5874177bfd78a15d966db6cecd625981757ff6a",
+      "sha256": "0dc11e94f6cb097a18e7ef87a5874177bfd78a15d966db6cecd625981757ff6a",
+      "change": null
+    }
+  ]
+}

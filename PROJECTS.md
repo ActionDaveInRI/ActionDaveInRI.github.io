@@ -8,7 +8,6 @@
 | [Silt + Signal](https://actiondaveinri.github.io/spaceship/silt-and-signal/) | A hand-drawn survival RPG. Scavenge, fight, and rebuild a life from almost nothing. | [About](https://actiondaveinri.github.io/spaceship/silt-and-signal/about.html) |
 | [PETRI: Living Lineages](https://actiondaveinri.github.io/petri/living-lineages/) | A living pond of evolving organisms. Inspect their anatomy, inherited genes, and family histories. | [Source](https://github.com/ActionDaveInRI/petri/tree/main/living-lineages) |
 | [Inkdrift](https://actiondaveinri.github.io/spaceship/inkdrift/) | Pilot a small cartoon ship through a procedural asteroid field and land on illustrated worlds. | [Source](https://github.com/ActionDaveInRI/spaceship/tree/main/inkdrift) |
-| [Nebula Weave](https://actiondaveinri.github.io/spaceship/nebula-weave/) | Grow nebulae from Wave Function Collapse patterns, with filaments, dust lanes, and shifting palettes. | [Source](https://github.com/ActionDaveInRI/spaceship/tree/main/nebula-weave) |
 | [Petri Classic](https://actiondaveinri.github.io/petri/classic/) | The original petri-dish experiments in population, diet, evolving traits, and radiation. | [Source](https://github.com/ActionDaveInRI/petri/tree/main/classic) |
 | [Radio chatter](https://actiondaveinri.github.io/radio_chatter_generator/versions/tts_09.html) | Simulated radio conversations with synthesized voices, environmental context, and experimental local language models. | [Source](https://github.com/ActionDaveInRI/radio_chatter_generator) |
 | [Planetside](https://actiondaveinri.github.io/planetside/) | A procedural planet workbench with terrain, grid, lighting, and rendering controls. | [Source](https://github.com/ActionDaveInRI/planetside) |
@@ -27,6 +26,6 @@ Inkstar is the early generation of Inkdrift. [Play current Inkdrift](inkdrift/) 
 
 Wayfarer and Silt + Signal open their current live Sites and require an authorized ChatGPT sign-in. Their access settings and canonical source repositories remain unchanged.
 
-6 current gallery projects have actual screenshots; 8 await a usable capture. The Inkstar screenshot is also preserved in the Inkdrift archive.
+5 current gallery projects have actual screenshots; 8 await a usable capture. The Inkstar screenshot is also preserved in the Inkdrift archive.
 
 Seven older previews require WebGL graphics support unavailable in this capture browser. Silt + Signal requires sign-in for a fresh gameplay capture.

@@ -8,10 +8,12 @@ esc = html.escape
 
 def card(p):
     image = f'<a class="preview" href="{esc(p["launch"])}" aria-label="Open {esc(p["title"])}"><img src="{esc(p["image"])}" alt="{esc(p["imageAlt"])}" loading="lazy" width="960" height="640"></a>' if p['image'] else ''
+    if not image and p.get('featured'):
+        image = f'<a class="preview preview-pending" href="{esc(p["launch"])}" aria-label="Open {esc(p["title"])}"><span>{esc(p["title"])}</span><small>Gameplay preview pending</small></a>'
     versions = f'<a href="{esc(p["versions"])}">{esc(p.get("versionsLabel", "Versions"))}</a>' if p.get('versions') else ''
     status = '' if p['image'] else '<span class="pending">Screenshot pending</span>'
     access = f'<span class="pending">{esc(p["accessLabel"])}</span>' if p.get('accessLabel') else ''
-    cls = 'project card' if p['image'] else 'project compact'
+    cls = 'project card' if p['image'] or p.get('featured') else 'project compact'
     search = esc((p['title']+' '+p['description']+' '+p['category']+' '+' '.join(p.get('aliases',[]))).lower())
     return f'''<article class="{cls}" data-category="{esc(p['category'])}" data-search="{search}">
       {image}<div class="project-body"><div class="eyebrow">{esc(p['category'])}{status}{access}</div>
@@ -21,8 +23,8 @@ def card(p):
 
 categories=list(dict.fromkeys(p['category'] for p in projects))
 buttons='<button class="filter active" data-filter="all" aria-pressed="true">All projects</button>' + ''.join(f'<button class="filter" data-filter="{esc(c)}" aria-pressed="false">{esc(c)}</button>' for c in categories)
-featured=''.join(card(p) for p in projects if p['image'])
-other=''.join(card(p) for p in projects if not p['image'])
+featured=''.join(card(p) for p in projects if p['image'] or p.get('featured'))
+other=''.join(card(p) for p in projects if not p['image'] and not p.get('featured'))
 page='''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Games & experiments · David</title><meta name="description" content="David's browser games and experiments: evolving life, spaceflight, procedural worlds, and visual studies.">
@@ -32,7 +34,7 @@ page='''<!doctype html>
 <div class="intro"><div><p class="kicker">THE PROJECT SHELF</p><h1>Games & experiments</h1><p class="lede">Spaceflight, living systems, and procedural worlds.<br>Small projects with room to explore.</p></div><p class="shelf-count"><strong>PROJECT_COUNT</strong> projects<br><span>One home for each experiment.</span></p></div>
 <div class="tools"><div class="filters" role="group" aria-label="Filter projects">''' + buttons + '''</div><label class="search"><span class="sr-only">Find a project</span><input type="search" placeholder="Find a project…" id="search" autocomplete="off"></label></div>
 </header><main id="projects"><p id="result-count" class="result-count" aria-live="polite">PROJECT_COUNT projects</p>
-<section id="featured" aria-labelledby="featured-title"><h2 id="featured-title" class="sr-only">Projects with screenshots</h2><div class="grid">''' + featured + '''</div></section>
+<section id="featured" aria-labelledby="featured-title"><h2 id="featured-title" class="sr-only">Featured projects</h2><div class="grid">''' + featured + '''</div></section>
 <section class="other" id="other" aria-labelledby="other-title"><div class="section-heading"><h2 id="other-title">More experiments</h2><p>Playable links and preserved builds. Screenshots pending.</p></div><div class="compact-grid">''' + other + '''</div></section>
 <p id="empty" hidden>No projects match. Try another name or choose All projects.</p></main>
 <footer><p>A collection of works in progress, studies, and earlier experiments.</p><a href="https://github.com/ActionDaveInRI/spaceship/blob/main/PROJECTS.md">Project directory on GitHub ↗</a></footer></div>

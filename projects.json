@@ -33,7 +33,8 @@
     "versions": null,
     "image": null,
     "previewStatus": "pending",
-    "accessLabel": "ChatGPT sign-in"
+    "accessLabel": "ChatGPT sign-in",
+    "featured": true
   },
   {
     "id": "petri-living-lineages",
@@ -68,21 +69,6 @@
     "aliases": [
       "Inkstar"
     ]
-  },
-  {
-    "id": "nebula-weave",
-    "title": "Nebula Weave",
-    "repo": "spaceship",
-    "directory": "nebula-weave",
-    "category": "Worlds & visuals",
-    "description": "Grow nebulae from Wave Function Collapse patterns, with filaments, dust lanes, and shifting palettes.",
-    "launch": "https://actiondaveinri.github.io/spaceship/nebula-weave/",
-    "source": "https://github.com/ActionDaveInRI/spaceship/tree/main/nebula-weave",
-    "versions": "https://actiondaveinri.github.io/spaceship/nebula-weave/versions.html",
-    "image": "https://actiondaveinri.github.io/spaceship/nebula-weave/preview.webp",
-    "imageAlt": "Blue procedural nebula with glowing filaments, dark dust lanes, and WFC controls.",
-    "previewStatus": "captured",
-    "note": "The standalone recovered build is `index.html`. The original six-part GitHub build remains in `versions/github-split/`; serve it over HTTP so its script fetches can work. The screenshot is the supplied standalone-demo capture."
   },
   {
     "id": "petri-classic",

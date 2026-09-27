@@ -1,5 +1,41 @@
 [
   {
+    "id": "wayfarer",
+    "title": "Wayfarer",
+    "repo": "spaceship",
+    "directory": "wayfarer",
+    "category": "Space & flight",
+    "description": "Walk your freighter, work with your crew, and fly cargo between frontier ports and an asteroid outpost.",
+    "live": "https://wayfarer-freighter.x-nihilo.chatgpt.site",
+    "imageAlt": "Wayfarer at Cinder Quay, with the captain, crew, freight terminal, and the freighter ramp.",
+    "note": "Launches the existing live Wayfarer Site. Sign-in and existing access settings apply. Preview is an actual v30 gameplay capture from September 26, 2026.",
+    "launch": "https://actiondaveinri.github.io/spaceship/wayfarer/",
+    "source": "https://actiondaveinri.github.io/spaceship/wayfarer/about.html",
+    "sourceLabel": "About",
+    "versions": null,
+    "image": "https://actiondaveinri.github.io/spaceship/wayfarer/preview.webp",
+    "previewStatus": "captured",
+    "accessLabel": "ChatGPT sign-in"
+  },
+  {
+    "id": "silt-and-signal",
+    "title": "Silt + Signal",
+    "repo": "spaceship",
+    "directory": "silt-and-signal",
+    "category": "Survival & RPG",
+    "description": "A hand-drawn survival RPG. Scavenge, fight, and rebuild a life from almost nothing.",
+    "live": "https://silt-and-signal.x-nihilo.chatgpt.site",
+    "imageAlt": "",
+    "note": "Launches the existing live Silt & Signal Site. Sign-in and existing access settings apply. A gameplay preview could not be captured in the current browser; the live build requires the owner’s ChatGPT sign-in.",
+    "launch": "https://actiondaveinri.github.io/spaceship/silt-and-signal/",
+    "source": "https://actiondaveinri.github.io/spaceship/silt-and-signal/about.html",
+    "sourceLabel": "About",
+    "versions": null,
+    "image": null,
+    "previewStatus": "pending",
+    "accessLabel": "ChatGPT sign-in"
+  },
+  {
     "id": "petri-living-lineages",
     "title": "PETRI: Living Lineages",
     "repo": "petri",
@@ -15,21 +51,6 @@
     "note": "Recovered v05 web app and v01–v04 releases from the ChatGPT project files. The main entry is the v05 web build. Download the complete modular source from `downloads/`. See [QA notes](QA.md) for prior validation and device limitations. The screenshot is the supplied v05 release capture. The web manifest and service worker use relative scope, so this app is contained within `/petri/living-lineages/`."
   },
   {
-    "id": "inkstar",
-    "title": "Inkstar",
-    "repo": "spaceship",
-    "directory": "inkstar",
-    "category": "Space & flight",
-    "description": "Cartoon spaceflight with procedural destinations, trading, missions, and a shipyard.",
-    "launch": "https://actiondaveinri.github.io/spaceship/inkstar/",
-    "source": "https://github.com/ActionDaveInRI/spaceship/tree/main/inkstar",
-    "versions": "https://actiondaveinri.github.io/spaceship/inkstar/versions.html",
-    "image": "https://actiondaveinri.github.io/spaceship/inkstar/preview.webp",
-    "imageAlt": "Inkstar landed at the oceanic garden world Verdania with port services.",
-    "previewStatus": "captured",
-    "note": "The gallery starts the recovered standalone polish demo. `versions/github-fleet/` preserves the former GitHub homepage, its loader, renderer, and zero-cost ship/paint behavior byte for byte. Earlier unused runtime scripts are in `versions/earlier-runtime/`. The thumbnail is the supplied polish-demo capture."
-  },
-  {
     "id": "inkdrift",
     "title": "Inkdrift",
     "repo": "spaceship",
@@ -38,11 +59,15 @@
     "description": "Pilot a small cartoon ship through a procedural asteroid field and land on illustrated worlds.",
     "launch": "https://actiondaveinri.github.io/spaceship/inkdrift/",
     "source": "https://github.com/ActionDaveInRI/spaceship/tree/main/inkdrift",
-    "versions": null,
+    "versions": "https://actiondaveinri.github.io/spaceship/inkdrift/archive/",
     "image": "https://actiondaveinri.github.io/spaceship/inkdrift/preview.webp",
     "imageAlt": "Inkdrift spacecraft among asteroids in a blue and purple starfield.",
     "previewStatus": "captured",
-    "note": "Recovered standalone tech demo from the ChatGPT project files. The screenshot is the supplied spaceflight capture."
+    "note": "Current standalone Inkdrift demo. Inkstar is the early generation, preserved under archive/inkstar/. Old Inkstar entry URLs redirect to the corresponding archived builds. The current Inkdrift runtime is unchanged.",
+    "versionsLabel": "Archive",
+    "aliases": [
+      "Inkstar"
+    ]
   },
   {
     "id": "nebula-weave",

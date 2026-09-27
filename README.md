@@ -6,11 +6,15 @@ A visual directory of David’s browser games and experiments.
 
 | Project | Directory |
 |---|---|
-| [Inkstar](https://actiondaveinri.github.io/spaceship/inkstar/) | [inkstar/](inkstar/) |
-| [Inkdrift](https://actiondaveinri.github.io/spaceship/inkdrift/) | [inkdrift/](inkdrift/) |
-| [Nebula Weave](https://actiondaveinri.github.io/spaceship/nebula-weave/) | [nebula-weave/](nebula-weave/) |
-| [Ship effects](https://actiondaveinri.github.io/spaceship/ship-effects/) | [ship-effects/](ship-effects/) |
+| Wayfarer | [wayfarer/](wayfarer/) — opens the live Site |
+| Silt + Signal | [silt-and-signal/](silt-and-signal/) — opens the live Site |
+| Inkdrift | [inkdrift/](inkdrift/) — current playable build |
+| Inkstar history | [inkdrift/archive/](inkdrift/archive/) — early Inkdrift builds |
+| Nebula Weave | [nebula-weave/](nebula-weave/) |
+| Ship effects | [ship-effects/](ship-effects/) |
 
-Each project folder owns its current build, preview, guide, and any earlier versions. Old named HTML launch links redirect to the corresponding build. The spaceship repository homepage is now the gallery; its previous game is preserved at `inkstar/versions/github-fleet/`.
+Inkstar is part of Inkdrift’s history, not a separate gallery project. The current Inkdrift card launches the game directly; its Archive link opens earlier Inkstar builds. Old launch URLs remain usable.
 
-The gallery catalog is `projects.json`. Run `python3 scripts/build_gallery.py` after changing it. Screenshots belong in the owning project folder as `preview.webp`; use real captures. Single-project repositories remain their own project directories.
+Wayfarer and Silt + Signal open their existing live builds, with their current access settings. Their game source and version history stay in the existing Sites repositories.
+
+The gallery catalog is `projects.json`. Run `python3 scripts/build_gallery.py` after changing it. Screenshots must be real captures. Single-project repositories remain their own project directories.

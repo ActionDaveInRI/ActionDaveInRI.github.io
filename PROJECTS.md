@@ -28,6 +28,6 @@ Wayfarer and Silt + Signal include their complete recovered game source and orig
 
 Wayfarer v30 and Silt + Signal v3 run directly on GitHub Pages without ChatGPT sign-in. All runtime assets are local. Their original Sites builds remain available with their existing access settings. Browser saves remain local to each website address.
 
-5 current gallery projects have actual screenshots; 8 await a usable capture. The Inkstar screenshot is also preserved in the Inkdrift archive.
+6 current gallery projects have actual screenshots; 7 await a usable capture. The Inkstar screenshot is also preserved in the Inkdrift archive.
 
 Remaining previews are pending usable graphics captures. See [standalone migration verification](STANDALONE-QA.md) for the recovered games.

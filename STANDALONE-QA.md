@@ -17,12 +17,15 @@ Wayfarer's only runtime modification is changing `/favicon.svg` to `./favicon.sv
 - Original Wayfarer `tests/voyage.mjs`: passed. Covers boarding, cargo loading, launch, weapons, repair, the full guided voyage, docking, payment, saves and return travel.
 - Original Wayfarer `tests/robbery.mjs`: all 14 checks passed, covering mission gating, surrender, capture, cover, escape, retries, reward persistence and old-save migration.
 - `git diff --check` on authored migration changes: passed. Four whitespace warnings in the recovered JavaScript/Three.js files are inherited verbatim; the original game files were not reformatted.
+- GitHub Pages deployment of `4a5fd7e064c3e818d1244c3529d05d9850556086`: succeeded.
+- All **54 public runtime resources** were fetched without cookies or authorization. Every request returned HTTP 200 at the requested GitHub Pages URL, with no redirect, and every response matched its expected SHA-256.
+- Both normal public launch links opened the actual game start screens in the browser without a ChatGPT login. Wayfarer started a freight shift, accepted the walk-to-terminal interaction, opened/closed the local chart, and paused/resumed. Silt + Signal started a new survivor, entered the Lowland, opened/closed inventory, and paused/resumed. Its rendered gameplay is captured in `silt-and-signal/preview.jpg` and used in the gallery.
 
 The gameplay checks run against the original source; the hash verification establishes that those game modules are unchanged in this migration. No new gameplay behavior was introduced.
 
 ## Browser and device limits
 
-Local interactive browser verification was unavailable in the execution environment. Public-page verification is recorded below after deployment. This migration does not establish new native-device, physical-controller or GPU-performance coverage.
+The browser checks used the actual deployed GitHub Pages addresses; local interactive browser access was unavailable. This migration does not establish new native-device, physical-controller or GPU-performance coverage. The original controls and renderers are preserved byte-for-byte.
 
 ## Saves and history
 

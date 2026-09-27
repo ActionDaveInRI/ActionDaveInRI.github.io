@@ -1,24 +1,27 @@
 # Project directory
 
-A starting point for David's GitHub experiments. These entries describe the code currently present in each repository; older names sometimes reflect an earlier experiment.
+[Open the screenshot gallery](https://actiondaveinri.github.io/spaceship/)
 
-[Open the browser directory](https://actiondaveinri.github.io/spaceship/projects.html)
+| Project | Description | Source directory |
+|---|---|---|
+| [PETRI: Living Lineages](https://actiondaveinri.github.io/petri/living-lineages/) | A living pond of evolving organisms. Inspect their anatomy, inherited genes, and family histories. | [petri/living-lineages](https://github.com/ActionDaveInRI/petri/tree/main/living-lineages) |
+| [Inkstar](https://actiondaveinri.github.io/spaceship/inkstar/) | Cartoon spaceflight with procedural destinations, trading, missions, and a shipyard. | [spaceship/inkstar](https://github.com/ActionDaveInRI/spaceship/tree/main/inkstar) |
+| [Inkdrift](https://actiondaveinri.github.io/spaceship/inkdrift/) | Pilot a small cartoon ship through a procedural asteroid field and land on illustrated worlds. | [spaceship/inkdrift](https://github.com/ActionDaveInRI/spaceship/tree/main/inkdrift) |
+| [Nebula Weave](https://actiondaveinri.github.io/spaceship/nebula-weave/) | Grow nebulae from Wave Function Collapse patterns, with filaments, dust lanes, and shifting palettes. | [spaceship/nebula-weave](https://github.com/ActionDaveInRI/spaceship/tree/main/nebula-weave) |
+| [Petri Classic](https://actiondaveinri.github.io/petri/classic/) | The original petri-dish experiments in population, diet, evolving traits, and radiation. | [petri/classic](https://github.com/ActionDaveInRI/petri/tree/main/classic) |
+| [Radio chatter](https://actiondaveinri.github.io/radio_chatter_generator/versions/tts_09.html) | Simulated radio conversations with synthesized voices, environmental context, and experimental local language models. | [radio_chatter_generator/.](https://github.com/ActionDaveInRI/radio_chatter_generator) |
+| [Planetside](https://actiondaveinri.github.io/planetside/) | A procedural planet workbench with terrain, grid, lighting, and rendering controls. | [planetside/.](https://github.com/ActionDaveInRI/planetside) |
+| [Planet generator](https://actiondaveinri.github.io/planet_generator/) | Build Earthlike worlds with procedural terrain, starfields, and several rendering experiments. | [planet_generator/.](https://github.com/ActionDaveInRI/planet_generator) |
+| [Starmap](https://actiondaveinri.github.io/starmap/starmap_001_frz_2.html) | Explore a procedural field of stars and configure the planetary systems around them. | [starmap/.](https://github.com/ActionDaveInRI/starmap) |
+| [Orbital Velocity](https://actiondaveinri.github.io/orbital-velocity/) | A top-down spaceflight experiment built around thrust, gravity, and orbital motion. | [orbital-velocity/.](https://github.com/ActionDaveInRI/orbital-velocity) |
+| [Ship effects](https://actiondaveinri.github.io/spaceship/ship-effects/) | A focused spacecraft study: layered hull plates, thrusters, laser fire, and landing legs. | [spaceship/ship-effects](https://github.com/ActionDaveInRI/spaceship/tree/main/ship-effects) |
+| [ASCII FLIP](https://actiondaveinri.github.io/ascii_flip/ascii-fluid/) | A colored particle and fluid experiment rendered as a moving field of ASCII characters. | [ascii_flip/ascii-fluid](https://github.com/ActionDaveInRI/ascii_flip/tree/main/ascii-fluid) |
+| [Pulsating sphere](https://actiondaveinri.github.io/ascii_flip/sphere/) | A small Three.js animation study in changing color, size, and motion. | [ascii_flip/sphere](https://github.com/ActionDaveInRI/ascii_flip/tree/main/sphere) |
 
-| Project | What is here | Open | Repository |
-|---|---|---|---|
-| Petri dish simulator | An emergent ecosystem with evolving traits, different diets, radiation, and interactive controls. | [Open](https://actiondaveinri.github.io/petri/index.html) | [petri](https://github.com/ActionDaveInRI/petri) |
-| Radio chatter generator | Browser experiments in synthesized radio conversations, environmental context, and locally generated dialogue. | [Open](https://actiondaveinri.github.io/radio_chatter_generator/index.html) | [radio_chatter_generator](https://github.com/ActionDaveInRI/radio_chatter_generator) |
-| Planet generator | Earthlike planet experiments with procedural terrain, starfields, and several control and rendering approaches. | [Open](https://actiondaveinri.github.io/planet_generator/versions.html) | [planet_generator](https://github.com/ActionDaveInRI/planet_generator) |
-| Pulsating sphere / ASCII experiments | The current files show a Three.js sphere that changes color and size. Earlier ASCII experiments remain in Git history. | [Open](https://actiondaveinri.github.io/ascii_flip/index.html) | [ascii_flip](https://github.com/ActionDaveInRI/ascii_flip) |
-| Starmap | An interactive Three.js starmap with procedural stars and planetary-system controls. | [Open](https://actiondaveinri.github.io/starmap/index.html) | [starmap](https://github.com/ActionDaveInRI/starmap) |
-| Spaceship / INKSTAR | A collection of spaceflight experiments: INKSTAR, an earlier ship-effects demo, and the Nebula Weave generator. | [Open](https://actiondaveinri.github.io/spaceship/versions.html) | [spaceship](https://github.com/ActionDaveInRI/spaceship) |
-| Orbital Velocity | A standalone top-down space game exploring thrust, gravity, and orbital motion. | [Open](https://actiondaveinri.github.io/orbital-velocity/index.html) | [orbital-velocity](https://github.com/ActionDaveInRI/orbital-velocity) |
-| Planetside | A procedural planet demo with a menubar, rendering controls, and grid and terrain options. | [Open](https://actiondaveinri.github.io/planetside/index.html) | [planetside](https://github.com/ActionDaveInRI/planetside) |
-| Social network mapper | An empty project placeholder, now explicitly labeled. | No build yet | [social_network_mapper](https://github.com/ActionDaveInRI/social_network_mapper) |
+## Preview status
 
-## Using this collection
+Six projects have actual captured screenshots. Seven WebGL projects need a capture from a browser with working graphics support; their gallery cards are labeled accordingly. No illustrative mockups stand in for screenshots.
 
-- Start with the project guide or version chooser when there is more than one build.
-- Existing application paths and code were retained during the September 26, 2026 cleanup. Identical copies are labeled, rather than deleted.
-- Some experiments load libraries or language models from the internet. Their READMEs explain the setup; the directory is not a claim that every historical version still runs.
-- Each repository remains independent. Wayfarer on ChatGPT Sites is a separate project and is not included in this GitHub collection.
+## Separate projects
+
+Wayfarer and the other ChatGPT Sites projects retain their own source repositories and current access settings. They are not copied into these public GitHub repositories. The empty social_network_mapper repository remains a placeholder and is not presented as a playable demo.

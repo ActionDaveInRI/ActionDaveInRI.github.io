@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spaceship – Sci‑Fi Hull Plates, Thrusters, Laser, & Landing Leg Effects</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #000; }
+    canvas { display: block; }
+  </style>
+  <!-- Import map for Three.js -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.154.0/examples/jsm/controls/OrbitControls.js";
+
+    // ====================================================
+    // 1) Plate Texture – Create a canvas showing plate tone variation,
+    //    plus a grayscale map for bump/roughness. Also small label text.
+    // ====================================================
+    function createPlateCanvas(width = 1024, height = 1024, prefix = "Plate-") {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      // Base background
+      ctx.fillStyle = "#dddddd";
+      ctx.fillRect(0, 0, width, height);
+
+      const platesX = 4, platesY = 4;
+      const cellW = width / platesX;
+      const cellH = height / platesY;
+
+      for (let py = 0; py < platesY; py++) {
+        for (let px = 0; px < platesX; px++) {
+          const x0 = px * cellW;
+          const y0 = py * cellH;
+          // Keep hue near 210 (cool grey), small ±4 shift. Sat near 2–5 => basically grey
+          const hueShift = 210 + (Math.random() - 0.5) * 8;
+          const sat = 2 + Math.random() * 3;  // near 2–5
+          const light = 70 + Math.random() * 5;
+          ctx.fillStyle = `hsl(${hueShift}, ${sat}%, ${light}%)`;
+          ctx.fillRect(x0, y0, cellW, cellH);
+
+          // Plate label
+          ctx.font = "24px VT323, monospace";
+          ctx.fillStyle = "rgba(80,80,80,0.9)";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "bottom";
+          const plateNum = py * platesX + px + 1;
+          ctx.fillText(`${prefix}${plateNum}`, x0 + cellW / 2, y0 + cellH - 4);
+
+          // Dividing lines
+          ctx.strokeStyle = "#bbb";
+          ctx.lineWidth = 2;
+          if (px < platesX - 1) {
+            ctx.beginPath();
+            ctx.moveTo(x0 + cellW, y0);
+            ctx.lineTo(x0 + cellW, y0 + cellH);
+            ctx.stroke();
+          }
+          if (py < platesY - 1) {
+            ctx.beginPath();
+            ctx.moveTo(x0, y0 + cellH);
+            ctx.lineTo(x0 + cellW, y0 + cellH);
+            ctx.stroke();
+          }
+
+          // Rivets
+          ctx.fillStyle = "#999";
+          const rivetRadius = 2;
+          const rivetsPerEdge = 5;
+          const drawRivet = (rx, ry) => {
+            ctx.beginPath();
+            ctx.arc(rx, ry, rivetRadius, 0, Math.PI * 2);
+            ctx.fill();
+          };
+          for (let r = 0; r < rivetsPerEdge; r++) {
+            drawRivet(x0 + (r + 0.5) * (cellW / rivetsPerEdge), y0 + 2);
+            drawRivet(x0 + (r + 0.5) * (cellW / rivetsPerEdge), y0 + cellH - 2);
+          }
+          for (let r = 0; r < rivetsPerEdge; r++) {
+            drawRivet(x0 + 2, y0 + (r + 0.5) * (cellH / rivetsPerEdge));
+            drawRivet(x0 + cellW - 2, y0 + (r + 0.5) * (cellH / rivetsPerEdge));
+          }
+        }
+      }
+      return canvas;
+    }
+
+    function createGrayscaleMapFromCanvas(canvas) {
+      const grayCanvas = document.createElement('canvas');
+      grayCanvas.width = canvas.width;
+      grayCanvas.height = canvas.height;
+      const ctx = grayCanvas.getContext('2d');
+      ctx.drawImage(canvas, 0, 0);
+      const imgData = ctx.getImageData(0, 0, grayCanvas.width, grayCanvas.height);
+      const data = imgData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        let lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+        if (lum < 80) {
+          lum *= 1.1; // slightly lighten the darkest areas
+        }
+        data[i] = data[i + 1] = data[i + 2] = lum;
+      }
+      ctx.putImageData(imgData, 0, 0);
+      return grayCanvas;
+    }
+
+    function createPlateTextures(prefix) {
+      const canvas = createPlateCanvas(1024, 1024, prefix);
+      const colorTexture = new THREE.CanvasTexture(canvas);
+      colorTexture.anisotropy = 8;
+      colorTexture.wrapS = THREE.RepeatWrapping;
+      colorTexture.wrapT = THREE.RepeatWrapping;
+      colorTexture.repeat.set(2, 4);
+
+      const roughCanvas = createGrayscaleMapFromCanvas(canvas);
+      const roughTexture = new THREE.CanvasTexture(roughCanvas);
+      roughTexture.anisotropy = 8;
+      roughTexture.wrapS = THREE.RepeatWrapping;
+      roughTexture.wrapT = THREE.RepeatWrapping;
+      roughTexture.repeat.set(2, 4);
+
+      return { colorTexture, roughTexture };
+    }
+
+    // ====================================================
+    // 2) Materials – Hull Plate materials
+    // ====================================================
+    const texturesMH  = createPlateTextures("MH-");
+    const texturesNC  = createPlateTextures("NC-");
+    const texturesSBP = createPlateTextures("SBP-");
+    const texturesPBP = createPlateTextures("PBP-");
+
+    const hullMaterialMH = new THREE.MeshStandardMaterial({
+      map: texturesMH.colorTexture,
+      roughnessMap: texturesMH.roughTexture,
+      bumpMap: texturesMH.roughTexture,
+      bumpScale: 0.05,
+      roughness: 1.0,
+      metalness: 0.8
+    });
+    const hullMaterialNC = new THREE.MeshStandardMaterial({
+      map: texturesNC.colorTexture,
+      roughnessMap: texturesNC.roughTexture,
+      bumpMap: texturesNC.roughTexture,
+      bumpScale: 0.05,
+      roughness: 1.0,
+      metalness: 0.8
+    });
+    const hullMaterialSBP = new THREE.MeshStandardMaterial({
+      map: texturesSBP.colorTexture,
+      roughnessMap: texturesSBP.roughTexture,
+      bumpMap: texturesSBP.roughTexture,
+      bumpScale: 0.05,
+      roughness: 1.0,
+      metalness: 0.8
+    });
+    const hullMaterialPBP = new THREE.MeshStandardMaterial({
+      map: texturesPBP.colorTexture,
+      roughnessMap: texturesPBP.roughTexture,
+      bumpMap: texturesPBP.roughTexture,
+      bumpScale: 0.05,
+      roughness: 1.0,
+      metalness: 0.8
+    });
+
+    const blackMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide });
+    const cockpitMaterial = new THREE.MeshStandardMaterial({ color: 0x223355, roughness: 0.1, metalness: 0.8 });
+    const plainMaterial   = new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.3, metalness: 0.5 });
+    const finMaterial     = new THREE.MeshStandardMaterial({ color: 0xffd966, roughness: 0.3, metalness: 0.3 });
+    const darkRingMaterial= new THREE.MeshPhongMaterial({ color: 0x222222, specular: 0x555555, shininess: 50 });
+
+    // ====================================================
+    // 3) Thruster Effects – Engine glow cones now include a point light.
+    // ====================================================
+    function createThrusterEffect(scale = 1.0, exitOffset = new THREE.Vector3(0,0,0)) {
+      const group = new THREE.Group();
+      group.position.copy(exitOffset);
+      group.visible = false;
+
+      // Glow cone
+      const coneHeight = 2.0 * scale;
+      const coneRadius = 0.2 * scale;
+      let coneGeom = new THREE.ConeGeometry(coneRadius, coneHeight, 32);
+      coneGeom.rotateZ(THREE.MathUtils.degToRad(90));
+      coneGeom.translate(-coneHeight/2, 0, 0);
+      const coneMat = new THREE.MeshBasicMaterial({
+        color: 0xffa500,
+        transparent: true,
+        opacity: 0.0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      const glowCone = new THREE.Mesh(coneGeom, coneMat);
+
+      // Light
+      const coneLight = new THREE.PointLight(0xffa500, 0, 10);
+      glowCone.add(coneLight);
+      group.userData.coneLight = coneLight;
+      group.add(glowCone);
+
+      // Particle exhaust
+      const particleCount = 200;
+      const positions = new Float32Array(particleCount*3);
+      const velocities= new Float32Array(particleCount*3);
+      const timeLeft = new Float32Array(particleCount);
+      const timeMax  = new Float32Array(particleCount);
+
+      function respawnParticle(i){
+        timeMax[i] = 1.0 + Math.random();
+        timeLeft[i]= timeMax[i];
+        positions[i*3]   = (Math.random()-0.5)*0.1*scale;
+        positions[i*3+1] = (Math.random()-0.5)*0.1*scale;
+        positions[i*3+2] = (Math.random()-0.5)*0.1*scale;
+        let baseVel = 2.0 + Math.random();
+        if(Math.random()<0.1) baseVel*=2;
+        velocities[i*3]   = -baseVel*scale;
+        velocities[i*3+1] = (Math.random()-0.5)*0.2*scale;
+        velocities[i*3+2] = (Math.random()-0.5)*0.2*scale;
+      }
+      for(let i=0; i<particleCount; i++){ respawnParticle(i); }
+      const particleGeom = new THREE.BufferGeometry();
+      particleGeom.setAttribute('position', new THREE.BufferAttribute(positions,3));
+      const particleMat = new THREE.PointsMaterial({
+        color: 0xffa500,
+        size: 0.1,
+        transparent: true,
+        opacity: 1.0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      const exhaustPoints = new THREE.Points(particleGeom, particleMat);
+      group.add(exhaustPoints);
+
+      group.userData = {
+        glowMat: coneMat,
+        partGeom: particleGeom,
+        partCount: particleCount,
+        posArray: positions,
+        velArray: velocities,
+        timeLeftArray: timeLeft,
+        timeMaxArray: timeMax,
+        matRef: particleMat,
+        respawnFunc: respawnParticle,
+        coneLight: coneLight
+      };
+      return group;
+    }
+    const thrusterEffects = [];
+    let laserBolts = [];
+    let laserButtonPressed = false;
+
+    // For alternating laser pods
+    let nextLaserSide = 0;
+
+    // ====================================================
+    // 4) Scene Setup
+    // ====================================================
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 2000);
+    camera.position.set(14, 6, 14);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xaaaaaa, 1.0);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(10, 15, 10);
+    scene.add(directionalLight);
+
+    // ====================================================
+    // 5) Main Fuselage
+    // ====================================================
+    const fuselageGeo = new THREE.CylinderGeometry(0.5, 0.5, 10, 32, 1, true);
+    fuselageGeo.rotateZ(-Math.PI/2);
+    fuselageGeo.translate(5, 0, 0);
+    const fuselage = new THREE.Mesh(fuselageGeo, hullMaterialMH);
+    scene.add(fuselage);
+
+    // Tail Cap
+    const tailCapGeo = new THREE.CircleGeometry(0.5, 32);
+    const tailCap = new THREE.Mesh(tailCapGeo, blackMaterial);
+    tailCap.rotation.y = Math.PI/2;
+    tailCap.position.set(0,0,0);
+    scene.add(tailCap);
+
+    // Nose Cone
+    const noseGeo = new THREE.SphereGeometry(0.5, 32, 16, 0, Math.PI*2, 0, Math.PI/2);
+    noseGeo.computeBoundingBox();
+    const bbox = noseGeo.boundingBox;
+    const offsetY = -bbox.min.y;
+    noseGeo.translate(0, offsetY, 0);
+    noseGeo.rotateZ(-Math.PI/2);
+    const nosecone = new THREE.Mesh(noseGeo, hullMaterialNC);
+    nosecone.scale.set(3.0,1.0,1.0);
+    nosecone.position.set(10,0,0);
+    fuselage.add(nosecone);
+
+    // Cockpit
+    const cockpitSphere = new THREE.SphereGeometry(0.3,32,32);
+    const cockpitMesh = new THREE.Mesh(cockpitSphere, cockpitMaterial);
+    cockpitMesh.scale.set(2.205,1.05,0.8925);
+    cockpitMesh.position.set(8.52, 0.315, 0);
+    cockpitMesh.rotation.z = -THREE.MathUtils.degToRad(10);
+    scene.add(cockpitMesh);
+
+    // ====================================================
+    // 6) Landing Leg
+    // ====================================================
+    let landingLegGroup = new THREE.Group();
+    landingLegGroup.position.set(8, -0.5, 0);
+
+    const legGeo = new THREE.BoxGeometry(0.2, 0.8, 0.2);
+    legGeo.translate(0, -0.4, 0);
+    const landingLegMat = new THREE.MeshStandardMaterial({
+      color: 0x444444,
+      metalness: 0.7,
+      roughness: 0.4
+    });
+    const legMesh = new THREE.Mesh(legGeo, landingLegMat);
+    landingLegGroup.add(legMesh);
+
+    const footGeo = new THREE.BoxGeometry(0.4, 0.1, 0.4);
+    footGeo.translate(0, -0.05, 0);
+    footGeo.translate(0.15, -0.8, 0); // slight forward extension
+    const footMesh = new THREE.Mesh(footGeo, landingLegMat);
+    landingLegGroup.add(footMesh);
+
+    // Ladder
+    function createLadder(width=0.12, height=0.8, railWidth=0.03, railDepth=0.03, rungCount=4) {
+      const ladderGroup = new THREE.Group();
+      const railGeo = new THREE.BoxGeometry(railWidth, height, railDepth);
+      const railMat = new THREE.MeshStandardMaterial({ color: 0x666666, metalness: 0.6, roughness: 0.4 });
+      const railLeft = new THREE.Mesh(railGeo, railMat);
+      const railRight= new THREE.Mesh(railGeo, railMat);
+      railLeft.position.set(0, -height/2, -width/2);
+      railRight.position.set(0, -height/2, width/2);
+      ladderGroup.add(railLeft, railRight);
+      const rungGeo = new THREE.BoxGeometry(width, 0.02, railDepth);
+      const rungMat = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.6, roughness: 0.4 });
+      for(let i=1; i<rungCount; i++){
+        const rung = new THREE.Mesh(rungGeo, rungMat);
+        const yPos = -(height/rungCount)*i;
+        rung.position.set(0, yPos, 0);
+        ladderGroup.add(rung);
+      }
+      return ladderGroup;
+    }
+    const ladder = createLadder();
+    ladder.position.set(0.12, 0, 0);
+    landingLegGroup.add(ladder);
+    landingLegGroup.scale.y = 0;
+    fuselage.add(landingLegGroup);
+
+    let landingLegExtended = false;
+    let landingLegTargetScaleY = 0;
+    let landingLegCurrentScaleY = 0;
+    const landingLegAnimSpeed = 4;
+
+    // ====================================================
+    // 7) Side Pods
+    // ====================================================
+    function createSidePod(material, isPort=false) {
+      // Cylinder: length 3.8
+      const sidePodGeo = new THREE.CylinderGeometry(0.3, 0.3, 3.8, 16, 1, true);
+      sidePodGeo.rotateZ(Math.PI/2);
+      // shift so tail is at x=0 => translate half-length => 1.95
+      sidePodGeo.translate(1.95, 0, 0);
+
+      const sidePodMesh = new THREE.Mesh(sidePodGeo, material);
+
+      // Tail cap at x=0
+      const podTailCapGeo = new THREE.CircleGeometry(0.3,16);
+      const podTailCap = new THREE.Mesh(podTailCapGeo, blackMaterial);
+      podTailCap.rotation.y = Math.PI/2;
+      podTailCap.position.set(.06,0,0);
+
+      // front cap tube: revert to old location x=3.9
+      const podFrontCapGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.05,16);
+      podFrontCapGeo.rotateZ(Math.PI/2);
+      const intakeMat = new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 0.7, roughness: 0.4 });
+      const podFrontCap = new THREE.Mesh(podFrontCapGeo, intakeMat);
+      podFrontCap.position.set(3.9, 0, 0);
+
+      const group = new THREE.Group();
+      group.add(sidePodMesh, podTailCap, podFrontCap);
+
+      // intake ring at x=4.0
+      const intakeGeo = new THREE.TorusGeometry(0.3, 0.05, 16, 32);
+      const intakeRing = new THREE.Mesh(intakeGeo, intakeMat);
+      intakeRing.rotation.y = -Math.PI/2;
+      intakeRing.position.x = 4.0;
+      intakeRing.scale.set(1,1,3);
+      group.add(intakeRing);
+
+      // cone mesh at x=4.0
+      const coneGeo = new THREE.ConeGeometry(0.075, 0.5, 16);
+      coneGeo.rotateZ(-Math.PI/2);
+      coneGeo.translate(0.25,0,0);
+      const coneMesh = new THREE.Mesh(coneGeo, intakeMat);
+      coneMesh.position.set(4.0, 0, 0);
+      coneMesh.name = "intakeLaserOrigin";
+      group.add(coneMesh);
+
+      // thruster ring
+      const thrusterGeo = new THREE.TorusGeometry(0.5, 0.05, 16,64);
+      const thrusterRing = new THREE.Mesh(thrusterGeo, darkRingMaterial);
+      thrusterRing.rotation.y = -Math.PI/2;
+      thrusterRing.scale.set(0.5,0.5,4);
+      thrusterRing.position.set(0,0,0);
+      group.add(thrusterRing);
+
+      // Thruster effect
+      const sideEffect = createThrusterEffect(1.0, new THREE.Vector3(-0.2,0,0));
+      sideEffect.position.set(0,0,0);
+      group.add(sideEffect);
+      thrusterEffects.push(sideEffect);
+
+      return group;
+    }
+    const portPod = createSidePod(hullMaterialPBP,true);
+    portPod.position.set(0,0,-0.8);
+    scene.add(portPod);
+
+    const starboardPod = createSidePod(hullMaterialSBP,false);
+    starboardPod.position.set(0,0,0.8);
+    scene.add(starboardPod);
+
+    // ====================================================
+    // 8) Fins
+    // ====================================================
+    function createTrapezoidalFinMesh() {
+      const shape = new THREE.Shape();
+      shape.moveTo(-0.6, 0);
+      shape.lineTo(0.6, 0);
+      shape.lineTo(0.35, 1.2);
+      shape.lineTo(-0.35, 1.2);
+      shape.lineTo(-0.6, 0);
+      const extrudeSettings = { steps:1, depth:0.1, bevelEnabled:false };
+      const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+      geo.rotateY(-Math.PI/2);
+      return new THREE.Mesh(geo, finMaterial);
+    }
+    const finGroup = new THREE.Group();
+    const finAngles = [0, Math.PI/2, Math.PI, 3*Math.PI/2];
+    finAngles.forEach((angle, i) => {
+      const radialDir = new THREE.Vector3(0, Math.cos(angle), Math.sin(angle)).normalize();
+      const attachPoint= new THREE.Vector3(0, 0.5*Math.cos(angle), 0.5*Math.sin(angle));
+      const fin = createTrapezoidalFinMesh();
+      fin.rotation.z = Math.PI/2;
+      const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(1,0,0), radialDir.clone().negate());
+      fin.quaternion.premultiply(q);
+      fin.position.copy(attachPoint);
+      if(i%2===0) { fin.rotation.y += Math.PI/2; }
+      finGroup.add(fin);
+    });
+    finGroup.rotation.x = THREE.MathUtils.degToRad(45);
+    finGroup.position.x = 0.8;
+    fuselage.add(finGroup);
+
+    // ====================================================
+    // 9) Main Engine & Thruster
+    // ====================================================
+    const mainThrusterGeo = new THREE.TorusGeometry(0.5,0.05,16,64);
+    const mainThruster = new THREE.Mesh(mainThrusterGeo, darkRingMaterial);
+    mainThruster.rotation.y = -Math.PI/2;
+    mainThruster.scale.set(1,1,4);
+    mainThruster.position.set(0,0,0);
+    scene.add(mainThruster);
+
+    const mainEffect = createThrusterEffect(1.5, new THREE.Vector3(-0.5,0,0));
+    mainEffect.position.set(0,0,0);
+    scene.add(mainEffect);
+    thrusterEffects.push(mainEffect);
+
+    // ====================================================
+    // 10) Resize Handling
+    // ====================================================
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // ====================================================
+    // 11) Animations: Thrusters, Laser Bolts, Landing Leg
+    // ====================================================
+    let thrusterActive = 0;
+    let thrusterTarget = 0;
+    let emissionActive = false;
+    let particleFade = 1.0;
+    const fadeSpeed = 8;
+    let lastLaserFireTime = 0;
+    const laserCooldown = 0.3;
+
+    function fireLaserBolt() {
+      const currentTime = performance.now()/1000;
+      if(currentTime - lastLaserFireTime < laserCooldown) return;
+      lastLaserFireTime = currentTime;
+
+      // Toggle which side (port=0 or starboard=1)
+      const pod = (nextLaserSide===0) ? portPod : starboardPod;
+      nextLaserSide = 1 - nextLaserSide;
+
+      // Find the intake cone
+      const intakeOrigin = pod.getObjectByName("intakeLaserOrigin");
+      if(!intakeOrigin) return;
+      let origin = new THREE.Vector3();
+      intakeOrigin.getWorldPosition(origin);
+
+      // forward direction in world space
+      let forward = new THREE.Vector3(1,0,0);
+      intakeOrigin.localToWorld(forward);
+      forward.sub(origin).normalize();
+
+      // Laser bolt geometry
+      const boltHeight = 2;
+      const boltRadius = 0.05;
+      const boltGeo = new THREE.CylinderGeometry(boltRadius, boltRadius, boltHeight, 16);
+      boltGeo.rotateZ(-Math.PI/2);
+      boltGeo.translate(boltHeight/2,0,0);
+      const boltMat = new THREE.MeshStandardMaterial({
+        color: 0x00ff00,
+        emissive: 0x00ff00,
+        emissiveIntensity: 1,
+        metalness: 0.5,
+        roughness: 0.2
+      });
+      const boltMesh = new THREE.Mesh(boltGeo, boltMat);
+      boltMesh.position.copy(origin);
+      boltMesh.quaternion.setFromUnitVectors(new THREE.Vector3(1,0,0), forward);
+      boltMesh.userData.velocity = forward.clone().multiplyScalar(20);
+      boltMesh.userData.lifeTime = 1.5;
+      boltMesh.userData.age = 0;
+
+      // Add point light
+      const boltLight = new THREE.PointLight(0x00ff00, 2, 10);
+      boltMesh.add(boltLight);
+
+      scene.add(boltMesh);
+      laserBolts.push(boltMesh);
+    }
+
+    // Key events
+    window.addEventListener("keydown", e => {
+      if(e.code === "Space") { laserButtonPressed = true; }
+      if(e.key === "ArrowUp") { thrusterTarget = 1; }
+      if(e.key.toLowerCase() === "g") {
+        landingLegExtended = !landingLegExtended;
+        landingLegTargetScaleY = landingLegExtended ? 1 : 0;
+      }
+    });
+    window.addEventListener("keyup", e => {
+      if(e.code === "Space") { laserButtonPressed = false; }
+      if(e.key === "ArrowUp") { thrusterTarget = 0; }
+    });
+
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = clock.getDelta();
+
+      // Thruster fade
+      if(thrusterTarget > thrusterActive) {
+        thrusterActive = Math.min(1, thrusterActive + dt*fadeSpeed);
+      } else if(thrusterTarget < thrusterActive) {
+        thrusterActive = Math.max(0, thrusterActive - dt*fadeSpeed);
+      }
+      if(thrusterTarget > 0) {
+        emissionActive = true;
+        particleFade = 1.0;
+      } else {
+        emissionActive = false;
+        particleFade = Math.max(0, particleFade - dt*0.5);
+      }
+
+      thrusterEffects.forEach(effect => {
+        effect.visible = (thrusterActive>0.01 || particleFade>0.01);
+        effect.userData.glowMat.opacity = thrusterActive*0.5;
+        if(effect.userData.coneLight) {
+          effect.userData.coneLight.intensity = thrusterActive*2;
+        }
+        effect.userData.matRef.opacity = emissionActive ? thrusterActive : particleFade;
+        const posArray = effect.userData.posArray;
+        const velArray = effect.userData.velArray;
+        const timeLeft = effect.userData.timeLeftArray;
+        const count = effect.userData.partCount;
+        for(let i=0; i<count; i++){
+          const ix=i*3, iy=ix+1, iz=ix+2;
+          if(emissionActive){
+            timeLeft[i] -= dt*thrusterActive;
+            posArray[ix]+= velArray[ix]*dt*thrusterActive;
+            posArray[iy]+= velArray[iy]*dt*thrusterActive;
+            posArray[iz]+= velArray[iz]*dt*thrusterActive;
+            if(timeLeft[i]<=0){ effect.userData.respawnFunc(i); continue; }
+          } else {
+            timeLeft[i] -= dt;
+            posArray[ix]+= velArray[ix]*dt;
+            posArray[iy]+= velArray[iy]*dt;
+            posArray[iz]+= velArray[iz]*dt;
+          }
+        }
+        effect.userData.partGeom.attributes.position.needsUpdate = true;
+      });
+
+      // Lasers
+      if(laserButtonPressed) { fireLaserBolt(); }
+      for(let i=laserBolts.length-1; i>=0; i--){
+        const bolt = laserBolts[i];
+        bolt.userData.age += dt;
+        bolt.position.add(bolt.userData.velocity.clone().multiplyScalar(dt));
+        if(bolt.userData.age>bolt.userData.lifeTime){
+          scene.remove(bolt);
+          laserBolts.splice(i,1);
+        }
+      }
+
+      // Landing leg
+      const legDiff = landingLegTargetScaleY - landingLegCurrentScaleY;
+      landingLegCurrentScaleY += legDiff * dt * landingLegAnimSpeed;
+      landingLegGroup.scale.y = landingLegCurrentScaleY;
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>

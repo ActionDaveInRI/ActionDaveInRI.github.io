@@ -5,6 +5,7 @@ import hashlib
 import json
 import subprocess
 import tempfile
+from release_game import validate_runtime
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -38,6 +39,8 @@ for slug in ('wayfarer', 'silt-and-signal'):
             original = actual.replace(b'href="./favicon.svg"', b'href="/favicon.svg"')
         assert digest(original) == item['source_sha256'], f'{slug}: unexpected gameplay edit'
     entry = (game/'index.html').read_text()
+    validate_runtime({item['path']: (game/item['path']).read_bytes()
+                      for item in manifest['runtime_files']})
     parser = Resources()
     parser.feed(entry)
     for url in parser.urls:

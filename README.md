@@ -22,3 +22,5 @@ Their original Sites source histories are preserved in downloadable Git bundles:
 To run this repository locally, use `python3 -m http.server 8000` and open `http://localhost:8000/`. No installation or build is needed for these two games. To verify their preserved runtime files and source history, run `python3 scripts/check_standalone.py`. See [migration verification](STANDALONE-QA.md) for the browser checks and limits.
 
 The gallery catalog is `projects.json`. Run `python3 scripts/build_gallery.py` after changing it. Screenshots must be real captures. Single-project repositories remain their own project directories.
+
+For future Wayfarer and Silt + Signal updates, follow [Deliberate game releases](RELEASING.md). The original Sites repositories remain the development sources. `scripts/release_game.py` exports an explicitly selected source revision, with a dry-run default and a separate local `--apply` step. Publishing remains a deliberate commit to the GitHub Pages publishing branch; ordinary Sites edits do not update these public releases.

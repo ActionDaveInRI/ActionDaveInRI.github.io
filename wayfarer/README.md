@@ -33,6 +33,8 @@ The [original Sites game](https://wayfarer-freighter.x-nihilo.chatgpt.site) and 
 
 ## Saves
 
+Future public updates follow the [deliberate release process](../RELEASING.md). Develop in the original Sites source repository, then export and publish a selected, tested revision.
+
 Progress is still stored in this browser using the game's original save keys. Browser storage belongs to an origin: an existing save at the Sites address does **not** automatically appear at the GitHub Pages address. It remains available at the original address. The two games use separate save keys.
 
 [Original gameplay and technical documentation](history/SITES-README.md) is preserved verbatim. Its `public/game/`, `tests/` and tooling paths refer to the restored original repository.

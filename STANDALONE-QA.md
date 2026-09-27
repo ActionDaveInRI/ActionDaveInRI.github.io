@@ -25,6 +25,29 @@ The gameplay checks run against the original source; the hash verification estab
 
 ## Browser and device limits
 
+### Follow-up release verification — September 27, 2026
+
+- Confirmed both latest saved Sites versions have successful production deployments
+  and match the source commits above. The development working trees remain clean.
+- Re-fetched all 54 live runtime files without cookies or authorization; all returned
+  HTTP 200 without redirect and matched the recorded SHA-256 hashes.
+- Reopened both public URLs in the cloud browser without a sign-in flow. Wayfarer
+  started a freight shift and paused/resumed; Silt continued its saved survivor,
+  displayed the Drowned Mile, paused/resumed, and retained progress after reload.
+- Wayfarer's pause screen reported **Audio running** after a user gesture, and its
+  **Engine sound check** control ran. Its original `tests/audio.mjs` also passed,
+  covering the persistent audio graph, automation, mute/background handling and
+  sound-check reset. Silt's sound control toggled OFF and back ON successfully.
+  Audible speaker output was not captured by the remote browser, so these checks
+  establish audio startup/control behavior, not subjective listening quality.
+- Original Silt controller and physicality checks passed. Physical controllers and
+  native touch hardware were not available for this follow-up.
+- Seven exporter tests passed, including dry-run immutability, unchanged source,
+  history restoration, safe obsolete-file removal, conflicts and missing imports.
+  Applying the current source revisions was verified to be a no-op for both games.
+- The standalone verifier now also checks literal nested JavaScript imports,
+  import maps and CSS resources. No game runtime files changed in this follow-up.
+
 The browser checks used the actual deployed GitHub Pages addresses; local interactive browser access was unavailable. This migration does not establish new native-device, physical-controller or GPU-performance coverage. The original controls and renderers are preserved byte-for-byte.
 
 ## Saves and history

@@ -1,6 +1,6 @@
 """Build the static gallery from projects.json. Python standard library only."""
 from pathlib import Path
-import html, json
+import html, json, hashlib
 
 ROOT = Path(__file__).resolve().parents[1]
 projects = json.loads((ROOT/'projects.json').read_text())
@@ -44,6 +44,8 @@ function filter(){const q=search.value.trim().toLowerCase();let count=0;for(cons
 search.addEventListener('input',filter);buttons.forEach(button=>button.addEventListener('click',()=>{category=button.dataset.filter;buttons.forEach(b=>{const selected=b===button;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected));});filter();}));
 </script></body></html>'''
 page=page.replace('PROJECT_COUNT',str(len(projects)))
+style_version=hashlib.sha256((ROOT/'gallery.css').read_bytes()).hexdigest()[:12]
+page=page.replace('href="gallery.css"',f'href="gallery.css?v={style_version}"')
 (ROOT/'index.html').write_text(page)
 print(f'Built gallery: {len(projects)} projects, {sum(bool(p["image"]) for p in projects)} screenshots.')
 

@@ -1,4 +1,5 @@
 import * as T from 'three';
+import {lunarMare} from './lunar.js';
 import {WORLDS,MAP_SCALE,SEA_LEVEL,palettes,globeHeight,surfaceCoordinates,surfaceDirection} from './world.js';
 
 // Every scale uses this same miniature. Model spacing, relief and local-up share one frame.
@@ -22,14 +23,15 @@ export function bendSurfaceMesh(object){
 export function groundGeometry(id,universeSeed){
  // 12,500 triangles: below the compatibility renderer's per-mesh limit.
  const g=new T.IcosahedronGeometry(PLANET_RADIUS,24),p=g.attributes.position,colors=[],pal=palettes[id];
- for(let i=0;i<p.count;i+=3){let h=0,x=0,z=0;
-  for(let j=0;j<3;j++){const n=new T.Vector3().fromBufferAttribute(p,i+j).normalize(),height=globeHeight(n.x,-n.z,n.y,id,universeSeed),at=surfaceCoordinates(n.x,-n.z,n.y);h+=height/3;x+=at.x/3;z+=at.z/3;n.multiplyScalar(PLANET_RADIUS+Math.max(WORLDS[id].environment==='sealed'?-5:SEA_LEVEL,height)*SURFACE_SCALE);p.setXYZ(i+j,n.x,n.y,n.z);}
+ for(let i=0;i<p.count;i+=3){let h=0,x=0,z=0,nx=0,ny=0,nz=0;
+  for(let j=0;j<3;j++){const n=new T.Vector3().fromBufferAttribute(p,i+j).normalize(),height=globeHeight(n.x,-n.z,n.y,id,universeSeed),at=surfaceCoordinates(n.x,-n.z,n.y);h+=height/3;nx+=n.x/3;ny-=n.z/3;nz+=n.y/3;x+=at.x/3;z+=at.z/3;n.multiplyScalar(PLANET_RADIUS+Math.max(WORLDS[id].environment==='sealed'?-5:SEA_LEVEL,height)*SURFACE_SCALE);p.setXYZ(i+j,n.x,n.y,n.z);}
   let color=new T.Color(pal.water);
   if(WORLDS[id].environment==='sealed'||h>SEA_LEVEL){
    const gx=(x/170+.5)*65,gz=(z/170+.5)*65,variation=(Math.sin(gx*.13+gz*.09)+Math.cos(gz*.16-gx*.08)+2)/4;
    color.set(pal.ground[0]).lerp(new T.Color(pal.ground[2]),variation*.62);
    if(WORLDS[id].environment!=='sealed'&&h<1.8)color.lerp(new T.Color(id==='pelagos'?'#6b9893':id==='ochre'?'#d58e42':'#dec293'),.45);
    if(h>9)color.lerp(new T.Color(pal.rock),.48);
+   if(id==='cinder'){const length=Math.hypot(nx,ny,nz),mare=lunarMare(nx/length,ny/length,nz/length,universeSeed);color.lerp(new T.Color('#515963'),mare*.72);}
    if(id==='tarn'&&(h>8||Math.abs(z)>55))color.lerp(new T.Color('#e0e8e4'),.83);
    if(id==='nacre')color.lerp(new T.Color(h<3?'#52798e':'#d8edef'),.65);
   }

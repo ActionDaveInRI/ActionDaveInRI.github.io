@@ -100,6 +100,6 @@ the screenshot gallery and link to independently hosted game repositories.
 
 ## First Light portable release
 
-First Light’s current selected release is game v0.10.1 from `d319e719c1ae2bfb3e2391cac129865a467944cd`, at [first-light/](first-light/). Its development source is https://first-light-expeditions.x-nihilo.chatgpt.site. The generic `release_game.py` currently handles Wayfarer and Silt + Signal only.
+First Light’s current selected release is game v0.10.2 from `2db0e28ce733822fe2382e973f37d8911c1e66a7`, at [first-light/](first-light/). Its development source is https://first-light-expeditions.x-nihilo.chatgpt.site. The generic `release_game.py` currently handles Wayfarer and Silt + Signal only.
 
 For First Light, select a clean, exact development source commit; run its tests and `node scripts/build-portable.mjs`. Copy the resulting `public/First-Light.html` to `first-light/index.html`, update the editable portable source export and provenance hashes, then update the screenshot, project metadata and README. Run `scripts/build_gallery.py`, verify the portable game at the Pages subpath, and publish a reviewed commit to `main`. Do not copy authentication, server configuration, credentials or personal save files. Updates to the development Site alone do not release this public version.

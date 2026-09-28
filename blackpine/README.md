@@ -12,3 +12,5 @@ The playable HTML is byte-for-byte identical to the saved source's `dist/index.h
 Move with WASD / arrow keys, aim with the mouse and fire with the mouse button; follow the in-game start screen for the complete keyboard and touch controls.
 
 `source/preview-v1.jpeg` is retained only as a historical screenshot of the preceding Vector Vale build, not a preview of current Blackpine.
+
+Preview: `preview.jpg` is an actual gameplay capture from this public v2 release on September 28, 2026.

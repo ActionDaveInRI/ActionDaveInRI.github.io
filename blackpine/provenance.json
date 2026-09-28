@@ -11,5 +11,11 @@
     "path": "source/preview-v1.jpeg",
     "version_number": 1,
     "current_build": false
+  },
+  "preview": {
+    "path": "preview.jpg",
+    "source": "Public GitHub Pages gameplay capture",
+    "version_number": 2,
+    "captured_at": "2026-09-28"
   }
 }

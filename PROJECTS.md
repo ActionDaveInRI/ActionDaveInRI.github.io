@@ -37,6 +37,6 @@ Recovered Sites releases include source provenance in their own folders. Publish
 
 First Light v0.9 is in [first-light/](first-light/), including editable source and tests. Use its Export save / Import save feature to move progress between hosts.
 
-13 of 22 gallery projects have real screenshots.
+14 of 22 gallery projects have real screenshots.
 
 See [gallery verification](GALLERY-QA.md) and [release instructions](RELEASING.md).

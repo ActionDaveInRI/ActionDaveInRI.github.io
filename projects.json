@@ -245,16 +245,17 @@
     "live": "https://actiondaveinri.github.io/spaceship/blackpine/",
     "source": "https://github.com/ActionDaveInRI/spaceship/tree/main/blackpine",
     "versions": null,
-    "image": null,
-    "imageAlt": "",
-    "previewStatus": "unavailable",
+    "image": "https://actiondaveinri.github.io/spaceship/blackpine/preview.jpg",
+    "imageAlt": "Blackpine v2 gameplay: the survivor beside a tent, campfire and radio mast, with health and ammunition controls.",
+    "previewStatus": "captured",
     "requiresLogin": false,
     "hosting": "github-pages",
     "originalSite": "https://vector-vale.x-nihilo.chatgpt.site",
     "sourceVersion": 2,
     "sourceCommit": "2fa411dae640f6bd5c49aeaf81e4191e1ed63cee",
-    "note": "Current build screenshot pending; prior v1 screenshot depicts Vector Vale and must not be used.",
-    "section": "current"
+    "note": "Standalone saved v2 game, formerly Vector Vale. Preview captured from the current public GitHub Pages build on 2026-09-28.",
+    "section": "current",
+    "previewVersion": 2
   },
   {
     "id": "breach-run",

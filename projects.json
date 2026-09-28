@@ -17,9 +17,9 @@
     "requiresLogin": false,
     "hosting": "github-pages",
     "originalSite": "https://first-light-expeditions.x-nihilo.chatgpt.site",
-    "gameVersion": "0.10",
-    "sourceCommit": "fd6ceccc13413712eb4e0fbadf8c728d0ce5eaf3",
-    "note": "Places with a Past: causal town businesses and red-orange-gold Ochre. Standalone release with editable source and 39 simulation tests.",
+    "gameVersion": "0.10.1",
+    "sourceCommit": "d319e719c1ae2bfb3e2391cac129865a467944cd",
+    "note": "Places with a Past: causal town businesses and Ochre’s red-orange soil with sulfur-yellow seas. Standalone release with editable source and 39 simulation tests.",
     "section": "current"
   },
   {

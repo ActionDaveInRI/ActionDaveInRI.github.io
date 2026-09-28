@@ -28,8 +28,7 @@ export function groundGeometry(id,universeSeed){
   if(WORLDS[id].environment==='sealed'||h>SEA_LEVEL){
    const gx=(x/170+.5)*65,gz=(z/170+.5)*65,variation=(Math.sin(gx*.13+gz*.09)+Math.cos(gz*.16-gx*.08)+2)/4;
    color.set(pal.ground[0]).lerp(new T.Color(pal.ground[2]),variation*.62);
-   if(id==='ochre'){const band=(Math.sin(h*.65+Math.sin(x*.045)*1.8)+1)/2;color.set(pal.ground[band<.33?0:band<.67?1:2]);color.lerp(new T.Color(pal.ground[3]),variation*.12);}
-   if(WORLDS[id].environment!=='sealed'&&h<1.8)color.lerp(new T.Color(id==='pelagos'?'#6b9893':'#dec293'),.45);
+   if(WORLDS[id].environment!=='sealed'&&h<1.8)color.lerp(new T.Color(id==='pelagos'?'#6b9893':id==='ochre'?'#d58e42':'#dec293'),.45);
    if(h>9)color.lerp(new T.Color(pal.rock),.48);
    if(id==='tarn'&&(h>8||Math.abs(z)>55))color.lerp(new T.Color('#e0e8e4'),.83);
    if(id==='nacre')color.lerp(new T.Color(h<3?'#52798e':'#d8edef'),.65);

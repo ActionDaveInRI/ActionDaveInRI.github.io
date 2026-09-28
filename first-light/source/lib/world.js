@@ -16,7 +16,7 @@ export const WORLDS={
 export const palettes={hearth:{ground:['#bb8052','#c38e5e','#ce9d68','#a87652'],rock:'#986853',water:'#377e8d',sky:'#acbdba',green:'#78966b'},cinder:{ground:['#977c72','#ac8a78','#b69881','#86747a'],rock:'#745f61',water:'#376f7c',sky:'#252e42',green:'#79856e'},pelagos:{ground:['#3f6263','#52756b','#648a77','#344952'],rock:'#34404e',water:'#236779',sky:'#90b0bc',green:'#83b7a0'}};
 const additional=[
  ['tarn','Tarn','aster','Glacial fjords','#91b4be',197,4,2,2,5,'A sheltered inlet beneath pale ridges. Long winters favor a reactor, while the exposed uplands hold rich ore.','Stillwater Inlet','Frostwatch Ridge','ice'],
- ['ochre','Ochre','helios','Desert riverlands','#e48732',263,4,1,0,5,'A green ribbon threads terracotta bluffs. River terraces support gardens; the dry escarpment rewards industrial crews.','Ribbon Landing','Sunstep Bluff','desert'],
+ ['ochre','Ochre','helios','Rustlands & sulfur seas','#c85b30',263,4,1,0,5,'Sulfur-yellow seas meet red-orange bluffs and rust-colored plains. Inland terraces support gardens; the dry escarpment rewards industrial crews.','Ribbon Landing','Sunstep Bluff','desert'],
  ['verdant','Verdant','morrow','Forest highlands','#6da28a',337,4,1,1,3,'Dense groves and rain-fed valleys beneath a white sun. Fertile lowlands are easier to sustain than the steep upland ridges.','Fernwater Vale','Canopy Ridge','forest'],
  ['brine','Brine','faraday','Saltwater terraces','#b39fbb',419,5,2,2,6,'Lavender salt shelves rise above ink-blue lagoons. Sparse food and metal-rich ridges make each shipment matter.','Quiet Lagoon','Violet Shelf','salt'],
  ['russet','Russet','morrow','Autumn steppe','#bd8566',503,4,1,1,4,'Copper grasslands fold around a narrow sea. Settlements can follow the sheltered shore or climb the wind-scoured heights.','Lantern Shore','Redwind Rise','steppe'],
@@ -34,7 +34,7 @@ for(const w of Object.values(WORLDS)){w.environment=['moon','iceMoon'].includes(
 const colorSets={
  nacre:['#b8d6df','#d3e7ea','#edf5ed','#8baebd','#597c99','#aed7e3','#243248','#9bcad3'],
  tarn:['#77979e','#a9b9bd','#cad3cd','#658a98','#536b7f','#346579','#b4c8d1','#82a3a4'],
- ochre:['#c34e2e','#e98631','#edc548','#a9322a','#9e302b','#347e87','#e0b684','#819356'],
+ ochre:['#ad442c','#c85b30','#dd783c','#8f3227','#923a2d','#e4d52c','#d8ad8a','#89904e'],
  verdant:['#426d61','#57816a','#709780','#385953','#4b6764','#326c76','#9fb8af','#5f9977'],
  brine:['#81728a','#99879c','#b2a5ac','#655c76','#524964','#364d74','#abb3c3','#b0bba6'],
  russet:['#a46d4c','#b38251','#c49b66','#896944','#825941','#416f79','#c1b5a5','#a59b61'],

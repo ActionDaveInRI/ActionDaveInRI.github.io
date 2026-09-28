@@ -6,7 +6,7 @@ The repository root is the gallery. Each game has its own folder; projects alrea
 
 | Project | Current build | Location |
 |---|---|---|
-| [First Light](https://actiondaveinri.github.io/spaceship/first-light/) | v0.10 | [spaceship/first-light](https://github.com/ActionDaveInRI/spaceship/tree/main/first-light) |
+| [First Light](https://actiondaveinri.github.io/spaceship/first-light/) | v0.10.1 | [spaceship/first-light](https://github.com/ActionDaveInRI/spaceship/tree/main/first-light) |
 | [Silt + Signal](https://actiondaveinri.github.io/spaceship/silt-and-signal/) | v9 | [spaceship/silt-and-signal](https://github.com/ActionDaveInRI/spaceship/tree/main/silt-and-signal) |
 | [Wayfarer](https://actiondaveinri.github.io/spaceship/wayfarer/) | v30 | [spaceship/wayfarer](https://github.com/ActionDaveInRI/spaceship/tree/main/wayfarer) |
 | [Star Cluster · Geographic Explorer](https://actiondaveinri.github.io/spaceship/star-cluster/) | v11 | [spaceship/star-cluster](https://github.com/ActionDaveInRI/spaceship/tree/main/star-cluster) |
@@ -35,7 +35,7 @@ Inkstar remains in the [Inkdrift archive](inkdrift/archive/). Nebula Weave remai
 
 Recovered Sites releases include source provenance in their own folders. Publishing here is deliberate; Sites development does not automatically replace these releases. The original Sites projects and access settings are preserved. Browser saves stay at their original website address unless a game provides an export/import feature.
 
-First Light v0.10 is in [first-light/](first-light/), including editable source and tests. Use its Export save / Import save feature to move progress between hosts.
+First Light v0.10.1 is in [first-light/](first-light/), including editable source and tests. Use its Export save / Import save feature to move progress between hosts.
 
 14 of 22 gallery projects have real screenshots.
 

@@ -53,13 +53,13 @@ export class WorldView{
  else if(mode==='system'){this.system(world,state);this.scene.background=new T.Color('#091c2b');this.scene.fog=null;if(changed){this.camera.position.set(0,32,45);this.controls.target.set(0,0,0);this.camera.zoom=1;}}
  else if(mode==='orbit'){this.orbit(world,state);this.scene.background=new T.Color('#0b1b2a');this.scene.fog=null;if(changed){this.camera.position.set(0,16,32);this.controls.target.set(0,0,0);this.camera.zoom=1;}}
  else if(mode==='ship'){this.ship(design,kit);this.scene.background=new T.Color('#263e48');this.scene.fog=new T.Fog('#263e48',35,85);if(changed){this.camera.position.set(8,5.7,10);this.controls.target.set(0,1,0);this.camera.zoom=1;}}
- else{this.surface(world,state,design,site);this.scene.background=new T.Color(WORLDS[world].environment==='sealed'?'#142639':'#7799a5');this.scene.fog=null;if(changed){this.camera.position.set(40,130,100);this.controls.target.set(0,48,0);this.camera.zoom=1.3;}if(focusChanged)this.camera.zoom=Math.max(1.3,this.camera.zoom);}
+ else{this.surface(world,state,design,site);this.scene.background=new T.Color(WORLDS[world].environment==='sealed'?'#142639':world==='ochre'?pal.sky:'#7799a5');this.scene.fog=null;if(changed){this.camera.position.set(40,130,100);this.controls.target.set(0,48,0);this.camera.zoom=1.3;}if(focusChanged)this.camera.zoom=Math.max(1.3,this.camera.zoom);}
 
  this.scene.updateMatrixWorld(true);this.addTraffic(state);this.addLandedCallouts(state);this.controls.update();this.size();
  }
  populateSurface(id,state,design,site){
  const pal=palettes[id],rnd=seeded(seedOf(state.universe.seed+':'+id+':decoration')),home=id==='hearth',colony=state.colonies[id],anchor=this.siteInfo(id,home?'coast':colony?.site||site),baseX=anchor.x,baseZ=anchor.z;
- const rockGeo=new T.IcosahedronGeometry(1,0),rockMat=mat(pal.rock),reedMat=mat(pal.green),stemGeo=new T.ConeGeometry(.7,2.2,5),foamMat=new T.MeshBasicMaterial({color:'#9acbcc',transparent:true,opacity:.25,side:T.DoubleSide});
+ const rockGeo=new T.IcosahedronGeometry(1,0),rockMat=mat(pal.rock),reedMat=mat(pal.green),stemGeo=new T.ConeGeometry(.7,2.2,5),foamMat=new T.MeshBasicMaterial({color:id==='ochre'?'#fff1a0':'#9acbcc',transparent:true,opacity:.25,side:T.DoubleSide});
  const wooded=['hearth','verdant','russet','haven'].includes(id),reserves=(home||id==='cinder'?['coast']:['coast','plateau']).map(k=>this.siteInfo(id,k));
  // Uniform sphere samples keep the same vegetation and rocks at every viewing scale.
  for(let i=0;i<650;i++){
@@ -134,7 +134,7 @@ export class WorldView{
  for(const r of this.regions(id)){
   const selected=r.id===this.region,points=[];
   for(let i=0;i<=6;i++){const a=Math.PI/3*i+Math.PI/6,x=r.x+Math.cos(a)*TILE_RADIUS,z=r.z+Math.sin(a)*TILE_RADIUS;points.push(new T.Vector3(x,Math.max(SEA_LEVEL,this.height(x,z,id))+.2,z));}
-  const color=selected?'#ffe3a0':r.water?'#719daa':r.ore?'#d8a375':r.fertile?'#9ac9a4':'#9faeac';
+  const color=selected?'#ffe3a0':r.water?(id==='ochre'?'#c9bb62':'#719daa'):r.ore?'#d8a375':r.fertile?'#9ac9a4':'#9faeac';
   const line=new T.Line(new T.BufferGeometry().setFromPoints(points),new T.LineBasicMaterial({color,transparent:true,opacity:selected?1:.62}));line.userData.drape=true;this.root.add(line);
   const verts=[];for(let i=0;i<6;i++)verts.push(r.x,Math.max(SEA_LEVEL,r.height)+.13,r.z,...points[i].toArray(),...points[i+1].toArray());
   const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(verts,3));const hit=mesh(geo,new T.MeshBasicMaterial({color,side:T.DoubleSide,transparent:true,opacity:selected?.2:.035}));hit.castShadow=false;hit.userData.drape=true;this.root.add(hit);this.pick(hit,{world:id,region:r.id});

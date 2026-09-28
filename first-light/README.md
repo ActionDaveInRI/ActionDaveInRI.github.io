@@ -1,10 +1,10 @@
-# First Light · v0.10 — Places with a Past
+# First Light · v0.10.1 — Places with a Past
 
 [Play First Light](https://actiondaveinri.github.io/spaceship/first-light/) · [Back to the gallery](https://actiondaveinri.github.io/spaceship/) · [Development version](https://first-light-expeditions.x-nihilo.chatgpt.site)
 
 Build an interstellar civilization across miniature planets. Survey worlds, establish settlements, connect cargo-drone services, and grow lasting towns from local production.
 
-This release adds businesses sustained by actual local industry and delivered cargo, lasting neighborhood histories, clickable workplace and household connections, and visible construction stages. Ochre now has red rock, orange strata and golden ground. Research progresses automatically; City, Build, Ports and Land organize the inspector.
+This release adds businesses sustained by actual local industry and delivered cargo, lasting neighborhood histories, clickable workplace and household connections, and visible construction stages. Ochre now has Mars-like red-orange ground, rust bluffs and sulfur-yellow seas. Research progresses automatically; City, Build, Ports and Land organize the inspector.
 
 ## Play and saves
 
@@ -14,7 +14,7 @@ Saves stay in the browser at each website address. To continue a Sites game here
 
 ## Source and verification
 
-Editable modules, the locked dependencies, build script, tests and migration fixtures are in [source/](source/). Source revision: `fd6ceccc13413712eb4e0fbadf8c728d0ce5eaf3`. The public runtime is byte-identical to that revision’s portable artifact; [source-provenance.json](source-provenance.json) records file hashes and export adaptations.
+Editable modules, the locked dependencies, build script, tests and migration fixtures are in [source/](source/). Source revision: `d319e719c1ae2bfb3e2391cac129865a467944cd`. The public runtime is byte-identical to that revision’s portable artifact; [source-provenance.json](source-provenance.json) records file hashes and export adaptations.
 
 39 simulation tests pass, covering the normal campaign, cargo conservation, old saves, resource conversions, housing, businesses and tile occupancy. The source game’s building selection and construction were checked in-browser with the compatibility renderer. Native GPU rendering and physical touch devices were not tested in this release check.
 

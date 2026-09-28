@@ -8,6 +8,7 @@ A visual directory of David’s browser games and experiments.
 |---|---|
 | Wayfarer | [wayfarer/](wayfarer/) — complete v30 game, no login |
 | Silt + Signal | [silt-and-signal/](silt-and-signal/) — complete v3 game, no login |
+| First Light | [first-light/](first-light/) — v0.9 civilization and colony demo, no login |
 | Inkdrift | [inkdrift/](inkdrift/) — current playable build |
 | Inkstar history | [inkdrift/archive/](inkdrift/archive/) — early Inkdrift builds |
 | Nebula Weave | [nebula-weave/](nebula-weave/) |
@@ -24,3 +25,6 @@ To run this repository locally, use `python3 -m http.server 8000` and open `http
 The gallery catalog is `projects.json`. Run `python3 scripts/build_gallery.py` after changing it. Screenshots must be real captures. Single-project repositories remain their own project directories.
 
 For future Wayfarer and Silt + Signal updates, follow [Deliberate game releases](RELEASING.md). The original Sites repositories remain the development sources. `scripts/release_game.py` exports an explicitly selected source revision, with a dry-run default and a separate local `--apply` step. Publishing remains a deliberate commit to the GitHub Pages publishing branch; ordinary Sites edits do not update these public releases.
+
+
+First Light v0.9 is published in its own [first-light/](first-light/) directory, with a self-contained game, current screenshot, editable source, build instructions and 32 simulation tests. Transfer a Sites save using Export save / Import save; saves do not automatically cross website addresses.

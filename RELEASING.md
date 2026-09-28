@@ -96,3 +96,10 @@ game runtimes can remain the same.
 Keep old Pages launch URLs working during a move. Renaming a GitHub repository
 does not automatically redirect its Pages URLs. A personal homepage can hold
 the screenshot gallery and link to independently hosted game repositories.
+
+
+## First Light portable release
+
+First Light’s current selected release is game v0.9 from `1849b2fb261d8ad77437f9006506878a4d4d96ec`, at [first-light/](first-light/). Its development source is https://first-light-expeditions.x-nihilo.chatgpt.site. The generic `release_game.py` currently handles Wayfarer and Silt + Signal only.
+
+For First Light, select a clean, exact development source commit; run its tests and `node scripts/build-portable.mjs`. Copy the resulting `public/First-Light.html` to `first-light/index.html`, update the editable portable source export and provenance hashes, then update the screenshot, project metadata and README. Run `scripts/build_gallery.py`, verify the portable game at the Pages subpath, and publish a reviewed commit to `main`. Do not copy authentication, server configuration, credentials or personal save files. Updates to the development Site alone do not release this public version.

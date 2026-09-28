@@ -1,0 +1,11 @@
+import {build} from 'vite';
+import react from '@vitejs/plugin-react';
+import {readFileSync,writeFileSync,mkdirSync,readdirSync,rmSync} from 'node:fs';
+import {resolve} from 'node:path';
+mkdirSync('public',{recursive:true});
+const tmp=resolve('.portable-build');mkdirSync(tmp,{recursive:true});
+writeFileSync(resolve(tmp,'entry.tsx'),`import React from 'react';import {createRoot} from 'react-dom/client';import Home from '../app/page';import '../app/globals.css';createRoot(document.getElementById('root')).render(<Home/>);`);
+await build({configFile:false,publicDir:false,plugins:[react()],resolve:{alias:{'@':resolve('.')}},define:{'process.env.NODE_ENV':'"production"'},build:{outDir:resolve(tmp,'out'),emptyOutDir:true,minify:true,lib:{entry:resolve(tmp,'entry.tsx'),formats:['iife'],name:'FirstLight',fileName:()=> 'game.js'},rollupOptions:{output:{inlineDynamicImports:true}},cssCodeSplit:false}});
+const out=resolve(tmp,'out');const js=readFileSync(resolve(out,'game.js'),'utf8');const css=readdirSync(out).filter(f=>f.endsWith('.css')).map(f=>readFileSync(resolve(out,f),'utf8')).join('\n');
+writeFileSync('public/First-Light.html',`<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>First Light · Portable Demo</title><style>${css}</style></head><body><div id="root"></div><script>${js.replaceAll('</script','<\\/script')}</script></body></html>`);
+rmSync(tmp,{recursive:true,force:true});console.log('Portable demo: public/First-Light.html');

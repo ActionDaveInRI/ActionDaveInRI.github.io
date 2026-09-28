@@ -6,6 +6,7 @@
 |---|---|---|
 | [Wayfarer](https://actiondaveinri.github.io/spaceship/wayfarer/) | Walk your freighter, work with your crew, and fly cargo between frontier ports and an asteroid outpost. | [Source](https://github.com/ActionDaveInRI/spaceship/tree/main/wayfarer) |
 | [Silt + Signal](https://actiondaveinri.github.io/spaceship/silt-and-signal/) | A hand-drawn survival RPG. Scavenge, fight, and rebuild a life from almost nothing. | [Source](https://github.com/ActionDaveInRI/spaceship/tree/main/silt-and-signal) |
+| [First Light](https://actiondaveinri.github.io/spaceship/first-light/) | Build an interstellar civilization on miniature planets. Connect cargo routes, develop local industries, and watch homes and market streets grow. | [Source](https://github.com/ActionDaveInRI/spaceship/tree/main/first-light) |
 | [PETRI: Living Lineages](https://actiondaveinri.github.io/petri/living-lineages/) | A living pond of evolving organisms. Inspect their anatomy, inherited genes, and family histories. | [Source](https://github.com/ActionDaveInRI/petri/tree/main/living-lineages) |
 | [Inkdrift](https://actiondaveinri.github.io/spaceship/inkdrift/) | Pilot a small cartoon ship through a procedural asteroid field and land on illustrated worlds. | [Source](https://github.com/ActionDaveInRI/spaceship/tree/main/inkdrift) |
 | [Petri Classic](https://actiondaveinri.github.io/petri/classic/) | The original petri-dish experiments in population, diet, evolving traits, and radiation. | [Source](https://github.com/ActionDaveInRI/petri/tree/main/classic) |
@@ -26,8 +27,10 @@ Wayfarer and Silt + Signal include their complete recovered game source and orig
 
 ## Access and previews
 
+First Light v0.9 also runs without login at [first-light/](first-light/), with editable source and release provenance. Use Export save / Import save to transfer progress from its development Site.
+
 Wayfarer v30 and Silt + Signal v3 run directly on GitHub Pages without ChatGPT sign-in. All runtime assets are local. Their original Sites builds remain available with their existing access settings. Browser saves remain local to each website address.
 
-6 current gallery projects have actual screenshots; 7 await a usable capture. The Inkstar screenshot is also preserved in the Inkdrift archive.
+7 current gallery projects have actual screenshots; 7 await a usable capture. The Inkstar screenshot is also preserved in the Inkdrift archive.
 
 Remaining previews are pending usable graphics captures. See [standalone migration verification](STANDALONE-QA.md) for the recovered games.

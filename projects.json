@@ -49,6 +49,28 @@
     "sourceCommit": "9f2fcf390a0da78f054fd87bdc5259a3560098d0"
   },
   {
+    "id": "first-light",
+    "title": "First Light",
+    "repo": "spaceship",
+    "directory": "first-light",
+    "category": "Space & flight",
+    "description": "Build an interstellar civilization on miniature planets. Connect cargo routes, develop local industries, and watch homes and market streets grow.",
+    "launch": "https://actiondaveinri.github.io/spaceship/first-light/",
+    "live": "https://actiondaveinri.github.io/spaceship/first-light/",
+    "source": "https://github.com/ActionDaveInRI/spaceship/tree/main/first-light",
+    "versions": null,
+    "image": "https://actiondaveinri.github.io/spaceship/first-light/preview.jpg",
+    "imageAlt": "First Light: the growing town at Longshore Bay, cargo drones, a clay brickworks, and a tile inspector identifying the founding ship and buildings.",
+    "previewStatus": "captured",
+    "accessLabel": "No login",
+    "requiresLogin": false,
+    "hosting": "github-pages",
+    "originalSite": "https://first-light-expeditions.x-nihilo.chatgpt.site",
+    "gameVersion": "0.9",
+    "sourceCommit": "1849b2fb261d8ad77437f9006506878a4d4d96ec",
+    "note": "Ground into Towns: self-contained portable release with editable source and tests. Screenshot captured from the same v0.9 source in compatibility rendering. Existing Sites saves can be transferred with Export save / Import save."
+  },
+  {
     "id": "petri-living-lineages",
     "title": "PETRI: Living Lineages",
     "repo": "petri",

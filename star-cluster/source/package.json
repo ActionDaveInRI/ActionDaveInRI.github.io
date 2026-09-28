@@ -1,0 +1,16 @@
+{
+  "name": "star-cluster-portable",
+  "version": "11.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "build": "node scripts/build-portable.mjs",
+    "test": "npm run build && node --loader ./tests/vendor-loader.mjs --test tests/simulation.test.mjs tests/rendered-html.test.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.0"
+  }
+}

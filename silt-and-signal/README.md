@@ -2,11 +2,11 @@
 
 [Play Silt + Signal](https://actiondaveinri.github.io/spaceship/silt-and-signal/) · [Source history](history/) · [About](about.html)
 
-The full game runs directly on GitHub Pages, without ChatGPT sign-in, a backend, a CDN, or a build step. This is the recovered Sites **v3** game at source commit `9f2fcf390a0da78f054fd87bdc5259a3560098d0`. All game code, graphics, sound, controls and save formats are preserved.
+The full game runs directly on GitHub Pages, without ChatGPT sign-in, a backend, a CDN, or a build step. This is the selected Sites **v9** game at source commit `e9b81ea312df5e137a42ac224847c4adc896102a`. All game code, graphics, sound, controls and save formats are preserved.
 
 ## Source and hosting
 
-The files in this directory are the standalone game source and playable build. They were copied from `dist/` in the original Sites repository. `source-provenance.json` records every original path and source/deployed SHA-256. All four runtime files are byte-for-byte identical to the published v3 source.
+The files in this directory are the standalone game source and playable build. They were copied from `dist/` in the original Sites repository. `source-provenance.json` records every original path and source/deployed SHA-256. All four runtime files are byte-for-byte identical to the published v9 source. The gallery preview is rendered by the same v9 Canvas game code with the existing shelter test scene.
 
 To run locally, serve the repository root:
 
@@ -18,7 +18,7 @@ Then open `http://localhost:8000/silt-and-signal/`. Use HTTP hosting for reliabl
 
 ## History
 
-`history/source-history.bundle` preserves all **3 original source commits**, including the original hosting wrapper, build configuration, documentation and any original tests. `history/versions.json` maps each published version to its exact original commit and date. The former redirect is retained as `history/sites-launcher.html`.
+`history/source-history.bundle` preserves all **9 original source commits**, including the original hosting wrapper, build configuration, documentation and any original tests. `history/versions.json` maps each published version to its exact original commit and date. The former redirect is retained as `history/sites-launcher.html`.
 
 Restore the complete original repository from a clone/download of this repository:
 

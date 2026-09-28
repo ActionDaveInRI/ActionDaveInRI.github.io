@@ -1,0 +1,14 @@
+{
+  "source_site": "https://bramblewild.x-nihilo.chatgpt.site",
+  "source_project_id": "appgprj_6aac9f9b37d881919c7f95c133fac4e4",
+  "source_version": 19,
+  "source_commit": "6f5fc6ad7c3a21c91ae87c756fb42bfb3b366144",
+  "exported_at": "2026-09-28",
+  "runtime_source_path": "public/world",
+  "adaptation": "The game directory was promoted to the project root and its favicon link made relative. Game logic is unchanged.",
+  "screenshot_source": "progression-05-bramblewild-v19.jpg",
+  "screenshot_version": 19,
+  "external_runtime_requests": false,
+  "preserved_source_commits": 20,
+  "source_history": "history/source-history.bundle"
+}

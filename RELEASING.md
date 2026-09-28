@@ -8,7 +8,7 @@ sync, or push hook connecting Sites development to this repository.
 | Game | Development Site | Current public source |
 |---|---|---|
 | Wayfarer | https://wayfarer-freighter.x-nihilo.chatgpt.site | Sites v30 · `eacc6f34d17d6d5e7584504188e59b4573a940b1` |
-| Silt + Signal | https://silt-and-signal.x-nihilo.chatgpt.site | Sites v3 · `9f2fcf390a0da78f054fd87bdc5259a3560098d0` |
+| Silt + Signal | https://silt-and-signal.x-nihilo.chatgpt.site | Sites v9 · `e9b81ea312df5e137a42ac224847c4adc896102a` |
 
 ## Prepare a release
 
@@ -31,7 +31,7 @@ execution workspace, and can be replaced with equivalent local clones.
 
 ```sh
 python3 scripts/release_game.py --game wayfarer --source /workspace/sites/wayfarer-freighter --commit eacc6f34d17d6d5e7584504188e59b4573a940b1 --sites-version 30
-python3 scripts/release_game.py --game silt-and-signal --source /workspace/sites/silt-and-signal --commit 9f2fcf390a0da78f054fd87bdc5259a3560098d0 --sites-version 3
+python3 scripts/release_game.py --game silt-and-signal --source /workspace/sites/silt-and-signal --commit e9b81ea312df5e137a42ac224847c4adc896102a --sites-version 9
 ```
 
 Repeat the chosen command with `--apply` to prepare its files locally. Applying

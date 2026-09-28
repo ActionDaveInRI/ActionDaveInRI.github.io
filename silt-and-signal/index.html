@@ -37,7 +37,7 @@
 
     <button id="pause-btn" class="pause-toggle hidden" aria-label="Pause and show controls">Ⅱ <span>CONTROLS</span></button>
 
-    <div id="prompt" class="hidden" aria-live="polite"><kbd id="prompt-key">E</kbd><span id="prompt-text">SEARCH</span></div>
+    <button id="prompt" class="hidden" aria-live="polite"><kbd id="prompt-key">E</kbd><span id="prompt-text">SEARCH</span></button>
     <div id="toast" class="hidden" aria-live="assertive"></div>
 
     <section id="title-screen" class="screen active" aria-labelledby="game-title">
@@ -51,7 +51,7 @@
         <button id="controls-btn" class="quiet">CONTROLS &amp; CONTROLLER</button>
       </div>
       <div class="control-legend">
-        <span class="keyboard-only"><b>WASD</b> MOVE</span><span class="keyboard-only"><b>MOUSE / ARROWS</b> AIM</span><span class="keyboard-only"><b>CLICK / SPACE</b> ATTACK</span><span class="keyboard-only"><b>SHIFT</b> SPRINT</span><span class="keyboard-only"><b>Q · E · R · TAB</b> SWAP · USE · RELOAD · PACK</span><span class="controller-only"><b>LEFT / RIGHT STICK</b> MOVE / AIM</span><span class="controller-only"><b>RT · LT</b> ATTACK · SPRINT</span><span class="controller-only"><b>A · X · Y · VIEW</b> USE · RELOAD · SWAP · PACK</span><span class="touch-only"><b>DUAL STICKS</b> MOVE · AIM · ATTACK</span><span class="touch-only"><b>EDGE PUSH</b> SPRINT · BUTTONS USE / RELOAD / SWAP / PACK</span>
+        <span class="keyboard-only"><b>WASD</b> MOVE</span><span class="keyboard-only"><b>MOUSE / ARROWS</b> AIM</span><span class="keyboard-only"><b>CLICK / SPACE</b> ATTACK</span><span class="keyboard-only"><b>SHIFT</b> SPRINT</span><span class="keyboard-only"><b>E · R · Q · H · TAB</b> USE · RELOAD · SWAP · HEAL · PACK</span><span class="controller-only"><b>LEFT / RIGHT STICK</b> MOVE / AIM</span><span class="controller-only"><b>RT · LT</b> ATTACK · SPRINT</span><span class="controller-only"><b>A · X · Y · VIEW</b> USE · RELOAD · SWAP · PACK</span><span class="touch-only"><b>LEFT STICK</b> MOVE</span><span class="touch-only"><b>RIGHT PAD</b> DRAG TO AIM · RELEASE SAFELY · TAP ONCE TO ATTACK</span><span class="touch-only"><b>TAP</b> NEARBY OBJECTS TO USE</span>
       </div>
       <p id="controller-intro" class="controller-intro">Controller: click the game, then press a button.</p>
       <button id="sound-btn" class="sound-toggle" aria-pressed="true">SOUND ON</button>
@@ -67,10 +67,10 @@
           <div><b>Move</b><span>WASD · left stick · left touch stick</span></div>
           <div><b>Aim</b><span>Mouse / arrows · right stick · right touch stick</span></div>
           <div><b>Attack</b><span>Click / Space · RT · push right touch stick</span></div>
-          <div><b>Sprint</b><span>Shift · LT · push move stick to the rim</span></div>
-          <div><b>Use</b><span>E · A / ✕ · USE</span></div>
+          <div><b>Sprint</b><span>Shift · LT · tap WALK / RUN</span></div>
+          <div><b>Use</b><span>E · A / ✕ · tap an object or its prompt</span></div>
           <div><b>Reload / swap</b><span>R / Q · X / Y · touch buttons</span></div>
-          <div><b>Pack</b><span>Tab · View / Select · PACK</span></div>
+          <div><b>Heal / pack</b><span>H · HEAL / Tab or I · View / Select · PACK</span></div>
           <div><b>Pause / back</b><span>Esc · Menu / Start · B / ○</span></div>
         </div>
         <section class="controller-panel" aria-label="Controller connection">
@@ -136,12 +136,16 @@
     </section>
 
     <nav id="touch-ui" class="hidden" aria-label="Touch controls">
-      <div id="move-stick" class="stick left" aria-label="Movement stick"><i></i></div>
-      <div id="aim-stick" class="stick right" aria-label="Aim and fire stick"><i></i></div>
-      <button id="touch-use" class="touch-button use">USE</button>
-      <button id="touch-reload" class="touch-button reload">R</button>
-      <button id="touch-swap" class="touch-button swap">SWAP</button>
-      <button id="touch-pack" class="touch-button pack">PACK</button>
+      <div id="move-stick" class="stick left" aria-label="Movement stick"><i></i><span>MOVE</span></div>
+      <div id="aim-stick" class="stick right" aria-label="Drag to aim and release safely. Tap separately for one attack."><i><b id="touch-attack-label">STRIKE</b></i><span id="touch-attack-hint">DRAG AIM · TAP STRIKE</span></div>
+      <button id="touch-use" class="hidden" tabindex="-1">USE</button>
+      <div class="touch-actions">
+        <button id="touch-pack">PACK</button>
+        <button id="touch-heal">HEAL</button>
+        <button id="touch-reload">RELOAD</button>
+        <button id="touch-swap">SWAP</button>
+      </div>
+      <button id="touch-run" class="touch-button run" aria-pressed="false">WALK</button>
     </nav>
   </main>
   <script src="control-core.js"></script>

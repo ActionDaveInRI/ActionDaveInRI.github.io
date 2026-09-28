@@ -1,7 +1,7 @@
 {
   "title": "Silt + Signal",
-  "sites_version": 3,
-  "source_commit": "9f2fcf390a0da78f054fd87bdc5259a3560098d0",
+  "sites_version": 9,
+  "source_commit": "e9b81ea312df5e137a42ac224847c4adc896102a",
   "source_directory": "dist",
   "original_site": "https://silt-and-signal.x-nihilo.chatgpt.site",
   "recovered_on": "2026-09-27",
@@ -16,23 +16,24 @@
     {
       "path": "game.js",
       "source_path": "dist/game.js",
-      "source_sha256": "7e62a566d5e0cab425a7d359a118d660f524f30f670a02f69dacea07f9a96395",
-      "sha256": "7e62a566d5e0cab425a7d359a118d660f524f30f670a02f69dacea07f9a96395",
+      "source_sha256": "70f120830ed9142bd95f84201ee0a64295d04e631bd5b52d46ef132e8796736a",
+      "sha256": "70f120830ed9142bd95f84201ee0a64295d04e631bd5b52d46ef132e8796736a",
       "change": null
     },
     {
       "path": "index.html",
       "source_path": "dist/index.html",
-      "source_sha256": "c067d6a6e0d9b93b1b85691e10d05fe655a81a041dc6dbb06337d4dd46bdfe34",
-      "sha256": "c067d6a6e0d9b93b1b85691e10d05fe655a81a041dc6dbb06337d4dd46bdfe34",
+      "source_sha256": "c22b2fa6b4168a1762d84ff3ccfc568afe0d18d45fe0be8f48b9a0ce43ced4d6",
+      "sha256": "c22b2fa6b4168a1762d84ff3ccfc568afe0d18d45fe0be8f48b9a0ce43ced4d6",
       "change": null
     },
     {
       "path": "style.css",
       "source_path": "dist/style.css",
-      "source_sha256": "0dc11e94f6cb097a18e7ef87a5874177bfd78a15d966db6cecd625981757ff6a",
-      "sha256": "0dc11e94f6cb097a18e7ef87a5874177bfd78a15d966db6cecd625981757ff6a",
+      "source_sha256": "34907b79b781562c38ab5f0fd9e9f09d7bde4357481da92583bccdcd58a5e358",
+      "sha256": "34907b79b781562c38ab5f0fd9e9f09d7bde4357481da92583bccdcd58a5e358",
       "change": null
     }
-  ]
+  ],
+  "released_on": "2026-09-28"
 }

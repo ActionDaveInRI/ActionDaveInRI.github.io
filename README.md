@@ -1,30 +1,48 @@
 # Games & experiments
 
-A visual directory of David’s browser games and experiments.
-
 [Open the screenshot gallery](https://actiondaveinri.github.io/spaceship/)
 
-| Project | Directory |
-|---|---|
-| Wayfarer | [wayfarer/](wayfarer/) — complete v30 game, no login |
-| Silt + Signal | [silt-and-signal/](silt-and-signal/) — complete v3 game, no login |
-| First Light | [first-light/](first-light/) — v0.9 civilization and colony demo, no login |
-| Inkdrift | [inkdrift/](inkdrift/) — current playable build |
-| Inkstar history | [inkdrift/archive/](inkdrift/archive/) — early Inkdrift builds |
-| Nebula Weave | [nebula-weave/](nebula-weave/) |
-| Ship effects | [ship-effects/](ship-effects/) |
+`index.html` is the gallery, not a game. Each project has its own directory, with a direct launch link, a short description, and a real preview wherever a usable capture is available. [PROJECTS.md](PROJECTS.md) lists every current build and its source location.
 
-Inkstar is part of Inkdrift’s history, not a separate gallery project. The current Inkdrift card launches the game directly; its Archive link opens earlier Inkstar builds. Old launch URLs remain usable.
+## Current games in this repository
 
-Wayfarer and Silt + Signal now run directly on GitHub Pages. Their complete game sources and local assets are included here; neither game needs ChatGPT sign-in, a backend, a CDN, or an npm build. Wayfarer preserves v30 and Silt + Signal preserves v3, including their current controls, graphics, sound, gameplay and browser save formats.
+| Project | Directory | Selected release |
+|---|---|---|
+| First Light | [first-light/](first-light/) | v0.9 · Ground into Towns |
+| Silt + Signal | [silt-and-signal/](silt-and-signal/) | Sites v9 |
+| Wayfarer | [wayfarer/](wayfarer/) | Sites v30 |
+| Star Cluster · Geographic Explorer | [star-cluster/](star-cluster/) | Sites v11 |
+| Wreck Run | [wreck-run/](wreck-run/) | Sites v1 |
+| Bramblewild | [bramblewild/](bramblewild/) | Sites v19 |
+| Last Light · Trench Assault | [last-light/](last-light/) | Sites v1 |
+| Wayfarer · Pixel Study | [wayfarer-pixel-study/](wayfarer-pixel-study/) | Sites v3 |
+| Blackpine | [blackpine/](blackpine/) | Sites v2 · formerly Vector Vale |
+| Breach Run | [breach-run/](breach-run/) | Sites v2 |
+| Island Three | [island-three/](island-three/) | Sites v9 |
+| Inkdrift | [inkdrift/](inkdrift/) | Current standalone build |
+| Ship effects | [ship-effects/](ship-effects/) | Original study |
 
-Their original Sites source histories are preserved in downloadable Git bundles: [Wayfarer history](wayfarer/history/) (30 commits) and [Silt + Signal history](silt-and-signal/history/) (3 commits). Each game includes a version-to-commit manifest and per-file source hashes. The existing Sites builds remain available, and the former redirects are archived. Existing browser saves remain at their original website address; they do not automatically transfer to GitHub Pages.
+Projects already in dedicated repositories retain their existing homes and URLs. The gallery links to them directly; it does not create competing copies.
 
-To run this repository locally, use `python3 -m http.server 8000` and open `http://localhost:8000/`. No installation or build is needed for these two games. To verify their preserved runtime files and source history, run `python3 scripts/check_standalone.py`. See [migration verification](STANDALONE-QA.md) for the browser checks and limits.
+Inkstar remains in [Inkdrift’s archive](inkdrift/archive/). Nebula Weave remains available at [nebula-weave/](nebula-weave/) outside the main gallery. Older launch URLs still work, and Git history preserves previous files.
 
-The gallery catalog is `projects.json`. Run `python3 scripts/build_gallery.py` after changing it. Screenshots must be real captures. Single-project repositories remain their own project directories.
+## Releases and source
 
-For future Wayfarer and Silt + Signal updates, follow [Deliberate game releases](RELEASING.md). The original Sites repositories remain the development sources. `scripts/release_game.py` exports an explicitly selected source revision, with a dry-run default and a separate local `--apply` step. Publishing remains a deliberate commit to the GitHub Pages publishing branch; ordinary Sites edits do not update these public releases.
+The recovered Sites games run directly from these project directories without ChatGPT sign-in. Their original Sites projects, URLs, access settings, and history remain intact. Each exported game records its selected source revision and adaptations in its own README and provenance file. These public builds are deliberate releases; later Sites edits do not automatically change them.
 
+Wayfarer includes its 30 original source commits and Silt + Signal includes its 9 original source commits in downloadable Git bundles. First Light includes its editable portable source and 32 simulation tests. Other recovered games include their source or original source archive alongside the playable build.
 
-First Light v0.9 is published in its own [first-light/](first-light/) directory, with a self-contained game, current screenshot, editable source, build instructions and 32 simulation tests. Transfer a Sites save using Export save / Import save; saves do not automatically cross website addresses.
+Browser saves remain at their original website address. First Light provides Export save / Import save for moving progress between hosts.
+
+## Maintain the gallery
+
+Edit `projects.json`, then run:
+
+```sh
+python3 scripts/build_gallery.py
+python3 scripts/check_standalone.py
+```
+
+The generator updates `index.html`, `versions.html`, and `PROJECTS.md`. Put each project’s runtime and preview in its own directory. Use real game captures, and record the preview version if it differs from the selected release. Keep launch URLs stable and archive earlier generations within the relevant project.
+
+For a local preview, serve the repository’s parent directory with `python3 -m http.server 8000` and open `http://localhost:8000/spaceship/`. See [release instructions](RELEASING.md) and [gallery verification](GALLERY-QA.md).

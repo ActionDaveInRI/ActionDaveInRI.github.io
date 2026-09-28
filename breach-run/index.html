@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Breach Run: a pixel-art demolition game. Clear a route through the building before the armored transporter arrives.">
+<title>Breach Run</title>
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main class="game-shell">
+  <header class="masthead">
+    <div><p class="eyebrow">PROCEDURAL DEMOLITION TEST // BUILD 01</p><h1>BREACH RUN</h1></div>
+    <button class="seed-button" id="new-seed" type="button">NEW BLOCK</button>
+  </header>
+  <section class="cabinet" aria-label="Breach Run game demo">
+    <div class="screen-bezel">
+      <canvas id="game" width="480" height="270" tabindex="0" aria-label="Playable pixel-art demolition game. Clear a route through the building before the armored transporter arrives."></canvas>
+      <div class="scanlines" aria-hidden="true"></div>
+    </div>
+    <div class="controls" aria-label="Touch controls">
+      <button class="control control-left" type="button" data-input="left" aria-label="Left, keyboard A"><span>◀</span><small>A</small></button>
+      <button class="control control-right" type="button" data-input="right" aria-label="Right, keyboard D"><span>▶</span><small>D</small></button>
+      <button class="control control-jump" type="button" data-input="jump" aria-label="JUMP, keyboard SPACE"><span>JUMP</span><small>SPACE</small></button>
+      <button class="control control-smash" type="button" data-input="smash" aria-label="SMASH, keyboard J / Z"><span>SMASH</span><small>J / Z</small></button>
+      <button class="control control-dash" type="button" data-input="dash" aria-label="DASH, keyboard K / X"><span>DASH</span><small>K / X</small></button>
+      <button class="control control-slam" type="button" data-input="slam" aria-label="SLAM, keyboard S / ↓"><span>SLAM</span><small>S / ↓</small></button>
+    </div>
+  </section>
+  <footer><p>Clear the marked transport lane. Break supports. Expect consequences.</p><p class="reset-hint">R — RESTART &nbsp; N — NEW SEED</p></footer>
+</main>
+<script type="module" src="./main.js"></script>
+</body>
+</html>

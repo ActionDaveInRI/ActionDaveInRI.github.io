@@ -1,7 +1,7 @@
 // Stable identities for the physical structures shown on the shared planet.
 import {WORLDS,siteInfo,regionById,longitudeDelta,TILE_RADIUS} from './world.js';
 import {PROJECTS,REGIONAL_PROJECTS} from './catalog.js';
-import {NEIGHBORHOODS} from './city.js';
+import {NEIGHBORHOODS,BUSINESSES,plotConnections} from './city.js';
 export function surfaceOccupants(s,id,site='coast'){
  const c=s.colonies[id],home=id==='hearth',a=siteInfo(id,home?'coast':c?.site||site,s.universe.seed),out=[],paused=c?.shortages>0;
  const add=(key,asset,name,dx,dz,purpose,extra={})=>out.push({id:key,world:id,asset,name,x:a.x+dx,z:a.z+dz,radius:asset==='port'?4:2.9,purpose,status:paused?'Awaiting supplies':'Operating',...extra});
@@ -20,7 +20,14 @@ export function surfaceOccupants(s,id,site='coast'){
   const upgrades={battery:['power',12,2],arrays:['power',20,2],garden:['greenhouse',-8,-12],workshop:['depot',12,-7],housing:['habitat',-14,-1],recycler:['recycler',-8,-7],shelter:['shelter',7,26]};
   for(const [key,[asset,x,z]]of Object.entries(upgrades))if(c?.upgrades[key])add('upgrade:'+key,asset,PROJECTS[key].name,x,z,PROJECTS[key].description);
   if(c?.project)add('construction','depot',PROJECTS[c.project.id].name+' workyard',-10,12,'Materials are already committed to this local project.',{status:c.project.remaining+' work remaining'});
-  for(const [i,p]of(c?.city?.plots||[]).entries())out.push({id:'city:'+p.id,world:id,asset:'neighborhood',name:p.name,x:p.x,z:p.z,radius:2.9,status:p.remaining?p.remaining+' supported seasons remaining':paused?'Awaiting supplies':'Established',purpose:p.kind==='commons'?'+1 construction work per supported season.':p.kind==='market'?'Local shops and repair workshops. Every two markets add +1 material; odd markets add +1 food when a greenhouse is working.':`Four housing places, grown from ${NEIGHBORHOODS[p.kind].cause}.`,config:{kind:p.kind,environment:WORLDS[id].environment,variation:i,building:p.remaining>0,dense:c.population>=40}});
+  for(const [i,p]of(c?.city?.plots||[]).entries()){
+   const links=plotConnections(s,id,p),business=BUSINESSES[p.business],idle=business&&(!links.suppliers.some(q=>q.active)||paused);
+   out.push({id:'city:'+p.id,world:id,asset:'neighborhood',name:p.name,x:p.x,z:p.z,radius:2.9,
+    status:p.remaining?(paused||idle?'Construction paused':p.remaining===2?'Foundations · 2 seasons':'Walls & fitting · 1 season'):idle?'Waiting for local activity':paused?'Awaiting supplies':'Established',
+    purpose:p.kind==='commons'?'+1 construction work per supported season.':business?business.benefit+' while supplied and serving residents.':p.kind==='market'?'Established shops serving local households.':`Four housing places, grown from ${NEIGHBORHOODS[p.kind].cause}.`,
+    origin:p.origin,links,business:p.business,plot:p,
+    config:{kind:p.kind,business:p.business,environment:WORLDS[id].environment,variation:i,building:p.remaining>0,remaining:p.remaining,dense:c.population>=40}});
+  }
  }
  for(const [rid,p]of Object.entries(s.improvements||{})){if(!rid.startsWith(id+':'))continue;const r=regionById(id,rid,s.universe.seed);if(!r)continue;const spec=REGIONAL_PROJECTS[p.kind],factory=['batteryworks','solarworks'].includes(p.kind);out.push({id:'region:'+rid,world:id,asset:spec.asset||{beacon:'beacon',garden:'greenhouse',extractor:'mine'}[p.kind],name:spec.name,x:r.x,z:r.z,radius:2.9,purpose:spec.description,status:p.ready>s.turn?p.ready-s.turn+' seasons remaining':paused?'Awaiting supplies':factory&&(home?s.materials:c?.materials||0)<1?'Needs input materials':'Operating'});}
  return out;

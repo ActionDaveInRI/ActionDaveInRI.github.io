@@ -1,12 +1,12 @@
 import * as T from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import {createLander,createBuilding,createTree,createCargoDrone,createOrbitalDepot,createResident,createNeighborhood} from './models.js';
-import {WORLDS,STARS,palettes,terrainHeight,globeHeight,surfaceDirection,siteInfo,regions,regionPatch,regionAt,surfaceCoordinates,regionById,worldsFor,starFor,mapPosition,systemPosition,seedOf,MAP_SCALE,TILE_RADIUS,SEA_LEVEL} from './world.js';
+import {WORLDS,STARS,palettes,terrainHeight,globeHeight,surfaceDirection,siteInfo,regions,regionPatch,regionAt,surfaceCoordinates,regionById,worldsFor,starFor,mapPosition,systemPosition,seedOf,longitudeDelta,MAP_SCALE,TILE_RADIUS,SEA_LEVEL} from './world.js';
 import {activeTraffic,visibleTraffic,flightFrames,sampleFlight,sampleRelay} from './traffic.js';
 import {PLANET_RADIUS,SURFACE_SCALE,projectSurface,surfaceFrame,bendSurfaceMesh,groundGeometry} from './planet.js';
 import {surfaceOccupants} from './occupancy.js';
 import {REGIONAL_PROJECTS} from './catalog.js';
-import {NEIGHBORHOODS,cityStage} from './city.js';
+import {NEIGHBORHOODS,cityStage,plotConnections} from './city.js';
 import {ambientProfile,sampleWalk} from './ambient.js';
 export {terrainHeight} from './world.js';
 const bodyId=id=>id?.startsWith('orbit:')?id.slice(6):id;
@@ -47,8 +47,8 @@ export class WorldView{
  label(text,pos,kind=''){if(this.assetBuild){const tag={text,pos:new T.Vector3(...pos),kind};this.assetBuild.labels.push(tag);return tag;}const el=document.createElement('div');el.className='scene-tag '+kind;el.textContent=text;this.labels.appendChild(el);const tag={el,pos:new T.Vector3(...pos)};this.tags.push(tag);return tag;}
  pick(o,data){o.userData.pick=data;(this.assetBuild?this.assetBuild.picks:this.pickables).push(o);return o;}
  clear(){const gs=new Set(),ms=new Set();this.root.traverse(o=>{if(o.geometry)gs.add(o.geometry);if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>ms.add(m));});gs.forEach(g=>g.dispose());ms.forEach(m=>m.dispose());this.root.clear();this.planets.clear();this.transferGates=new Map();this.landedCallouts=[];this.labels.replaceChildren();this.tags=[];this.pickables=[];this.occluders=[];this.markers=[];this.flights=[];this.orb=null;this.water=null;}
- set({world='hearth',mode='surface',state,design,kit='survey',site='coast',region=null,showTiles=false}){
- const sig=JSON.stringify([world,mode,state.universe,state.colonies,state.policy,design,kit,site,state.route,state.mission,state.services,state.stations,state.surveys,state.improvements,state.turn,region,showTiles]);if(sig===this.signature)return;this.signature=sig;this.syncTraffic(state);this.currentState=state;this.currentDesign=design;this.currentSite=site;const changed=world!==this.world||mode!==this.mode,focusChanged=region&&region!==this.region;this.world=world;this.mode=mode;this.region=region;this.showTiles=showTiles;this.clear();const pal=palettes[world];
+ set({world='hearth',mode='surface',state,design,kit='survey',site='coast',region=null,showTiles=false,occupant=null}){
+ const sig=JSON.stringify([world,mode,state.universe,state.colonies,state.policy,design,kit,site,state.route,state.mission,state.services,state.stations,state.surveys,state.improvements,state.turn,region,showTiles,occupant]);if(sig===this.signature)return;this.signature=sig;this.syncTraffic(state);this.currentState=state;this.currentDesign=design;this.currentSite=site;const changed=world!==this.world||mode!==this.mode,focusChanged=region&&region!==this.region;this.world=world;this.mode=mode;this.region=region;this.occupant=occupant;this.showTiles=showTiles;this.clear();const pal=palettes[world];
  if(mode==='galaxy'){this.galaxy(state);this.scene.background=new T.Color('#081a27');this.scene.fog=null;if(changed){this.camera.position.set(0,85,95);this.controls.target.set(0,0,7);this.camera.zoom=1;}}
  else if(mode==='system'){this.system(world,state);this.scene.background=new T.Color('#091c2b');this.scene.fog=null;if(changed){this.camera.position.set(0,32,45);this.controls.target.set(0,0,0);this.camera.zoom=1;}}
  else if(mode==='orbit'){this.orbit(world,state);this.scene.background=new T.Color('#0b1b2a');this.scene.fog=null;if(changed){this.camera.position.set(0,16,32);this.controls.target.set(0,0,0);this.camera.zoom=1;}}
@@ -95,10 +95,20 @@ export class WorldView{
  if(colony?.project){const x=baseX-10,z=baseZ+12,y=this.height(x,z,id),scaffold=mesh(new T.BoxGeometry(4,2,3),new T.MeshBasicMaterial({color:'#e7ba74',wireframe:true}),[x,y+1,z]);scaffold.userData.noSoftware=true;this.root.add(scaffold);inspect(scaffold,x,z,'construction');for(const dx of[-2,2])for(const dz of[-1.5,1.5])this.root.add(mesh(new T.CylinderGeometry(.06,.06,2,5),mat('#e7ba74'),[x+dx,y+1,z+dz]));this.label('CONSTRUCTION',[x,y+3,z]);}
  // Persistent homes and civic life are part of the shared planet at every scale.
  for(const [i,p]of (colony?.city?.plots||[]).entries()){
-  const obj=createNeighborhood(T,{kind:p.kind,environment:WORLDS[id].environment,variation:i,building:p.remaining>0,dense:colony.population>=40}),h=footing(p.x,p.z),depth=Math.max(.25,h-this.height(p.x,p.z,id));
+  const obj=createNeighborhood(T,{kind:p.kind,business:p.business,remaining:p.remaining,environment:WORLDS[id].environment,variation:i,building:p.remaining>0,dense:colony.population>=40}),h=footing(p.x,p.z),depth=Math.max(.25,h-this.height(p.x,p.z,id));
   obj.add(mesh(new T.CylinderGeometry(2.7,2.9,depth,6),mat(pal.rock),[0,-depth/2,0]));obj.position.set(p.x,h,p.z);obj.rotation.y=Math.atan2(p.road[0]-p.x,p.road[1]-p.z);this.root.add(obj);
   inspect(obj,p.x,p.z,'city:'+p.id);road(...p.road);
-  if(p.remaining>0)this.label((p.kind==='market'?'NEW SHOPS · ':'NEW HOMES · ')+p.remaining,[p.x,h+3.5,p.z],'district');
+  if(p.remaining>0)this.label((p.remaining===2?'FOUNDATIONS · ':'WALLS & FITTING · ')+(p.business?p.name.toUpperCase():p.kind==='market'?'SHOPS':'HOMES'),[p.x,h+3.5,p.z],'district');
+ }
+ // Inspectable economic links; these are dependencies through shared stores, not roads.
+ const selectedPlot=colony?.city?.plots.find(p=>'city:'+p.id===this.occupant);
+ if(selectedPlot&&id===this.world&&this.mode==='surface'){
+  const links=plotConnections(state,id,selectedPlot);
+  for(const [list,color] of [[links.suppliers,'#ffd16b'],[links.customers,'#7cd9ec']])for(const q of list){
+   const points=[];for(let i=0;i<=32;i++){const t=i/32,x=selectedPlot.x+longitudeDelta(q.x,selectedPlot.x)*t,z=selectedPlot.z+(q.z-selectedPlot.z)*t;points.push(new T.Vector3(x,Math.max(SEA_LEVEL,this.height(x,z,id))+.65,z));}
+   const line=new T.Line(new T.BufferGeometry().setFromPoints(points),new T.LineBasicMaterial({color,transparent:true,opacity:.95,depthTest:false}));line.userData.drape=true;line.renderOrder=4;this.root.add(line);
+   const ring=mesh(new T.RingGeometry(3.2,3.55,24),new T.MeshBasicMaterial({color,side:T.DoubleSide,depthTest:false}));ring.rotation.x=-Math.PI/2;ring.position.set(q.x,this.height(q.x,q.z,id)+.5,q.z);ring.userData.drape=true;ring.renderOrder=4;this.root.add(ring);
+  }
  }
  // Residents follow the actual footpaths. Their terrain frame is updated every sample.
  const profile=ambientProfile(WORLDS[id],colony,home),walks=paths.filter(p=>Math.hypot(p[2]-p[0],p[3]-p[1])>7);

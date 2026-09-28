@@ -1,6 +1,6 @@
-# First Light portable source · v0.9
+# First Light portable source · v0.10
 
-Game modules exported from source commit `1849b2fb261d8ad77437f9006506878a4d4d96ec`.
+Game modules exported from source commit `fd6ceccc13413712eb4e0fbadf8c728d0ce5eaf3`.
 
 From this directory, with Node 22.13+ and pnpm 11.25.0:
 

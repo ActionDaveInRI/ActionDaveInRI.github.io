@@ -64,13 +64,14 @@ function builder(T, root) {
 const clampTier = value => Math.max(1,Math.min(3,Math.round(Number(value)||1)));
 
 /** A small mixed-use block, grown by the settlement economy. */
-export function createNeighborhood(T,{kind='trade',environment='open',variation=0,building=false,dense=false}={}){
+export function createNeighborhood(T,{kind='trade',environment='open',variation=0,building=false,remaining=2,business=null,dense=false}={}){
  const root=new T.Group();root.name='First Light / '+kind+' neighborhood';
  root.userData={asset:'neighborhood',kind};const {part:p,beam,dish}=builder(T,root);
  const enclosed=['sealed','hostile'].includes(environment),cold=environment==='cold';
  if(building){
   p('hex','cream',[2.6,.15,2.6],[0,.08,0]);
   for(const x of [-1.8,1.8])for(const z of [-1.8,1.8]){beam([x,0,z],[x,2.2,z],.07,'copper');beam([x,2.2,z],[-x,2.2,z],.055,'copper');}
+  if(remaining===1){p('bevel',enclosed?'cream':'clay',[3,1.3,2.4],[0,.8,0]);p('box','navy',[.5,.7,.1],[0,.6,1.24]);p('box','ivory',[2.8,.12,2.2],[0,1.5,0]);}
   p('box','ivory',[1,.55,.8],[-.9,.42,0]);p('box','clay',[.8,.4,.9],[.65,.32,.6]);
   p('box','amber',[.35,.35,.08],[1.8,1.9,1.85]);return root;
  }
@@ -97,6 +98,10 @@ export function createNeighborhood(T,{kind='trade',environment='open',variation=
  if(kind==='industry'){p('box','dark',[1.4,.65,.8],[-.8,.35,1.6]);p('box','copper',[.8,.32,.6],[-.8,.83,1.6]);p('cylinder','cream',[.28,1.6,.28],[1.8,1.1,-1.5]);}
  if(kind==='trade'||kind==='market'){p('box','blue',[2.1,.13,.8],[.5,1.5,1.7]);for(const x of [-.5,1.5])beam([x,.1,2],[x,1.5,2],.045,'copper');p('box','clay',[1.5,.55,.55],[.5,.35,1.7]);}
  if(kind==='market'){p('box','cream',[2.3,.18,.95],[-.6,1.8,1.45]);p('box','copper',[2.3,.14,.2],[-.6,1.68,1.9]);p('box','leaf',[.7,.4,.5],[-1.3,.35,1.7]);p('box','amber',[.6,.45,.5],[.1,.35,1.7]);p('box','blue',[.7,.65,.12],[1.7,2.4,.5]);}
+ if(business==='bakery'){p('dome','clay',[.7,.7,.7],[-1.9,.45,-1.6]);p('cylinder','copper',[.15,1.8,.15],[-1.9,1.6,-1.6]);}
+ if(business==='repair'){p('box','copper',[1.4,.5,.9],[0,.4,1.8]);p('cylinder','dark',[.45,.3,.45],[-1.5,.35,1.7],[Math.PI/2,0,0]);}
+ if(business==='freight'){for(const x of [-1.5,-.7,.1])p('box','blue',[.6,.7,.7],[x,.5,-1.8]);dish(1.7,2.8,-.8,.65);}
+ if(business==='outfitter')dish(-1.1,2.8,-.15,.75);
  if(kind==='research')dish(-1.1,dense?3.5:2.6,-.15,.6);
  return root;
 }

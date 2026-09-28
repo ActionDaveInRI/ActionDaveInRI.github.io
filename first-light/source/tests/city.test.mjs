@@ -42,7 +42,7 @@ test('seeded expansion picks dry gentle footprints, connected roads, and keeps e
  }
 });
 test('v5 migration retains inventories and population; city validation is idempotent',()=>{
- const s=foothold();s.version=5;delete s.colonies.pelagos.city;const n=G.validateSave(s);assert.equal(n.version,7);assert.deepEqual(G.inventory(n,'pelagos'),G.inventory(s,'pelagos'));assert.equal(n.colonies.pelagos.population,12);assert.equal(n.colonies.pelagos.city.plots.length,0);assert.deepEqual(G.validateSave(n),n);
+ const s=foothold();s.version=5;delete s.colonies.pelagos.city;const n=G.validateSave(s);assert.equal(n.version,8);assert.deepEqual(G.inventory(n,'pelagos'),G.inventory(s,'pelagos'));assert.equal(n.colonies.pelagos.population,12);assert.equal(n.colonies.pelagos.city.plots.length,0);assert.deepEqual(G.validateSave(n),n);
  const bad=structuredClone(n);bad.colonies.pelagos.city.freight=[{turn:0,units:Infinity}];assert.throws(()=>G.validateSave(bad));
 });
 test('a town earns its civic work once; research spends knowledge automatically once per discovery',()=>{

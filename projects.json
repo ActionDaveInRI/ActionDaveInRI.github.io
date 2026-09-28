@@ -5,21 +5,21 @@
     "repo": "spaceship",
     "directory": "first-light",
     "category": "Space & flight",
-    "description": "Build an interstellar civilization on miniature planets. Connect cargo routes, develop local industries, and watch homes and market streets grow.",
+    "description": "Build connections between miniature planets, then watch farms, industry and cargo traffic give rise to homes and businesses. Inspect each neighborhood’s history and suppliers.",
     "launch": "https://actiondaveinri.github.io/spaceship/first-light/",
     "live": "https://actiondaveinri.github.io/spaceship/first-light/",
     "source": "https://github.com/ActionDaveInRI/spaceship/tree/main/first-light",
     "versions": null,
     "image": "https://actiondaveinri.github.io/spaceship/first-light/preview.jpg",
-    "imageAlt": "First Light: the growing town at Longshore Bay, cargo drones, a clay brickworks, and a tile inspector identifying the founding ship and buildings.",
+    "imageAlt": "First Light v0.10: a repair shop, its founding history, and highlighted connections to the clay brickworks and resident customers.",
     "previewStatus": "captured",
     "accessLabel": "No login",
     "requiresLogin": false,
     "hosting": "github-pages",
     "originalSite": "https://first-light-expeditions.x-nihilo.chatgpt.site",
-    "gameVersion": "0.9",
-    "sourceCommit": "1849b2fb261d8ad77437f9006506878a4d4d96ec",
-    "note": "Ground into Towns: self-contained portable release with editable source and tests. Screenshot captured from the same v0.9 source in compatibility rendering. Existing Sites saves can be transferred with Export save / Import save.",
+    "gameVersion": "0.10",
+    "sourceCommit": "fd6ceccc13413712eb4e0fbadf8c728d0ce5eaf3",
+    "note": "Places with a Past: causal town businesses and red-orange-gold Ochre. Standalone release with editable source and 39 simulation tests.",
     "section": "current"
   },
   {
@@ -76,7 +76,7 @@
   },
   {
     "id": "star-cluster",
-    "title": "Star Cluster \u00b7 Geographic Explorer",
+    "title": "Star Cluster · Geographic Explorer",
     "repo": "spaceship",
     "directory": "star-cluster",
     "category": "Worlds & visuals",
@@ -174,7 +174,7 @@
   },
   {
     "id": "wayfarer-pixel-study",
-    "title": "Wayfarer \u00b7 Pixel Study",
+    "title": "Wayfarer · Pixel Study",
     "repo": "spaceship",
     "directory": "wayfarer-pixel-study",
     "category": "Space & flight",
@@ -208,7 +208,7 @@
     "image": "https://actiondaveinri.github.io/petri/living-lineages/preview.webp",
     "imageAlt": "PETRI pond with organism populations and a Mixo anatomy inspector.",
     "previewStatus": "captured",
-    "note": "Recovered v05 web app and v01\u2013v04 releases from the ChatGPT project files. The main entry is the v05 web build. Download the complete modular source from `downloads/`. See [QA notes](QA.md) for prior validation and device limitations. The screenshot is the supplied v05 release capture. The web manifest and service worker use relative scope, so this app is contained within `/petri/living-lineages/`.",
+    "note": "Recovered v05 web app and v01–v04 releases from the ChatGPT project files. The main entry is the v05 web build. Download the complete modular source from `downloads/`. See [QA notes](QA.md) for prior validation and device limitations. The screenshot is the supplied v05 release capture. The web manifest and service worker use relative scope, so this app is contained within `/petri/living-lineages/`.",
     "section": "current"
   },
   {
@@ -348,7 +348,7 @@
     "image": null,
     "imageAlt": "",
     "previewStatus": "unavailable",
-    "note": "The repository root is this single project\u2019s directory. The original runtime is unchanged. WebGL is required; a working graphics screenshot is still pending because the capture browser cannot create a WebGL context.",
+    "note": "The repository root is this single project’s directory. The original runtime is unchanged. WebGL is required; a working graphics screenshot is still pending because the capture browser cannot create a WebGL context.",
     "section": "experiments"
   },
   {
@@ -364,7 +364,7 @@
     "image": null,
     "imageAlt": "",
     "previewStatus": "unavailable",
-    "note": "The repository root is this project\u2019s directory. Current build: `index.html`; earlier builds: `versions/`. Original launch URLs redirect to their versions. Requires WebGL and external graphics modules. Some historical module URLs may need repair; runtime behavior is unchanged. The capture browser cannot create a WebGL context.",
+    "note": "The repository root is this project’s directory. Current build: `index.html`; earlier builds: `versions/`. Original launch URLs redirect to their versions. Requires WebGL and external graphics modules. Some historical module URLs may need repair; runtime behavior is unchanged. The capture browser cannot create a WebGL context.",
     "section": "experiments"
   },
   {
@@ -380,7 +380,7 @@
     "image": null,
     "imageAlt": "",
     "previewStatus": "unavailable",
-    "note": "The repository root is this single project\u2019s directory. `starmap_001_frz_2.html` is the unchanged runtime. Requires WebGL and external Three.js modules. A working graphics screenshot is pending.",
+    "note": "The repository root is this single project’s directory. `starmap_001_frz_2.html` is the unchanged runtime. Requires WebGL and external Three.js modules. A working graphics screenshot is pending.",
     "section": "experiments"
   },
   {
@@ -396,7 +396,7 @@
     "image": null,
     "imageAlt": "",
     "previewStatus": "unavailable",
-    "note": "The repository root is this single project\u2019s directory. `index.html` is unchanged. A working graphics screenshot is pending: this capture browser lacks the WebGL context requested by the game. Gameplay has not been revalidated.",
+    "note": "The repository root is this single project’s directory. `index.html` is unchanged. A working graphics screenshot is pending: this capture browser lacks the WebGL context requested by the game. Gameplay has not been revalidated.",
     "section": "experiments"
   },
   {

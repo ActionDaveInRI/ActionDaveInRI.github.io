@@ -30,7 +30,7 @@ Inkstar remains in [Inkdrift’s archive](inkdrift/archive/). Nebula Weave remai
 
 The recovered Sites games run directly from these project directories without ChatGPT sign-in. Their original Sites projects, URLs, access settings, and history remain intact. Each exported game records its selected source revision and adaptations in its own README and provenance file. These public builds are deliberate releases; later Sites edits do not automatically change them.
 
-Wayfarer includes its 30 original source commits and Silt + Signal includes its 9 original source commits in downloadable Git bundles. First Light includes its editable portable source and 32 simulation tests. Other recovered games include their source or original source archive alongside the playable build.
+Wayfarer includes its 30 original source commits and Silt + Signal includes its 9 original source commits in downloadable Git bundles. First Light includes its editable portable source and 39 simulation tests. Other recovered games include their source or original source archive alongside the playable build.
 
 Browser saves remain at their original website address. First Light provides Export save / Import save for moving progress between hosts.
 

@@ -1,6 +1,6 @@
 # Games & experiments
 
-[Open the screenshot gallery](https://actiondaveinri.github.io/spaceship/)
+[Open the screenshot gallery](https://actiondaveinri.github.io/projects/)
 
 `index.html` is the gallery, not a game. Each project has its own directory, with a direct launch link, a short description, and a real preview wherever a usable capture is available. [PROJECTS.md](PROJECTS.md) lists every current build and its source location.
 
@@ -45,4 +45,4 @@ python3 scripts/check_standalone.py
 
 The generator updates `index.html`, `versions.html`, and `PROJECTS.md`. Put each project’s runtime and preview in its own directory. Use real game captures, and record the preview version if it differs from the selected release. Keep launch URLs stable and archive earlier generations within the relevant project.
 
-For a local preview, serve the repository’s parent directory with `python3 -m http.server 8000` and open `http://localhost:8000/spaceship/`. See [release instructions](RELEASING.md) and [gallery verification](GALLERY-QA.md).
+For a local preview, serve the repository’s parent directory with `python3 -m http.server 8000` and open `http://localhost:8000/projects/`. See [release instructions](RELEASING.md) and [gallery verification](GALLERY-QA.md).

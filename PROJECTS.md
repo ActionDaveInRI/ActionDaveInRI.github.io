@@ -1,31 +1,31 @@
 # Project directory
 
-[Open the screenshot gallery](https://actiondaveinri.github.io/spaceship/)
+[Open the screenshot gallery](https://actiondaveinri.github.io/projects/)
 
 The repository root is the gallery. Each game has its own folder; projects already in dedicated repositories keep their existing homes and URLs.
 
 | Project | Current build | Location |
 |---|---|---|
-| [First Light](https://actiondaveinri.github.io/spaceship/first-light/) | v0.10.2 | [spaceship/first-light](https://github.com/ActionDaveInRI/spaceship/tree/main/first-light) |
-| [Silt + Signal](https://actiondaveinri.github.io/spaceship/silt-and-signal/) | v9 | [spaceship/silt-and-signal](https://github.com/ActionDaveInRI/spaceship/tree/main/silt-and-signal) |
-| [Wayfarer](https://actiondaveinri.github.io/spaceship/wayfarer/) | v30 | [spaceship/wayfarer](https://github.com/ActionDaveInRI/spaceship/tree/main/wayfarer) |
-| [Star Cluster · Geographic Explorer](https://actiondaveinri.github.io/spaceship/star-cluster/) | v11 | [spaceship/star-cluster](https://github.com/ActionDaveInRI/spaceship/tree/main/star-cluster) |
-| [Wreck Run](https://actiondaveinri.github.io/spaceship/wreck-run/) | v1 | [spaceship/wreck-run](https://github.com/ActionDaveInRI/spaceship/tree/main/wreck-run) |
-| [Bramblewild](https://actiondaveinri.github.io/spaceship/bramblewild/) | v19 | [spaceship/bramblewild](https://github.com/ActionDaveInRI/spaceship/tree/main/bramblewild) |
-| [Last Light](https://actiondaveinri.github.io/spaceship/last-light/) | v1 | [spaceship/last-light](https://github.com/ActionDaveInRI/spaceship/tree/main/last-light) |
-| [Wayfarer · Pixel Study](https://actiondaveinri.github.io/spaceship/wayfarer-pixel-study/) | v3 | [spaceship/wayfarer-pixel-study](https://github.com/ActionDaveInRI/spaceship/tree/main/wayfarer-pixel-study) |
+| [First Light](https://actiondaveinri.github.io/projects/first-light/) | v0.10.2 | [projects/first-light](https://github.com/ActionDaveInRI/projects/tree/main/first-light) |
+| [Silt + Signal](https://actiondaveinri.github.io/projects/silt-and-signal/) | v9 | [projects/silt-and-signal](https://github.com/ActionDaveInRI/projects/tree/main/silt-and-signal) |
+| [Wayfarer](https://actiondaveinri.github.io/projects/wayfarer/) | v30 | [projects/wayfarer](https://github.com/ActionDaveInRI/projects/tree/main/wayfarer) |
+| [Star Cluster · Geographic Explorer](https://actiondaveinri.github.io/projects/star-cluster/) | v11 | [projects/star-cluster](https://github.com/ActionDaveInRI/projects/tree/main/star-cluster) |
+| [Wreck Run](https://actiondaveinri.github.io/projects/wreck-run/) | v1 | [projects/wreck-run](https://github.com/ActionDaveInRI/projects/tree/main/wreck-run) |
+| [Bramblewild](https://actiondaveinri.github.io/projects/bramblewild/) | v19 | [projects/bramblewild](https://github.com/ActionDaveInRI/projects/tree/main/bramblewild) |
+| [Last Light](https://actiondaveinri.github.io/projects/last-light/) | v1 | [projects/last-light](https://github.com/ActionDaveInRI/projects/tree/main/last-light) |
+| [Wayfarer · Pixel Study](https://actiondaveinri.github.io/projects/wayfarer-pixel-study/) | v3 | [projects/wayfarer-pixel-study](https://github.com/ActionDaveInRI/projects/tree/main/wayfarer-pixel-study) |
 | [PETRI: Living Lineages](https://actiondaveinri.github.io/petri/living-lineages/) | Current preserved build | [petri/living-lineages](https://github.com/ActionDaveInRI/petri/tree/main/living-lineages) |
-| [Inkdrift](https://actiondaveinri.github.io/spaceship/inkdrift/) | Current preserved build | [spaceship/inkdrift](https://github.com/ActionDaveInRI/spaceship/tree/main/inkdrift) |
-| [Blackpine](https://actiondaveinri.github.io/spaceship/blackpine/) | v2 | [spaceship/blackpine](https://github.com/ActionDaveInRI/spaceship/tree/main/blackpine) |
-| [Breach Run](https://actiondaveinri.github.io/spaceship/breach-run/) | v2 | [spaceship/breach-run](https://github.com/ActionDaveInRI/spaceship/tree/main/breach-run) |
-| [Island Three](https://actiondaveinri.github.io/spaceship/island-three/) | v9 | [spaceship/island-three](https://github.com/ActionDaveInRI/spaceship/tree/main/island-three) |
+| [Inkdrift](https://actiondaveinri.github.io/projects/inkdrift/) | Current preserved build | [projects/inkdrift](https://github.com/ActionDaveInRI/projects/tree/main/inkdrift) |
+| [Blackpine](https://actiondaveinri.github.io/projects/blackpine/) | v2 | [projects/blackpine](https://github.com/ActionDaveInRI/projects/tree/main/blackpine) |
+| [Breach Run](https://actiondaveinri.github.io/projects/breach-run/) | v2 | [projects/breach-run](https://github.com/ActionDaveInRI/projects/tree/main/breach-run) |
+| [Island Three](https://actiondaveinri.github.io/projects/island-three/) | v9 | [projects/island-three](https://github.com/ActionDaveInRI/projects/tree/main/island-three) |
 | [Petri Classic](https://actiondaveinri.github.io/petri/classic/) | Current preserved build | [petri/classic](https://github.com/ActionDaveInRI/petri/tree/main/classic) |
 | [Radio chatter](https://actiondaveinri.github.io/radio_chatter_generator/versions/tts_09.html) | Current preserved build | [radio_chatter_generator/](https://github.com/ActionDaveInRI/radio_chatter_generator) |
 | [Planetside](https://actiondaveinri.github.io/planetside/) | Current preserved build | [planetside/](https://github.com/ActionDaveInRI/planetside) |
 | [Planet generator](https://actiondaveinri.github.io/planet_generator/) | Current preserved build | [planet_generator/](https://github.com/ActionDaveInRI/planet_generator) |
 | [Starmap](https://actiondaveinri.github.io/starmap/starmap_001_frz_2.html) | Current preserved build | [starmap/](https://github.com/ActionDaveInRI/starmap) |
 | [Orbital Velocity](https://actiondaveinri.github.io/orbital-velocity/) | Current preserved build | [orbital-velocity/](https://github.com/ActionDaveInRI/orbital-velocity) |
-| [Ship effects](https://actiondaveinri.github.io/spaceship/ship-effects/) | Current preserved build | [spaceship/ship-effects](https://github.com/ActionDaveInRI/spaceship/tree/main/ship-effects) |
+| [Ship effects](https://actiondaveinri.github.io/projects/ship-effects/) | Current preserved build | [projects/ship-effects](https://github.com/ActionDaveInRI/projects/tree/main/ship-effects) |
 | [ASCII FLIP](https://actiondaveinri.github.io/ascii_flip/ascii-fluid/) | Current preserved build | [ascii_flip/ascii-fluid](https://github.com/ActionDaveInRI/ascii_flip/tree/main/ascii-fluid) |
 | [Pulsating sphere](https://actiondaveinri.github.io/ascii_flip/sphere/) | Current preserved build | [ascii_flip/sphere](https://github.com/ActionDaveInRI/ascii_flip/tree/main/sphere) |
 

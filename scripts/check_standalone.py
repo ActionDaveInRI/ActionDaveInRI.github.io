@@ -49,7 +49,7 @@ for slug in ('wayfarer', 'silt-and-signal'):
     assert not any(x in entry for x in ('location.replace(', 'location.assign(', 'chatgpt.site')), f'{slug}: external launcher remains'
     project = catalog[slug]
     assert project['requiresLogin'] is False and project['hosting'] == 'github-pages'
-    assert project['launch'] == project['live'] == f'https://actiondaveinri.github.io/spaceship/{slug}/'
+    assert project['launch'] == project['live'] == f'https://actiondaveinri.github.io/projects/{slug}/'
     assert project['sourceCommit'] == manifest['source_commit'] == history['source_commit']
     bundle = game/'history'/history['bundle']
     assert digest(bundle.read_bytes()) == history['bundle_sha256'], f'{slug}: damaged source history'

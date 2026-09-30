@@ -64,9 +64,9 @@ adaptation, assess that change explicitly before modifying the exporter.
    For exporter changes, also run
    `python3 -m unittest discover -s scripts -p 'test_release_game.py'`.
 4. Serve the parent of this checkout with `python3 -m http.server 8000`.
-   If the checkout is named `spaceship`, test
-   `http://localhost:8000/spaceship/wayfarer/` or
-   `http://localhost:8000/spaceship/silt-and-signal/`. This exercises the public
+   If the checkout is named `projects`, test
+   `http://localhost:8000/projects/wayfarer/` or
+   `http://localhost:8000/projects/silt-and-signal/`. This exercises the public
    project subpath. Use a fresh browser context, start gameplay, move and
    interact, exercise controls, inspect graphics, and check sound after a user
    gesture. Confirm no login or external game-service dependency.

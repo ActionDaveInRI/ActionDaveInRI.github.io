@@ -6,7 +6,7 @@ import json
 import hashlib
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = 'https://actiondaveinri.github.io/spaceship/'
+BASE = 'https://actiondaveinri.github.io/projects/'
 projects = json.loads((ROOT / 'projects.json').read_text())
 esc = html.escape
 assert len({p['id'] for p in projects}) == len(projects), 'Duplicate project ID'
@@ -65,14 +65,14 @@ for key, heading, subheading in [
 page = '''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Games & experiments · David</title><meta name="description" content="Play David's browser games and experiments: First Light, Wayfarer, Silt + Signal, and more. Screenshots, current builds, and preserved project histories.">
-<link rel="stylesheet" href="gallery.css"><link rel="canonical" href="https://actiondaveinri.github.io/spaceship/"></head>
+<link rel="stylesheet" href="gallery.css"><link rel="canonical" href="https://actiondaveinri.github.io/projects/"></head>
 <body><a class="skip" href="#projects">Skip to projects</a><div class="shell">
 <header><div class="topline"><a class="brand" href="./">DAVID / EXPERIMENTS</a><nav aria-label="Site"><a href="versions.html">Project directory</a><a href="https://github.com/ActionDaveInRI">GitHub <span aria-hidden="true">↗</span></a></nav></div>
 <div class="intro"><div><h1>Games & experiments</h1><p class="lede">Spaceflight, living systems, and worlds worth exploring.</p></div><p class="shelf-count"><strong>PROJECT_COUNT</strong> projects</p></div>
 <div class="tools"><div class="filters" role="group" aria-label="Filter projects">''' + buttons + '''</div><label class="search"><span class="sr-only">Find a project</span><input type="search" placeholder="Find a project…" id="search" autocomplete="off"></label></div>
 </header><main id="projects"><p id="result-count" class="result-count" aria-live="polite">PROJECT_COUNT projects</p>''' + ''.join(sections) + '''
 <p id="empty" hidden>No projects match. Try another name or choose All projects.</p></main>
-<footer><p>Works in progress, with a home for every project.</p><a href="https://github.com/ActionDaveInRI/spaceship/blob/main/PROJECTS.md">Source directory ↗</a></footer></div>
+<footer><p>Works in progress, with a home for every project.</p><a href="https://github.com/ActionDaveInRI/projects/blob/main/PROJECTS.md">Source directory ↗</a></footer></div>
 <script>
 const search=document.querySelector('#search'),buttons=[...document.querySelectorAll('.filter')],cards=[...document.querySelectorAll('.project')];let category='all';
 function filter(){const q=search.value.trim().toLowerCase();let count=0;for(const card of cards){const show=(category==='all'||card.dataset.category===category)&&card.dataset.search.includes(q);card.hidden=!show;if(show)count++;}document.querySelector('#result-count').textContent=`${count} ${count===1?'project':'projects'}`;document.querySelector('#empty').hidden=count!==0;for(const section of document.querySelectorAll('.project-section'))section.hidden=![...section.querySelectorAll('.project')].some(c=>!c.hidden);}

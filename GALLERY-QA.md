@@ -41,3 +41,12 @@ GitHub Pages successfully deployed commit `9e54f76e492c699bb32a3686360bd9540b565
 In the live browser, the gallery shows 22 cards without desktop horizontal overflow. The Space & flight filter returns 7 projects; searching First Light returns 1. Its preview link opens the correct public First Light game and compatibility-rendered gameplay appears. Planet Generator’s former Timer module error is gone; it reaches graphics initialization. Narrow-viewport browser/device testing was not available.
 
 All 13 initially published gallery images decoded in the live browser after deferred loading. Blackpine starts and renders current v2 gameplay. Wreck Run’s Quiet tow starts and displays the tug and wreck with the compatibility renderer. Island Three loads its local source/modules and displays its explicit WebGL-required message in this browser; GPU gameplay could not be verified here.
+
+
+## Island Three v9 preview · 2026-09-30
+
+- Added a real 1280 × 720 screenshot of the unchanged standalone v9 build, source commit `91adfc21e038d4e489327f739e806fc68f2eff25`. The authored Vista uses 12:00 daylight, High rendering quality, paused time/motion and the built-in still refinement. The WebP is an encoding of the browser capture, with no generated or composited artwork.
+- Captured in an isolated local Chromium 153 browser with SwiftShader WebGL, using only locally served repository assets. This resolves Island Three’s earlier capture limitation; the cloud browser still cannot render its WebGL scene. The historical v1 capture remains under `source/`.
+- Verified decoded 1280 × 720 preview and complete card on 1280-pixel desktop and 390-pixel mobile viewports; no mobile horizontal overflow. Preview, title and Open project links retain `island-three/`.
+- Existing standalone checks pass. All launch URLs, Island Three version/commit fields, runtime, vendor modules, source archive and provenance remain unchanged. All 13 current gallery entries now have previews; seven experiment previews remain unavailable.
+- Regenerated gallery and project directory. Existing image cache keys and the stale First Light directory version label were also synchronized with the unchanged catalog entries by the existing generator.

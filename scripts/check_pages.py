@@ -6,7 +6,7 @@ and compare local HTML/runtime resources to the reviewed checkout. This is route
 and dependency validation, not a substitute for interactive gameplay testing.
 """
 import argparse
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from html.parser import HTMLParser
 import json
 from pathlib import Path
@@ -138,12 +138,18 @@ def inspect_layout(root=ROOT):
 
 def check_live(base, catalog, paths, root=ROOT):
     base = base.rstrip('/') + '/'
+    routes = json.loads((Path(root)/'pages-redirects.json').read_text())
     requests = {urljoin(base, path): path for path in paths}
     for path in paths:
         if path.endswith('/index.html'):
             directory = urljoin(base, path[:-len('index.html')])
             requests[directory] = path
-            requests[directory.rstrip('/')] = path
+            # Pages can serve projects.html at /projects before considering
+            # projects/index.html. Accept it only when both redirects share
+            # the same manifest destination; local servers may use the index.
+            alternate = path[:-len('/index.html')] + '.html'
+            equivalent = alternate in routes and routes[alternate] == routes.get(path)
+            requests[directory.rstrip('/')] = (path, alternate) if equivalent else path
     for project in catalog:
         launch = project['launch']
         url = base + launch[len(BASE):] if launch.startswith(BASE) else launch
@@ -156,11 +162,21 @@ def check_live(base, catalog, paths, root=ROOT):
             assert response.status == 200, f'{url}: HTTP {response.status}'
             body = response.read()
         if path:
-            assert body == (Path(root)/path).read_bytes(), f'Deployed content differs: {path}'
+            candidates = path if isinstance(path, tuple) else (path,)
+            assert any(body == (Path(root)/candidate).read_bytes() for candidate in candidates), f'Deployed content differs: {path}'
         return url
 
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        results = list(pool.map(check, requests.items()))
+    results, failures = [], []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = {pool.submit(check, item): item[0] for item in requests.items()}
+        for index, future in enumerate(as_completed(futures), 1):
+            try:
+                results.append(future.result())
+            except Exception as error:
+                failures.append(f'{futures[future]}: {error}')
+            if index % 50 == 0:
+                print(f'Checked {index}/{len(requests)} public URLs.', flush=True)
+    assert not failures, '\n'.join(failures)
     print(f'Live verification: {len(catalog)} catalog launches and {len(paths)} local routes/resources passed ({len(results)} requests).')
 
 

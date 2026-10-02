@@ -62,3 +62,15 @@ All 13 initially published gallery images decoded in the live browser after defe
 - Layout/exporter regression tests, standalone manifest/history restoration checks, First Light's 39 tests and Star Cluster's 36 tests pass. Their exact development dependencies were installed only for testing. Existing whitespace in unchanged runtime files was preserved.
 - Route scripts were executed with a browser-shaped `location` object in Node to verify destination and query/fragment behavior. Interactive GPU, sound, controller and touch gameplay were not revalidated in this migration; the local Chromium download was unavailable. This is a source/layout migration of unchanged game builds.
 - After publishing, run `python3 scripts/check_pages.py --base https://actiondaveinri.github.io/spaceship/` to verify deployed launch pages and resources against the reviewed checkout.
+
+### Deployed migration verification
+
+GitHub Pages successfully deployed migration commit `c0bdf3da95f973a13326b4133078257a9608951f` in [deployment 37004570316](https://github.com/ActionDaveInRI/spaceship/actions/runs/37004570316). In the live cloud browser, all 13 spaceship-owned gallery launches navigate from their established root URLs to the matching `projects/<game>/index.html` builds. First Light loads its compatibility-rendered interface. A direct old First Light URL with `?seed=123&mode=test#landing-site` retains the complete query and fragment.
+
+Live browser checks also passed for the original Inkstar standalone/fleet URLs, WFC Nebula Demo, `spaceship_001.html`, and Wayfarer/Silt + Signal history pages. The gallery still has 22 cards and uses canonical `projects/` source and screenshot links. Interactive GPU, sound, physical-controller and touch behavior remain outside this migration's validation scope.
+
+The first HTTP sweep began during deployment and encountered one mismatched response for the new `projects/index.html`; fetching that page after deployment confirmed the reviewed bytes. Post-deployment checks were repeated to distinguish deployment propagation from a layout defect.
+
+The completed post-deployment verifier passes all 22 catalog launch URLs and 214 local routes/resources across 315 requests, including all 34 compatibility pages, explicit index files, directory URLs and slashless forms. Responses match the reviewed bytes. GitHub Pages serves `/projects` through the pre-existing `projects.html` redirect and `/projects/` through `projects/index.html`; both reach the gallery. The verifier accepts either response only when the manifest proves the same destination, and the live browser confirmed `/projects` reaches `/spaceship/index.html`. The updated verifier reports progress and collects all failures instead of stopping its report at the first failed URL.
+
+Permanent runtime regression checks follow each game's current provenance so future deliberate releases remain possible; the unchanged-source comparison against the migration baseline was a one-time migration check. Existing launch URLs and external source locations remain covered as compatibility invariants. All 15 layout/exporter regression tests pass after the verifier update.

@@ -14,22 +14,14 @@ BASELINE = 'ae6080f14efc656708b5cf1d667de8de810cc86a'
 
 
 class LayoutTests(unittest.TestCase):
-    def test_relocated_sources_and_gameplay_preserve_original_bytes(self):
-        tree = subprocess.check_output(['git', '-C', str(ROOT), 'ls-tree', '-r', '-z', BASELINE]).split(b'\0')
-        catalog = json.loads((ROOT/'projects.json').read_text())
-        owned = {p['id'] for p in catalog if p['repo'] == 'spaceship'} | {'nebula-weave'}
-        navigation = {'inkdrift/archive/index.html', 'inkdrift/archive/inkstar/versions.html',
-                      'wayfarer/about.html', 'silt-and-signal/about.html'}
-        for record in tree:
-            if not record:
-                continue
-            metadata, raw_path = record.split(b'\t', 1)
-            path = raw_path.decode()
-            if path.split('/')[0] not in owned or path in navigation:
-                continue
-            data = (ROOT/'projects'/path).read_bytes()
-            digest = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
-            self.assertEqual(digest, metadata.decode().split()[2], path)
+    def test_relocated_runtimes_match_current_release_provenance(self):
+        for path in (ROOT/'projects').glob('*/source-provenance.json'):
+            manifest = json.loads(path.read_text())
+            expected = dict(manifest.get('runtime', {}))
+            expected.update((entry['path'], entry['sha256']) for entry in manifest.get('runtime_files', []))
+            for name, digest in expected.items():
+                actual = hashlib.sha256((path.parent/name).read_bytes()).hexdigest()
+                self.assertEqual(actual, digest, (path.parent.name, name))
 
     def test_all_previous_html_entry_points_are_preserved(self):
         previous = subprocess.check_output(['git', '-C', str(ROOT), 'ls-tree', '-r', '--name-only', BASELINE], text=True).splitlines()
@@ -41,15 +33,20 @@ class LayoutTests(unittest.TestCase):
             if '/' in path or path in ('projects.html', 'spaceship_001.html'):
                 self.assertIn(path, routes)
 
-    def test_external_projects_and_all_catalog_launch_urls_are_unchanged(self):
+    def test_existing_catalog_urls_and_external_locations_are_preserved(self):
         previous = json.loads(subprocess.check_output(['git', '-C', str(ROOT), 'show', BASELINE+':projects.json'], text=True))
         current = json.loads((ROOT/'projects.json').read_text())
-        self.assertEqual([p['id'] for p in current], [p['id'] for p in previous])
-        for old, new in zip(previous, current):
+        by_id = {p['id']: p for p in current}
+        self.assertEqual(len(by_id), len(current))
+        for old in previous:
+            self.assertIn(old['id'], by_id)
+            new = by_id[old['id']]
             for key in ('launch', 'live', 'versions'):
-                self.assertEqual(new.get(key), old.get(key), (old['id'], key))
+                if old.get(key):
+                    self.assertEqual(new.get(key), old[key], (old['id'], key))
             if old['repo'] != 'spaceship':
-                self.assertEqual(new, old)
+                for key in ('repo', 'directory', 'source'):
+                    self.assertEqual(new[key], old[key], (old['id'], key))
 
     def test_each_redirect_preserves_query_and_fragment_in_browser_javascript(self):
         routes = json.loads((ROOT/'pages-redirects.json').read_text())
@@ -70,7 +67,7 @@ if(result!==expected)throw Error(c.source+': '+result+' != '+expected);}'''
 
     def test_layout_resources_exist(self):
         catalog, routes, paths = inspect_layout()
-        self.assertEqual(len(catalog), 22)
+        self.assertGreaterEqual(len(catalog), 22)
         self.assertGreater(len(paths), len(routes))
 
     def test_generator_is_repeatable_and_refuses_unmanaged_pages(self):

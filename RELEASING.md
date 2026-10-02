@@ -1,7 +1,7 @@
 # Deliberate game releases
 
 The original ChatGPT Sites repositories are the development sources. The game
-directories here are selected public releases. Edit the development source, then
+directories under `projects/` here are selected public releases. Edit the development source, then
 explicitly export and publish a tested revision. There is no watcher, scheduled
 sync, or push hook connecting Sites development to this repository.
 
@@ -35,7 +35,9 @@ python3 scripts/release_game.py --game silt-and-signal --source /workspace/sites
 ```
 
 Repeat the chosen command with `--apply` to prepare its files locally. Applying
-the already-current revision makes no changes. The script does not commit,
+the already-current revision makes no changes. The destination comes from the
+owned game's catalog `directory`; root compatibility pages are never release
+destinations. The script does not commit,
 push, publish, contact a service, or modify the source repository.
 
 For a new release it exports tracked files from the exact commit, updates file
@@ -57,7 +59,8 @@ adaptation, assess that change explicitly before modifying the exporter.
    add their verified mappings to `history/versions.json`; do not invent them
    from commit order. Review whether screenshots still represent the game.
 2. Run `python3 scripts/build_gallery.py` and
-   `python3 scripts/check_standalone.py`. The latter checks hashes, literal
+   `python3 scripts/check_standalone.py` and `python3 scripts/check_pages.py`.
+   The standalone checker checks hashes, literal
    HTML/CSS/module dependencies, catalog consistency and restoration of every
    mapped original commit. Dynamic requests still require browser review.
 3. Run relevant existing tests from the original game source repository.
@@ -88,7 +91,7 @@ commit and let Pages deploy it; the original Sites project stays intact.
 ## Moving the gallery or separating repositories
 
 The exporter preserves existing catalog URLs and has no hardcoded `spaceship`
-address. It currently expects `projects.json` and one directory per game. If each
+address. It currently expects `projects.json` and a catalog `directory` under `projects/` for each owned game. If each
 game moves into its own repository root, adapt that destination layout and the
 catalog update step before using this script. The development source and static
 game runtimes can remain the same.
@@ -100,6 +103,12 @@ the screenshot gallery and link to independently hosted game repositories.
 
 ## First Light portable release
 
-First Light’s current selected release is game v0.10.2 from `2db0e28ce733822fe2382e973f37d8911c1e66a7`, at [first-light/](first-light/). Its development source is https://first-light-expeditions.x-nihilo.chatgpt.site. The generic `release_game.py` currently handles Wayfarer and Silt + Signal only.
+First Light’s current selected release is game v0.10.2 from `2db0e28ce733822fe2382e973f37d8911c1e66a7`, at [projects/first-light/](projects/first-light/). Its development source is https://first-light-expeditions.x-nihilo.chatgpt.site. The generic `release_game.py` currently handles Wayfarer and Silt + Signal only.
 
-For First Light, select a clean, exact development source commit; run its tests and `node scripts/build-portable.mjs`. Copy the resulting `public/First-Light.html` to `first-light/index.html`, update the editable portable source export and provenance hashes, then update the screenshot, project metadata and README. Run `scripts/build_gallery.py`, verify the portable game at the Pages subpath, and publish a reviewed commit to `main`. Do not copy authentication, server configuration, credentials or personal save files. Updates to the development Site alone do not release this public version.
+For First Light, select a clean, exact development source commit; run its tests and `node scripts/build-portable.mjs`. Copy the resulting `public/First-Light.html` to `projects/first-light/index.html`, update the editable portable source export and provenance hashes, then update the screenshot, project metadata and README. Run `scripts/build_gallery.py`, verify the portable game at the Pages subpath, and publish a reviewed commit to `main`. Do not copy authentication, server configuration, credentials or personal save files. Updates to the development Site alone do not release this public version.
+
+## Layout changes and compatibility
+
+Keep editable sources, selected runtimes, previews, provenance and archives together in `projects/<game>/`. Catalog `launch`, `live` and `versions` addresses remain stable; catalog `directory`, `source` and `image` identify the canonical project location. The generator also rebuilds the HTML compatibility routes in `pages-redirects.json`, including nested historic launches. Add new public routes there when needed and retain the existing mappings. Redirects use relative paths with query/fragment preservation.
+
+Run all layout/exporter regression tests with `python3 -m unittest discover -s scripts -p 'test_*.py'`. After the normal Pages deployment succeeds, verify the public layout with `python3 scripts/check_pages.py --base https://actiondaveinri.github.io/spaceship/`. Roll back with a normal revert if those checks fail.

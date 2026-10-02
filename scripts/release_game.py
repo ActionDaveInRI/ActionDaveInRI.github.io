@@ -18,6 +18,7 @@ import re
 import subprocess
 import tempfile
 from urllib.parse import unquote, urlsplit
+from project_layout import project_directory
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = {'wayfarer': 'public/game', 'silt-and-signal': 'dist'}
@@ -178,16 +179,16 @@ def plan_release(gallery, source, game, commit, version, temporary):
             'Source commit not found')
     require(not git(source, 'status', '--porcelain'),
             'Source working tree is dirty; commit/recover the intended source first')
-    game_dir = gallery/game
-    manifest_path = target(game_dir, 'source-provenance.json')
-    history_path = target(game_dir, 'history/versions.json')
-    manifest = json.loads(manifest_path.read_text())
-    history = json.loads(history_path.read_text())
     catalog_path = target(gallery, 'projects.json')
     catalog = json.loads(catalog_path.read_text())
     projects = [p for p in catalog if p['id'] == game]
     require(len(projects) == 1, f'Expected one {game} catalog entry')
     project = projects[0]
+    game_dir = project_directory(gallery, project)
+    manifest_path = target(game_dir, 'source-provenance.json')
+    history_path = target(game_dir, 'history/versions.json')
+    manifest = json.loads(manifest_path.read_text())
+    history = json.loads(history_path.read_text())
     require(project['sourceCommit'] == history['source_commit'] == manifest['source_commit']
             and project['sourceVersion'] == history['latest_version'] == manifest['sites_version'],
             'Existing catalog, history and provenance disagree')

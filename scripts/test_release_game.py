@@ -32,7 +32,7 @@ class ReleaseTests(unittest.TestCase):
         (runtime/'game.js').write_text("import {value} from './old.js';\nconsole.log(value);\n")
         (runtime/'old.js').write_text('export const value=1;\n')
         self.first = self.commit('First version')
-        self.game = self.gallery/'silt-and-signal'
+        self.game = self.gallery/'projects/silt-and-signal'
         (self.game/'history').mkdir(parents=True)
         files, entries = release.export_source(self.source, self.first, 'silt-and-signal')
         for name, data in files.items():
@@ -51,7 +51,7 @@ class ReleaseTests(unittest.TestCase):
         (self.game/'source-provenance.json').write_bytes(release.encoded(self.manifest))
         (self.game/'history/versions.json').write_bytes(release.encoded(self.history))
         (self.gallery/'projects.json').write_bytes(release.encoded([dict(
-            id='silt-and-signal', sourceVersion=1, sourceCommit=self.first, note='old',
+            id='silt-and-signal', repo='spaceship', directory='projects/silt-and-signal', sourceVersion=1, sourceCommit=self.first, note='old',
             launch='https://custom.example/games/silt/', live='https://custom.example/games/silt/')]))
 
     def commit(self, message):
@@ -95,7 +95,7 @@ class ReleaseTests(unittest.TestCase):
         self.assertFalse((self.game/'old.js').exists())
         self.assertEqual((self.game/'new.js').read_bytes(), (self.source/'dist/new.js').read_bytes())
         for name in ('README.md', 'preview.jpg'):
-            self.assertEqual((self.game/name).read_bytes(), before['silt-and-signal/'+name])
+            self.assertEqual((self.game/name).read_bytes(), before['projects/silt-and-signal/'+name])
         history = json.loads((self.game/'history/versions.json').read_text())
         self.assertEqual(history['versions'][1:], self.history['versions'])
         restored = self.root/'restored'
@@ -108,6 +108,27 @@ class ReleaseTests(unittest.TestCase):
         catalog = json.loads((self.gallery/'projects.json').read_text())[0]
         self.assertEqual(catalog['launch'], 'https://custom.example/games/silt/')
         self.assertEqual(catalog['sourceCommit'], second)
+        self.assertEqual(catalog['directory'], 'projects/silt-and-signal')
+
+    def test_release_leaves_legacy_entry_point_untouched(self):
+        legacy = self.gallery/'silt-and-signal/index.html'
+        legacy.parent.mkdir()
+        legacy.write_text('Stable redirect; never a release destination.')
+        second = self.next_version()
+        code, output = self.run_release(second, 2, True)
+        self.assertEqual(code, 0, output)
+        self.assertEqual(legacy.read_text(), 'Stable redirect; never a release destination.')
+
+    def test_unsafe_or_external_catalog_directory_fails_before_mutation(self):
+        catalog_path = self.gallery/'projects.json'
+        for repo, directory in [('spaceship', '../elsewhere'), ('petri', 'projects/silt-and-signal'), ('spaceship', 'silt-and-signal')]:
+            catalog = json.loads(catalog_path.read_text())
+            catalog[0].update(repo=repo, directory=directory)
+            catalog_path.write_bytes(release.encoded(catalog))
+            before = snapshot(self.gallery)
+            code, output = self.run_release(self.first, 1, True)
+            self.assertEqual(code, 1, output)
+            self.assertEqual(snapshot(self.gallery), before)
 
     def test_missing_dependency_fails_before_any_gallery_mutation(self):
         (self.source/'dist/game.js').write_text("import './missing.js';\n")

@@ -6,6 +6,7 @@ import json
 import subprocess
 import tempfile
 from release_game import validate_runtime
+from project_layout import project_directory
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -27,7 +28,7 @@ class Resources(HTMLParser):
 
 catalog = {p['id']: p for p in json.loads((ROOT/'projects.json').read_text())}
 for slug in ('wayfarer', 'silt-and-signal'):
-    game = ROOT/slug
+    game = project_directory(ROOT, catalog[slug])
     manifest = json.loads((game/'source-provenance.json').read_text())
     history = json.loads((game/'history/versions.json').read_text())
     for item in manifest['runtime_files']:

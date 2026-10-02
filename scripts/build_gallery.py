@@ -4,12 +4,18 @@ from urllib.parse import urlsplit
 import html
 import json
 import hashlib
+from project_layout import build_redirects, project_directory
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = 'https://actiondaveinri.github.io/spaceship/'
 projects = json.loads((ROOT / 'projects.json').read_text())
 esc = html.escape
 assert len({p['id'] for p in projects}) == len(projects), 'Duplicate project ID'
+for project in projects:
+    if project['repo'] == 'spaceship':
+        directory = project_directory(ROOT, project)
+        assert (directory / 'index.html').is_file(), f'Missing project entry: {directory}'
+        assert project['source'] == 'https://github.com/ActionDaveInRI/spaceship/tree/main/' + project['directory'], 'Source link disagrees with project directory'
 
 
 def local_url(url, version=False):
@@ -83,11 +89,11 @@ style_version = hashlib.sha256((ROOT / 'gallery.css').read_bytes()).hexdigest()[
 page = page.replace('href="gallery.css"', f'href="gallery.css?v={style_version}"')
 (ROOT / 'index.html').write_text(page)
 
-lines = ['# Project directory', '', '[Open the screenshot gallery](' + BASE + ')', '', 'The repository root is the gallery. Each game has its own folder; projects already in dedicated repositories keep their existing homes and URLs.', '', '| Project | Current build | Location |', '|---|---|---|']
+lines = ['# Project directory', '', '[Open the screenshot gallery](' + BASE + ')', '', 'The repository root is the gallery. Games owned by this repository live under `projects/`; root launch pages redirect to their preserved builds. Projects in dedicated repositories keep their existing homes and URLs.', '', '| Project | Current build | Location |', '|---|---|---|']
 for p in projects:
     location = p['repo'] + ('/' + p['directory'] if p['directory'] != '.' else '/')
     lines.append(f'| [{p["title"]}]({p["launch"]}) | {release_label(p) or "Current preserved build"} | [{location}]({p["source"]}) |')
-lines += ['', '## History and release notes', '', 'Inkstar remains in the [Inkdrift archive](inkdrift/archive/). Nebula Weave remains at [nebula-weave/](nebula-weave/) as requested, outside the main gallery. Older launch URLs still work.', '', 'Recovered Sites releases include source provenance in their own folders. Publishing here is deliberate; Sites development does not automatically replace these releases. The original Sites projects and access settings are preserved. Browser saves stay at their original website address unless a game provides an export/import feature.', '', 'First Light v0.10.2 is in [first-light/](first-light/), including editable source and tests. Use its Export save / Import save feature to move progress between hosts.', '', f'{sum(bool(p.get("image")) for p in projects)} of {len(projects)} gallery projects have real screenshots.', '', 'See [gallery verification](GALLERY-QA.md) and [release instructions](RELEASING.md).', '']
+lines += ['', '## History and release notes', '', 'Inkstar remains in the [Inkdrift archive](projects/inkdrift/archive/). Nebula Weave lives in [projects/nebula-weave/](projects/nebula-weave/), outside the main gallery; its public `nebula-weave/` URL remains available. Older launch URLs still work.', '', 'Recovered Sites releases include source provenance in their own folders. Publishing here is deliberate; Sites development does not automatically replace these releases. The original Sites projects and access settings are preserved. Browser saves stay at their original website origin unless a game provides an export/import feature.', '', 'First Light v0.10.2 is in [projects/first-light/](projects/first-light/), including editable source and tests. Use its Export save / Import save feature to move progress between hosts.', '', f'{sum(bool(p.get("image")) for p in projects)} of {len(projects)} gallery projects have real screenshots.', '', 'See [gallery verification](GALLERY-QA.md) and [release instructions](RELEASING.md).', '']
 (ROOT / 'PROJECTS.md').write_text('\n'.join(lines))
 
 items = []
@@ -96,3 +102,4 @@ for p in projects:
     items.append(f'<li><a href="{local_url(p["launch"])}">{esc(p["title"])}</a> <small>{esc(release_label(p))}</small>{history}</li>')
 (ROOT / 'versions.html').write_text('''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Project directory · David</title><link rel="stylesheet" href="gallery.css?v=''' + style_version + '''"></head><body><main class="shell directory"><a href="./">← Screenshot gallery</a><h1>Project directory</h1><p>Current builds and their preserved histories.</p><ul>''' + ''.join(items) + '''</ul><h2>Additional archives</h2><p><a href="nebula-weave/">Nebula Weave</a> · <a href="inkdrift/archive/">Inkstar / early Inkdrift</a></p></main></body></html>''')
 print(f'Built gallery: {len(projects)} projects, {sum(bool(p.get("image")) for p in projects)} screenshots.')
+print(f'Built {build_redirects(ROOT)} compatibility redirects.')

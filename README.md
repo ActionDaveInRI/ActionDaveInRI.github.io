@@ -1,59 +1,39 @@
-# Games & experiments
+# Spaceship
 
-[Open the screenshot gallery](https://actiondaveinri.github.io/spaceship/)
+[Run Spaceship](https://actiondaveinri.github.io/spaceship/) · [Browse all games and experiments](https://actiondaveinri.github.io/)
 
-`index.html` is the gallery, not a game. Owned projects live under `projects/`, with a direct launch link, a short description, and a real preview wherever a usable capture is available. [PROJECTS.md](PROJECTS.md) lists every current build and its source location.
+This repository contains the original spacecraft effects demo: hull plates, thrusters, laser fire, and landing legs. `index.html` is byte-identical to the original `spaceship_001.html` added in commit `f4f06f3`. It requires WebGL and its existing external Three.js module.
 
-## Current games in this repository
+The screenshot gallery and collected games now live in [ActionDaveInRI.github.io](https://github.com/ActionDaveInRI/ActionDaveInRI.github.io), with their source under `projects/<game>/`. Projects already maintained in other repositories retain their own homes. The previous gallery and project source remain available in this repository's Git history; the migration retains that ancestry in the account-site repository too.
 
-| Project | Directory | Selected release |
-|---|---|---|
-| First Light | [first-light/](projects/first-light/) | v0.10.2 · Places with a Past |
-| Silt + Signal | [silt-and-signal/](projects/silt-and-signal/) | Sites v9 |
-| Wayfarer | [wayfarer/](projects/wayfarer/) | Sites v30 |
-| Star Cluster · Geographic Explorer | [star-cluster/](projects/star-cluster/) | Sites v11 |
-| Wreck Run | [wreck-run/](projects/wreck-run/) | Sites v1 |
-| Bramblewild | [bramblewild/](projects/bramblewild/) | Sites v19 |
-| Last Light · Trench Assault | [last-light/](projects/last-light/) | Sites v1 |
-| Wayfarer · Pixel Study | [wayfarer-pixel-study/](projects/wayfarer-pixel-study/) | Sites v3 |
-| Blackpine | [blackpine/](projects/blackpine/) | Sites v2 · formerly Vector Vale |
-| Breach Run | [breach-run/](projects/breach-run/) | Sites v2 |
-| Island Three | [island-three/](projects/island-three/) | Sites v9 |
-| Inkdrift | [inkdrift/](projects/inkdrift/) | Current standalone build |
-| Ship effects | [ship-effects/](projects/ship-effects/) | Original study |
+## Existing links
 
-Projects already in dedicated repositories retain their existing homes and URLs. The gallery links to them directly; it does not create competing copies.
+The root `/spaceship/` address now opens this demo. The gallery is at [actiondaveinri.github.io](https://actiondaveinri.github.io/); the old `/spaceship/projects/` and `/spaceship/projects.html` addresses reach it directly.
 
-Inkstar remains in [Inkdrift’s archive](projects/inkdrift/archive/). Nebula Weave remains available at [nebula-weave/](projects/nebula-weave/) outside the main gallery. Older launch URLs still work, and Git history preserves previous files.
+`pages-redirects.json` maps all 62 other HTML paths present at pre-migration commit `8d38d42dfab8e99e70031a0a5831b5e18fc6fad5` to their current destinations. This includes both original root game paths and the briefly published `/spaceship/projects/<game>/` paths, their archives, histories, and older Inkstar/WFC aliases. Compatibility directories contain only generated HTML handoffs. The collected source and runtime assets are maintained in the account-site repository.
 
-## Releases and source
+The original Ship effects addresses reach `/spaceship/`. The historical Star Cluster `source/public/demo/index.html` addresses reach the complete playable Star Cluster build. That editable source page was designed for its own source server and used `/demo/` asset paths; its unchanged source and provenance are preserved in the new repository.
 
-The recovered Sites games run directly from `projects/<game>/` without ChatGPT sign-in. Their original Sites projects, URLs, access settings, and history remain intact. Each exported game records its selected source revision and adaptations in its own README and provenance file. These public builds are deliberate releases; later Sites edits do not automatically change them.
+Redirects preserve query strings and fragments through JavaScript, with a link and HTML refresh fallback. All games remain on the same `https://actiondaveinri.github.io` origin, so existing origin-based browser saves remain available. The separate ChatGPT Sites origins retain their own saves.
 
-Wayfarer includes its 30 original source commits and Silt + Signal includes its 9 original source commits in downloadable Git bundles. First Light includes its editable portable source and 39 simulation tests. Other recovered games include their source or original source archive alongside the playable build.
+## Maintain and verify
 
-Browser saves remain at their original website address. First Light provides Export save / Import save for moving progress between hosts.
-
-## Maintain the gallery
-
-Edit `projects.json`, then run:
+Edit the manifest, then run:
 
 ```sh
-python3 scripts/build_gallery.py
-python3 scripts/check_standalone.py
+python3 scripts/compatibility.py
 python3 scripts/check_pages.py
+python3 -m unittest discover -s scripts -p 'test_*.py'
 ```
 
-The generator updates `index.html`, `versions.html`, and `PROJECTS.md`. Put each owned project’s runtime, source, history and preview in `projects/<game>/`. Use real game captures, and record the preview version if it differs from the selected release. Keep launch URLs stable and archive earlier generations within the relevant project.
+The generator refuses to overwrite an unmanaged page or redirect the root demo. The checker compares the full baseline HTML inventory, verifies every generated page, and checks the original demo's SHA-256. Tests execute the redirect JavaScript with ordinary and encoded queries/fragments.
 
-For a local preview, serve the repository’s parent directory with `python3 -m http.server 8000` and open `http://localhost:8000/spaceship/`. See [release instructions](RELEASING.md) and [gallery verification](GALLERY-QA.md).
+**Deployment order:** publish and verify the account site first; only then publish this compatibility change. GitHub Pages serves `main` at the repository root with `.nojekyll`. Do not remove old routes when adding releases.
 
-## Source layout and stable launch URLs
+After both sites are deployed:
 
-`projects/` is the canonical home for all games and studies owned by this repository. Root game folders contain only generated HTML compatibility pages. GitHub Pages continues to publish `main` at the repository root with `.nojekyll`; no hosting settings or separate build service are needed.
+```sh
+python3 scripts/check_pages.py --base https://actiondaveinri.github.io/spaceship/
+```
 
-`projects.json` uses `projects/<game>` for source directories and GitHub source links, while its public launch and history URLs retain their established addresses. Images load from the canonical project folders. `pages-redirects.json` records every previous HTML entry point, including nested archives, Inkstar, WFC Nebula Demo, and `spaceship_001.html`. The gallery generator recreates these relative redirects and preserves query strings and fragments. Edit the route manifest instead of a generated page, and keep old routes when adding releases.
-
-Moving paths within this Pages site keeps the same origin and existing localStorage saves. No game uses a service worker or pathname-based save scope. Original Sites saves remain at their separate origin.
-
-After regenerating, run `python3 -m unittest discover -s scripts -p 'test_*.py'` and `python3 scripts/check_pages.py`. After Pages deploys, run `python3 scripts/check_pages.py --base https://actiondaveinri.github.io/spaceship/` to check all gallery launches, legacy redirects, canonical HTML and local runtime dependencies against the reviewed files.
+This checks every old HTML path, index/directory/slashless form, the root demo, and canonical destination response. Compatibility responses and the demo must match this checkout exactly. The account-site checker separately verifies canonical game resources. These route checks do not replace interactive GPU/controller gameplay testing.

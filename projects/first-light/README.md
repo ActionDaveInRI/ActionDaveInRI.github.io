@@ -1,6 +1,6 @@
 # First Light · v0.10.2 — Places with a Past
 
-[Play First Light](https://actiondaveinri.github.io/spaceship/first-light/) · [Back to the gallery](https://actiondaveinri.github.io/spaceship/) · [Development version](https://first-light-expeditions.x-nihilo.chatgpt.site)
+[Play First Light](https://actiondaveinri.github.io/projects/first-light/) · [Back to the gallery](https://actiondaveinri.github.io/) · [Development version](https://first-light-expeditions.x-nihilo.chatgpt.site)
 
 Build an interstellar civilization across miniature planets. Survey worlds, establish settlements, connect cargo-drone services, and grow lasting towns from local production.
 

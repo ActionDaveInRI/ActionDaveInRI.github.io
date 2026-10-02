@@ -6,7 +6,7 @@ import json
 import subprocess
 import tempfile
 from release_game import validate_runtime
-from project_layout import project_directory
+from project_layout import SITE_BASE, project_directory
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -50,7 +50,7 @@ for slug in ('wayfarer', 'silt-and-signal'):
     assert not any(x in entry for x in ('location.replace(', 'location.assign(', 'chatgpt.site')), f'{slug}: external launcher remains'
     project = catalog[slug]
     assert project['requiresLogin'] is False and project['hosting'] == 'github-pages'
-    assert project['launch'] == project['live'] == f'https://actiondaveinri.github.io/spaceship/{slug}/'
+    assert project['launch'] == project['live'] == SITE_BASE + project['directory'] + '/'
     assert project['sourceCommit'] == manifest['source_commit'] == history['source_commit']
     bundle = game/'history'/history['bundle']
     assert digest(bundle.read_bytes()) == history['bundle_sha256'], f'{slug}: damaged source history'

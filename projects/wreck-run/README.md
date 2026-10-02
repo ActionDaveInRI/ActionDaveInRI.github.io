@@ -1,6 +1,6 @@
 # Wreck Run · v1
 
-[Play Wreck Run](https://actiondaveinri.github.io/spaceship/wreck-run/) · [Gallery](https://actiondaveinri.github.io/spaceship/) · [Development Site](https://wreck-run.x-nihilo.chatgpt.site)
+[Play Wreck Run](https://actiondaveinri.github.io/projects/wreck-run/) · [Gallery](https://actiondaveinri.github.io/) · [Development Site](https://wreck-run.x-nihilo.chatgpt.site)
 
 Tow a derelict freighter to the recovery ring while raiders attack. The wreck acts as physical cover, and damage reduces its salvage value. Ships move on a plane in a procedural Three.js scene, with a D3 radar and synthesized sound. Keyboard, mouse, touch and standard gamepad controls are included.
 

@@ -1,6 +1,6 @@
 # Silt + Signal
 
-[Play Silt + Signal](https://actiondaveinri.github.io/spaceship/silt-and-signal/) · [Source history](history/) · [About](about.html)
+[Play Silt + Signal](https://actiondaveinri.github.io/projects/silt-and-signal/) · [Source history](history/) · [About](about.html)
 
 The full game runs directly on GitHub Pages, without ChatGPT sign-in, a backend, a CDN, or a build step. This is the selected Sites **v9** game at source commit `e9b81ea312df5e137a42ac224847c4adc896102a`. All game code, graphics, sound, controls and save formats are preserved.
 

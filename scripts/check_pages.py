@@ -11,13 +11,13 @@ from html.parser import HTMLParser
 import json
 from pathlib import Path
 import re
-from urllib.parse import unquote, urljoin, urlsplit
+from urllib.parse import urljoin, urlsplit
 from urllib.request import Request, urlopen
 
-from project_layout import MARKER, project_directory, redirect_page
+from project_layout import MARKER, SITE_BASE, SITE_REPO, SOURCE_BASE, project_directory, redirect_page, site_file
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = 'https://actiondaveinri.github.io/spaceship/'
+BASE = SITE_BASE
 
 
 class Page(HTMLParser):
@@ -49,16 +49,8 @@ class Page(HTMLParser):
             self.script = None
 
 
-def local_file(url, current):
-    if url.startswith(('data:', 'blob:', '#', 'mailto:', 'javascript:')):
-        return None
-    absolute = urljoin(BASE + current, url)
-    if not absolute.startswith(BASE):
-        return None
-    path = unquote(urlsplit(absolute[len(BASE):]).path)
-    if not path or path.endswith('/'):
-        path += 'index.html'
-    return path
+def local_file(url, current, external_repos=()):
+    return site_file(url, current, external_repos)
 
 
 def script_refs(code):
@@ -74,19 +66,20 @@ def inspect_layout(root=ROOT):
     root = Path(root)
     catalog = json.loads((root/'projects.json').read_text())
     routes = json.loads((root/'pages-redirects.json').read_text())
+    external_repos = {p['repo'] for p in catalog if p['repo'] != SITE_REPO}
     for source, destination in routes.items():
         assert (root/source).read_text() == redirect_page(source, destination), f'Stale redirect: {source}'
         assert destination not in routes, f'Redirect chain: {source}'
         assert (root/destination).is_file(), f'Missing destination: {destination}'
     seeds = {'index.html', 'versions.html', *routes, *routes.values()}
     for project in catalog:
-        if project['repo'] == 'spaceship':
+        if project['repo'] == SITE_REPO:
             directory = project_directory(root, project)
             assert (directory/'index.html').is_file()
-            assert project['source'] == 'https://github.com/ActionDaveInRI/spaceship/tree/main/' + project['directory']
+            assert project['source'] == SOURCE_BASE + project['directory']
         for key in ('launch', 'live', 'versions', 'image'):
             if project.get(key):
-                path = local_file(project[key], 'index.html')
+                path = local_file(project[key], 'index.html', external_repos)
                 if path:
                     seeds.add(path)
     # Follow literal resources and local links, sharing each page's import map
@@ -100,6 +93,9 @@ def inspect_layout(root=ROOT):
         assert path.is_file(), f'Missing local Pages file: {name}'
         checked.add(name)
         urls = []
+        # Source HTML is preserved build input, not a standalone web runtime.
+        if '/source/' in name:
+            continue
         if name.endswith('.html'):
             text = path.read_text()
             page = Page(text)
@@ -130,7 +126,7 @@ def inspect_layout(root=ROOT):
             # checked here, and recovered-release manifests have stricter checks.
             elif name.endswith(('.js', '.mjs')) and not url.startswith(('.', '/')) and not urlsplit(url).scheme:
                 continue
-            dependency = local_file(url, current)
+            dependency = local_file(url, current, external_repos)
             if dependency:
                 pending.append((dependency, maps, entry))
     return catalog, routes, checked
@@ -139,6 +135,7 @@ def inspect_layout(root=ROOT):
 def check_live(base, catalog, paths, root=ROOT):
     base = base.rstrip('/') + '/'
     routes = json.loads((Path(root)/'pages-redirects.json').read_text())
+    external_repos = {p['repo'] for p in catalog if p['repo'] != SITE_REPO}
     requests = {urljoin(base, path): path for path in paths}
     for path in paths:
         if path.endswith('/index.html'):
@@ -152,12 +149,13 @@ def check_live(base, catalog, paths, root=ROOT):
             requests[directory.rstrip('/')] = (path, alternate) if equivalent else path
     for project in catalog:
         launch = project['launch']
-        url = base + launch[len(BASE):] if launch.startswith(BASE) else launch
-        requests.setdefault(url, local_file(launch, 'index.html'))
+        path = local_file(launch, 'index.html', external_repos)
+        url = base + launch[len(BASE):] if path is not None and launch.startswith(BASE) else launch
+        requests.setdefault(url, path)
 
     def check(item):
         url, path = item
-        request = Request(url, headers={'User-Agent': 'spaceship-pages-verifier', 'Cache-Control': 'no-cache'})
+        request = Request(url, headers={'User-Agent': 'portfolio-pages-verifier', 'Cache-Control': 'no-cache'})
         with urlopen(request, timeout=45) as response:
             assert response.status == 200, f'{url}: HTTP {response.status}'
             body = response.read()

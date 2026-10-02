@@ -4,23 +4,24 @@ from urllib.parse import urlsplit
 import html
 import json
 import hashlib
-from project_layout import build_redirects, project_directory
+from project_layout import SITE_BASE, SITE_REPO, SOURCE_BASE, build_redirects, project_directory, site_file
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = 'https://actiondaveinri.github.io/spaceship/'
+BASE = SITE_BASE
 projects = json.loads((ROOT / 'projects.json').read_text())
 esc = html.escape
+external_repos = {p['repo'] for p in projects if p['repo'] != SITE_REPO}
 assert len({p['id'] for p in projects}) == len(projects), 'Duplicate project ID'
 for project in projects:
-    if project['repo'] == 'spaceship':
+    if project['repo'] == SITE_REPO:
         directory = project_directory(ROOT, project)
         assert (directory / 'index.html').is_file(), f'Missing project entry: {directory}'
-        assert project['source'] == 'https://github.com/ActionDaveInRI/spaceship/tree/main/' + project['directory'], 'Source link disagrees with project directory'
+        assert project['source'] == SOURCE_BASE + project['directory'], 'Source link disagrees with project directory'
 
 
 def local_url(url, version=False):
     """Keep gallery links portable, and refresh local screenshots on each release."""
-    if url.startswith(BASE):
+    if url.startswith(BASE) and site_file(url, external_repos=external_repos) is not None:
         url = url[len(BASE):]
     path = ROOT / urlsplit(url).path
     if version and not urlsplit(url).scheme and path.is_file():
@@ -71,14 +72,14 @@ for key, heading, subheading in [
 page = '''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Games & experiments · David</title><meta name="description" content="Play David's browser games and experiments: First Light, Wayfarer, Silt + Signal, and more. Screenshots, current builds, and preserved project histories.">
-<link rel="stylesheet" href="gallery.css"><link rel="canonical" href="https://actiondaveinri.github.io/spaceship/"></head>
+<link rel="stylesheet" href="gallery.css"><link rel="canonical" href="https://actiondaveinri.github.io/"></head>
 <body><a class="skip" href="#projects">Skip to projects</a><div class="shell">
 <header><div class="topline"><a class="brand" href="./">DAVID / EXPERIMENTS</a><nav aria-label="Site"><a href="versions.html">Project directory</a><a href="https://github.com/ActionDaveInRI">GitHub <span aria-hidden="true">↗</span></a></nav></div>
 <div class="intro"><div><h1>Games & experiments</h1><p class="lede">Spaceflight, living systems, and worlds worth exploring.</p></div><p class="shelf-count"><strong>PROJECT_COUNT</strong> projects</p></div>
 <div class="tools"><div class="filters" role="group" aria-label="Filter projects">''' + buttons + '''</div><label class="search"><span class="sr-only">Find a project</span><input type="search" placeholder="Find a project…" id="search" autocomplete="off"></label></div>
 </header><main id="projects"><p id="result-count" class="result-count" aria-live="polite">PROJECT_COUNT projects</p>''' + ''.join(sections) + '''
 <p id="empty" hidden>No projects match. Try another name or choose All projects.</p></main>
-<footer><p>Works in progress, with a home for every project.</p><a href="https://github.com/ActionDaveInRI/spaceship/blob/main/PROJECTS.md">Source directory ↗</a></footer></div>
+<footer><p>Works in progress, with a home for every project.</p><a href="https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/blob/main/PROJECTS.md">Source directory ↗</a></footer></div>
 <script>
 const search=document.querySelector('#search'),buttons=[...document.querySelectorAll('.filter')],cards=[...document.querySelectorAll('.project')];let category='all';
 function filter(){const q=search.value.trim().toLowerCase();let count=0;for(const card of cards){const show=(category==='all'||card.dataset.category===category)&&card.dataset.search.includes(q);card.hidden=!show;if(show)count++;}document.querySelector('#result-count').textContent=`${count} ${count===1?'project':'projects'}`;document.querySelector('#empty').hidden=count!==0;for(const section of document.querySelectorAll('.project-section'))section.hidden=![...section.querySelectorAll('.project')].some(c=>!c.hidden);}
@@ -89,17 +90,17 @@ style_version = hashlib.sha256((ROOT / 'gallery.css').read_bytes()).hexdigest()[
 page = page.replace('href="gallery.css"', f'href="gallery.css?v={style_version}"')
 (ROOT / 'index.html').write_text(page)
 
-lines = ['# Project directory', '', '[Open the screenshot gallery](' + BASE + ')', '', 'The repository root is the gallery. Games owned by this repository live under `projects/`; root launch pages redirect to their preserved builds. Projects in dedicated repositories keep their existing homes and URLs.', '', '| Project | Current build | Location |', '|---|---|---|']
+lines = ['# Project directory', '', '[Open the screenshot gallery](' + BASE + ')', '', 'The repository root is the screenshot gallery at your main GitHub Pages address. Collected games live under `projects/`. Spaceship is its own demo again, and projects in dedicated repositories keep their existing homes and URLs. Old `/spaceship/` game links redirect from that repository to this site.', '', '| Project | Current build | Location |', '|---|---|---|']
 for p in projects:
     location = p['repo'] + ('/' + p['directory'] if p['directory'] != '.' else '/')
     lines.append(f'| [{p["title"]}]({p["launch"]}) | {release_label(p) or "Current preserved build"} | [{location}]({p["source"]}) |')
-lines += ['', '## History and release notes', '', 'Inkstar remains in the [Inkdrift archive](projects/inkdrift/archive/). Nebula Weave lives in [projects/nebula-weave/](projects/nebula-weave/), outside the main gallery; its public `nebula-weave/` URL remains available. Older launch URLs still work.', '', 'Recovered Sites releases include source provenance in their own folders. Publishing here is deliberate; Sites development does not automatically replace these releases. The original Sites projects and access settings are preserved. Browser saves stay at their original website origin unless a game provides an export/import feature.', '', 'First Light v0.10.2 is in [projects/first-light/](projects/first-light/), including editable source and tests. Use its Export save / Import save feature to move progress between hosts.', '', f'{sum(bool(p.get("image")) for p in projects)} of {len(projects)} gallery projects have real screenshots.', '', 'See [gallery verification](GALLERY-QA.md) and [release instructions](RELEASING.md).', '']
+lines += ['', '## History and release notes', '', 'Inkstar remains in the [Inkdrift archive](projects/inkdrift/archive/). Nebula Weave lives in [projects/nebula-weave/](projects/nebula-weave/), outside the main gallery. Previous `/spaceship/nebula-weave/` and other game launch URLs remain available through redirects in the Spaceship repository.', '', 'Recovered Sites releases include source provenance in their own folders. Publishing here is deliberate; Sites development does not automatically replace these releases. The original Sites projects and access settings are preserved. Browser saves stay at their original website origin unless a game provides an export/import feature.', '', 'First Light v0.10.2 is in [projects/first-light/](projects/first-light/), including editable source and tests. Use its Export save / Import save feature to move progress between hosts.', '', f'{sum(bool(p.get("image")) for p in projects)} of {len(projects)} gallery projects have real screenshots.', '', 'See [gallery verification](GALLERY-QA.md) and [release instructions](RELEASING.md).', '']
 (ROOT / 'PROJECTS.md').write_text('\n'.join(lines))
 
 items = []
 for p in projects:
     history = f' · <a href="{local_url(p["versions"])}">{esc(p.get("versionsLabel", "Versions"))}</a>' if p.get('versions') else ''
     items.append(f'<li><a href="{local_url(p["launch"])}">{esc(p["title"])}</a> <small>{esc(release_label(p))}</small>{history}</li>')
-(ROOT / 'versions.html').write_text('''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Project directory · David</title><link rel="stylesheet" href="gallery.css?v=''' + style_version + '''"></head><body><main class="shell directory"><a href="./">← Screenshot gallery</a><h1>Project directory</h1><p>Current builds and their preserved histories.</p><ul>''' + ''.join(items) + '''</ul><h2>Additional archives</h2><p><a href="nebula-weave/">Nebula Weave</a> · <a href="inkdrift/archive/">Inkstar / early Inkdrift</a></p></main></body></html>''')
+(ROOT / 'versions.html').write_text('''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Project directory · David</title><link rel="stylesheet" href="gallery.css?v=''' + style_version + '''"></head><body><main class="shell directory"><a href="./">← Screenshot gallery</a><h1>Project directory</h1><p>Current builds and their preserved histories.</p><ul>''' + ''.join(items) + '''</ul><h2>Additional archives</h2><p><a href="projects/nebula-weave/">Nebula Weave</a> · <a href="projects/inkdrift/archive/">Inkstar / early Inkdrift</a></p></main></body></html>''')
 print(f'Built gallery: {len(projects)} projects, {sum(bool(p.get("image")) for p in projects)} screenshots.')
 print(f'Built {build_redirects(ROOT)} compatibility redirects.')

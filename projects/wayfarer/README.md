@@ -1,6 +1,6 @@
 # Wayfarer
 
-[Play Wayfarer](https://actiondaveinri.github.io/spaceship/wayfarer/) · [Source history](history/) · [About](about.html)
+[Play Wayfarer](https://actiondaveinri.github.io/projects/wayfarer/) · [Source history](history/) · [About](about.html)
 
 The full game runs directly on GitHub Pages, without ChatGPT sign-in, a backend, a CDN, or a build step. This is the recovered Sites **v30** game at source commit `eacc6f34d17d6d5e7584504188e59b4573a940b1`. All game code, graphics, sound, controls and save formats are preserved.
 

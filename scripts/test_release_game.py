@@ -51,7 +51,7 @@ class ReleaseTests(unittest.TestCase):
         (self.game/'source-provenance.json').write_bytes(release.encoded(self.manifest))
         (self.game/'history/versions.json').write_bytes(release.encoded(self.history))
         (self.gallery/'projects.json').write_bytes(release.encoded([dict(
-            id='silt-and-signal', repo='spaceship', directory='projects/silt-and-signal', sourceVersion=1, sourceCommit=self.first, note='old',
+            id='silt-and-signal', repo='ActionDaveInRI.github.io', directory='projects/silt-and-signal', sourceVersion=1, sourceCommit=self.first, note='old',
             launch='https://custom.example/games/silt/', live='https://custom.example/games/silt/')]))
 
     def commit(self, message):
@@ -121,7 +121,7 @@ class ReleaseTests(unittest.TestCase):
 
     def test_unsafe_or_external_catalog_directory_fails_before_mutation(self):
         catalog_path = self.gallery/'projects.json'
-        for repo, directory in [('spaceship', '../elsewhere'), ('petri', 'projects/silt-and-signal'), ('spaceship', 'silt-and-signal')]:
+        for repo, directory in [('ActionDaveInRI.github.io', '../elsewhere'), ('petri', 'projects/silt-and-signal'), ('ActionDaveInRI.github.io', 'silt-and-signal')]:
             catalog = json.loads(catalog_path.read_text())
             catalog[0].update(repo=repo, directory=directory)
             catalog_path.write_bytes(release.encoded(catalog))

@@ -1,6 +1,6 @@
 # Star Cluster · Geographic Explorer · Sites v11
 
-[Open Star Cluster](https://actiondaveinri.github.io/spaceship/star-cluster/) · [Gallery](https://actiondaveinri.github.io/spaceship/) · [Development Site](https://star-cluster-planet-demo.x-nihilo.chatgpt.site)
+[Open Star Cluster](https://actiondaveinri.github.io/projects/star-cluster/) · [Gallery](https://actiondaveinri.github.io/) · [Development Site](https://star-cluster-planet-demo.x-nihilo.chatgpt.site)
 
 Explore a procedural star cluster, travel between systems, and inspect planetary terrain. This release includes the 100-star starting cluster, paired system and nearby-star maps, adjustable amber neighbor links, and exaggerated visible terrestrial relief.
 

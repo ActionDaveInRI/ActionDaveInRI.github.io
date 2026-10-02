@@ -66,10 +66,9 @@ adaptation, assess that change explicitly before modifying the exporter.
 3. Run relevant existing tests from the original game source repository.
    For exporter changes, also run
    `python3 -m unittest discover -s scripts -p 'test_release_game.py'`.
-4. Serve the parent of this checkout with `python3 -m http.server 8000`.
-   If the checkout is named `spaceship`, test
-   `http://localhost:8000/spaceship/wayfarer/` or
-   `http://localhost:8000/spaceship/silt-and-signal/`. This exercises the public
+4. Serve this checkout with `python3 -m http.server 8000`. Test
+   `http://localhost:8000/projects/wayfarer/` or
+   `http://localhost:8000/projects/silt-and-signal/`. This exercises the public
    project subpath. Use a fresh browser context, start gameplay, move and
    interact, exercise controls, inspect graphics, and check sound after a user
    gesture. Confirm no login or external game-service dependency.
@@ -90,8 +89,7 @@ commit and let Pages deploy it; the original Sites project stays intact.
 
 ## Moving the gallery or separating repositories
 
-The exporter preserves existing catalog URLs and has no hardcoded `spaceship`
-address. It currently expects `projects.json` and a catalog `directory` under `projects/` for each owned game. If each
+The exporter preserves catalog URLs and uses the main website catalog. It currently expects `projects.json` and a catalog `directory` under `projects/` for each owned game. If each
 game moves into its own repository root, adapt that destination layout and the
 catalog update step before using this script. The development source and static
 game runtimes can remain the same.
@@ -109,6 +107,8 @@ For First Light, select a clean, exact development source commit; run its tests 
 
 ## Layout changes and compatibility
 
-Keep editable sources, selected runtimes, previews, provenance and archives together in `projects/<game>/`. Catalog `launch`, `live` and `versions` addresses remain stable; catalog `directory`, `source` and `image` identify the canonical project location. The generator also rebuilds the HTML compatibility routes in `pages-redirects.json`, including nested historic launches. Add new public routes there when needed and retain the existing mappings. Redirects use relative paths with query/fragment preservation.
+Keep editable sources, selected runtimes, previews, provenance and archives together in `projects/<game>/` in `ActionDaveInRI.github.io`. Catalog `launch`, `live`, `versions`, `directory`, `source` and `image` all identify the canonical project location. Keep those addresses stable for subsequent releases.
 
-Run all layout/exporter regression tests with `python3 -m unittest discover -s scripts -p 'test_*.py'`. After the normal Pages deployment succeeds, verify the public layout with `python3 scripts/check_pages.py --base https://actiondaveinri.github.io/spaceship/`. Roll back with a normal revert if those checks fail.
+The main-site generator rebuilds the two local gallery aliases in `pages-redirects.json`. Legacy `/spaceship/` routes are maintained separately in the `spaceship` repository. Retain those mappings when adding releases; redirects preserve queries and fragments. See [MIGRATION.md](MIGRATION.md) for the ordered cutover and rollback.
+
+Run all layout/exporter regression tests with `python3 -m unittest discover -s scripts -p 'test_*.py'`. After the normal Pages deployment succeeds, verify the public layout with `python3 scripts/check_pages.py --base https://actiondaveinri.github.io/`. Roll back with a normal revert if those checks fail.

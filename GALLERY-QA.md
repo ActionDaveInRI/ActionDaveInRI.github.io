@@ -83,4 +83,16 @@ The prepared compatibility tree restores the exact original Spaceship runtime an
 
 A paired local HTTP rehearsal passes 218 main-site gallery/resource/launch requests and 183 legacy route/destination requests. The main-site scanner inspects 170 routes/resources and correctly treats other repositories on the same Pages origin as external. Every compatibility destination exists. 306 collection files remain byte-identical; 11 documentation/navigation files change. Editable source files, previews and source-history archives remain intact.
 
-**Deployment is pending.** GitHub repository creation and Pages configuration are not available through the repository connector, and browser sign-in was not completed. The current publishing branch remains unchanged. See [MIGRATION.md](MIGRATION.md) for the two prepared branches, ordered deployment, live verification and rollback. No new live URLs or interactive gameplay checks are claimed here.
+At preparation time, deployment was pending account setup. The completed publication and live checks are recorded below; [MIGRATION.md](MIGRATION.md) describes the current layout, deployment records, verification commands and rollback.
+
+### Account homepage deployed
+
+The new public repository `ActionDaveInRI/ActionDaveInRI.github.io` retains the full imported Git history and publishes `main` from the repository root. Pages successfully deployed account-site commit `3922bae89ac5112bca72421e72f793080db0d037` in [run 37069989078](https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/actions/runs/37069989078). The live homepage passed all 218 HTTP requests, covering 22 catalog launches, 170 local routes/resources and gallery aliases, with exact local-byte comparisons.
+
+Only after that success, `spaceship/main` advanced normally from the verified baseline to `dc583a8ebe64438439797ecb4de46944dd2c8679`. [Pages run 37070324576](https://github.com/ActionDaveInRI/spaceship/actions/runs/37070324576) succeeded. All 183 post-deployment compatibility requests passed: 62 legacy HTML paths, index/directory/slashless variants, 28 canonical targets and both original demo root addresses. The restored root demo is byte-identical to the original. Combined, all **401 live HTTP checks passed**.
+
+In the live browser, the new homepage displays 22 cards, all 15 screenshot images decode, search for First Light returns one result and Space & flight returns seven. The desktop has no horizontal overflow. Clicking the First Light screenshot opens `/projects/first-light/` and displays its compatibility-rendered interface. The old First Light URL preserves `?seed=123&mode=test#landing-site` at the new destination. Inkstar, its fleet archive, WFC, Wayfarer and Silt + Signal histories, and both `/spaceship/projects` forms navigate to their intended new locations. The root `/spaceship/` has the original demo title.
+
+![Published account homepage](docs/gallery-live.jpg)
+
+This migration leaves the nine previously external repository entries unchanged and moves no source from those repositories. Game source, selected builds, previews and history bundles remain intact. Interactive GPU/audio/controller/touch gameplay was not revalidated; the move changes layout and navigation rather than gameplay.

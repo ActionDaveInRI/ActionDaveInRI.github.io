@@ -2,14 +2,18 @@
 
 ## Cutover status
 
-Prepared and locally verified; **not deployed**. The existing `spaceship/main` remains the publishing branch at commit `8d38d42dfab8e99e70031a0a5831b5e18fc6fad5`. Creation of `ActionDaveInRI/ActionDaveInRI.github.io` and its Pages configuration require GitHub account setup, which the connected repository editor does not expose. Browser sign-in was not completed.
+**Deployed and verified.** The screenshot gallery is live at [actiondaveinri.github.io](https://actiondaveinri.github.io/), with the collected games and their source under `projects/` in this repository. The original Spaceship demo is live at [/spaceship/](https://actiondaveinri.github.io/spaceship/).
 
-Two preparation branches preserve the work in the existing repository:
+The account repository was imported with full Git history. Both repositories publish `main` from `/ (root)` through GitHub Pages. The account site was published and checked before changing the old site:
 
-- `migration/main-portfolio`: the complete new account website, including the screenshot gallery, collected games, source history and tooling. **Publish this branch's contents to the new repository, not to `spaceship/main`.**
-- `migration/restore-spaceship`: the original Spaceship demo and compatibility pages. Publish this to `spaceship/main` only after the account website is deployed and verified.
+| Repository | Migration commit | Successful Pages deployment |
+|---|---|---|
+| `ActionDaveInRI.github.io` | `3922bae89ac5112bca72421e72f793080db0d037` | [37069989078](https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/actions/runs/37069989078) |
+| `spaceship` | `dc583a8ebe64438439797ecb4de46944dd2c8679` | [37070324576](https://github.com/ActionDaveInRI/spaceship/actions/runs/37070324576) |
 
-## Intended addresses
+Both migration commits descend from `8d38d42dfab8e99e70031a0a5831b5e18fc6fad5`. No history was rewritten. The preparation branches `migration/main-portfolio` and `migration/restore-spaceship` remain as migration checkpoints; ordinary updates now belong on each repository's `main` branch.
+
+## Current addresses
 
 | Content | Canonical URL | Source repository |
 |---|---|---|
@@ -20,38 +24,25 @@ Two preparation branches preserve the work in the existing repository:
 
 The gallery retains all 22 entries and 15 real screenshots. Thirteen collection directories move, including Nebula Weave outside the gallery. The fourteenth former directory, Ship effects, returns to its original Spaceship repository; its gallery ID stays `ship-effects`.
 
-## Publish in order
+## Maintain and verify
 
-1. Create the public account-site repository `ActionDaveInRI/ActionDaveInRI.github.io`. Preserve the full Git history, rather than uploading a ZIP or squashing the source tree. One route is GitHub's repository importer using the public `ActionDaveInRI/spaceship` repository, then setting `main` to the imported `migration/main-portfolio` commit. Alternatively, create an empty repository and push the preparation branch with Git:
+From a full clone of this account website:
 
-   ```sh
-   git clone --branch migration/main-portfolio https://github.com/ActionDaveInRI/spaceship.git portfolio
-   cd portfolio
-   git remote set-url origin https://github.com/ActionDaveInRI/ActionDaveInRI.github.io.git
-   git push origin HEAD:main
-   ```
+```sh
+python3 scripts/build_gallery.py
+python3 -m unittest discover -s scripts -p 'test_*.py'
+python3 scripts/check_standalone.py
+python3 scripts/check_pages.py --base https://actiondaveinri.github.io/
+```
 
-   These commands run on a machine already authorized to push to the account. No rewritten or force-pushed history is needed.
+From a full clone of `ActionDaveInRI/spaceship`:
 
-2. Configure the new repository's GitHub Pages source to deploy `main`, folder `/ (root)`. The `.nojekyll` file is already present. Wait for successful deployment before changing `spaceship/main`.
-3. From a full clone of the account website, run:
+```sh
+python3 -m unittest discover -s scripts -p 'test_*.py'
+python3 scripts/check_pages.py --base https://actiondaveinri.github.io/spaceship/
+```
 
-   ```sh
-   python3 scripts/build_gallery.py
-   python3 -m unittest discover -s scripts -p 'test_*.py'
-   python3 scripts/check_standalone.py
-   python3 scripts/check_pages.py --base https://actiondaveinri.github.io/
-   ```
-
-   Check that the public homepage displays the screenshot cards, filters and search, and that screenshot and Open project links launch the intended games. At this intermediate stage the Spaceship card still reaches the previous gallery until step 4.
-4. Recheck the current `spaceship/main` for intervening changes, then merge `migration/restore-spaceship` normally. Its existing Pages deployment can continue publishing `main` at the repository root.
-5. After that deployment succeeds, run the compatibility branch's checker:
-
-   ```sh
-   python3 scripts/check_pages.py --base https://actiondaveinri.github.io/spaceship/
-   ```
-
-   Check a live legacy game link with a query and fragment, Inkstar/WFC aliases, history pages, both `/spaceship/projects` forms, and the restored root demo. Record actual deployed commit IDs and results in `GALLERY-QA.md`.
+Keep catalog/source links and releases in this account repository. Keep the existing compatibility manifest and generated redirects in `spaceship`. When changing a destination, deploy and verify it before updating any old entry point.
 
 ## Compatibility and preservation
 
@@ -71,8 +62,15 @@ Only documentation, catalog data and navigation pages change in the collected pr
 - All 62 compatibility destinations resolve to actual files in the prepared sites.
 - 306 collection files remain byte-identical to the baseline; 11 documentation/navigation files changed. The original Spaceship runtime is restored byte-for-byte.
 
-These are local checks, not a claim that the new public website is deployed. Live post-cutover verification and interactive GPU/audio/controller checks remain pending. The move does not change gameplay code.
+## Live verification
+
+- Account website: all 22 catalog launch URLs, 170 local routes/resources and gallery aliases passed across **218 HTTP requests**. Local responses matched the reviewed bytes; other repositories were checked at their unchanged public URLs.
+- Spaceship: all 62 legacy HTML paths, their directory/slashless variants, 28 canonical destinations and the restored demo passed across **183 HTTP requests**. Both root demo URLs matched the original runtime exactly.
+- Live browser: 22 gallery cards, all 15 decoded screenshots, search (First Light: 1 result) and category filter (Space & flight: 7 results) checked. No desktop horizontal overflow. Clicking the First Light screenshot launched its compatibility-rendered interface at `/projects/first-light/`.
+- Live browser redirects checked for First Light with `?seed=123&mode=test#landing-site`, Inkstar and its fleet build, WFC, Wayfarer/Silt + Signal history, and both `/spaceship/projects` forms. The original Spaceship title and root URL were verified.
+
+All **401 live HTTP checks passed**. See [GALLERY-QA.md](GALLERY-QA.md) for the verification history and [the deployed gallery capture](docs/gallery-live.jpg). Interactive GPU/audio/controller/touch gameplay was not revalidated by this migration. The move does not change gameplay code.
 
 ## Rollback
 
-If the account site fails before the second deployment, leave `spaceship/main` unchanged while fixing it. If the compatibility deployment fails, revert that migration commit normally in `spaceship`, allowing Pages to republish the previous working gallery and collection. Keep the new account site available during repair so links already shared there remain usable. Do not delete either repository or rewrite its history.
+If a later repair requires the previous gallery and collection layout, revert the compatibility migration commit normally in `spaceship`, allowing Pages to republish the previous site. Keep the new account site available during repair so links already shared there remain usable. Do not delete either repository or rewrite its history.

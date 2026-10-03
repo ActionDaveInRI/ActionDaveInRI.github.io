@@ -1,0 +1,157 @@
+{
+  "source_site": "https://hullwalker-eva.x-nihilo.chatgpt.site",
+  "source_project_id": "appgprj_6abc32e03f58819183e66216bc06649b",
+  "source_version": 3,
+  "source_commit": "0c7cee44007adef9393c3fd7c0116272525c0c91",
+  "exported_at": "2026-10-03",
+  "runtime_source_path": "dist",
+  "adaptation": "None; the complete tracked dist/ runtime is copied byte-for-byte.",
+  "screenshot_source": "Hullwalker-natural-EVA-motion.jpg",
+  "screenshot_version": 3,
+  "screenshot_method": "Actual v3 gameplay captured with the built-in Canvas compatibility renderer.",
+  "external_runtime_requests": false,
+  "preserved_source_commits": 3,
+  "source_history": "history/source-history.bundle",
+  "runtime_files": [
+    {
+      "path": "astronaut.js",
+      "source_path": "dist/astronaut.js",
+      "sha256": "d9c701df20f42f6d7862fc4c662549f22b798c9fd98203dae743cbc982a51114"
+    },
+    {
+      "path": "audio.js",
+      "source_path": "dist/audio.js",
+      "sha256": "cec68cc06ab89a92c7da6932dab2eecd9ebeec2e562912c092d8d9a862ea5ef9"
+    },
+    {
+      "path": "index.html",
+      "source_path": "dist/index.html",
+      "sha256": "13f0356305d1e327b0f8f3d75453b235b7c7d56d74fa7bad1e992b64a51d3621"
+    },
+    {
+      "path": "main.js",
+      "source_path": "dist/main.js",
+      "sha256": "1a4ee59d3ca9e59f69cc8f1297d115be7d1d237afc13d0cb460e28a9285cb231"
+    },
+    {
+      "path": "scene-kit.js",
+      "source_path": "dist/scene-kit.js",
+      "sha256": "826c9647f495dcfd98ce64c960d0bb9afa9980ab7491cdf72fbbe900c7323ff4"
+    },
+    {
+      "path": "software-renderer.js",
+      "source_path": "dist/software-renderer.js",
+      "sha256": "2ef361699637c5ee1a884a64e57520acd17f0e554e8929de1e1a7900e9625373"
+    },
+    {
+      "path": "style.css",
+      "source_path": "dist/style.css",
+      "sha256": "1e2627348eae959dbc28b317a4e6bc9d8de8c1f6aa67b4e6927fe1fd4e7d6716"
+    },
+    {
+      "path": "vendor/three/LICENSE",
+      "source_path": "dist/vendor/three/LICENSE",
+      "sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"
+    },
+    {
+      "path": "vendor/three/build/three.core.js",
+      "source_path": "dist/vendor/three/build/three.core.js",
+      "sha256": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20"
+    },
+    {
+      "path": "vendor/three/build/three.module.js",
+      "source_path": "dist/vendor/three/build/three.module.js",
+      "sha256": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a"
+    },
+    {
+      "path": "vendor/three/examples/jsm/controls/OrbitControls.js",
+      "source_path": "dist/vendor/three/examples/jsm/controls/OrbitControls.js",
+      "sha256": "b97879c748170baadeb3fb84cea1ffdf4674e283dc06042f34e2acb95a76042c"
+    },
+    {
+      "path": "vendor/three/examples/jsm/math/SimplexNoise.js",
+      "source_path": "dist/vendor/three/examples/jsm/math/SimplexNoise.js",
+      "sha256": "dd1f3c42c1bc9fa1b76c1c0796d352521accf0a3a95cc7d0caf479abc5a444a2"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/EffectComposer.js",
+      "source_path": "dist/vendor/three/examples/jsm/postprocessing/EffectComposer.js",
+      "sha256": "4b8c855f28eed2570bed898adc0ab89c585a8a281ecb6d905c09d00697f9f50a"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/GTAOPass.js",
+      "source_path": "dist/vendor/three/examples/jsm/postprocessing/GTAOPass.js",
+      "sha256": "855fd7953e81c1050a4abea8af4bfeb5ad9b6d879f793a9c650e3768aaec62a3"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/MaskPass.js",
+      "source_path": "dist/vendor/three/examples/jsm/postprocessing/MaskPass.js",
+      "sha256": "7cd08eee9d5d6f5578beaddbdcbe9c384f6873810af27f22ab7db3ceeb127aa3"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/OutputPass.js",
+      "source_path": "dist/vendor/three/examples/jsm/postprocessing/OutputPass.js",
+      "sha256": "f5b81c96e76b6b28b4b3ba8c41c4aeb982b1e03f3d82883242d951b2ab082fa2"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/Pass.js",
+      "source_path": "dist/vendor/three/examples/jsm/postprocessing/Pass.js",
+      "sha256": "444b409c235ead986893c472e720da1b779a56985c7d10b279c7944b52bd61c5"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/RenderPass.js",
+      "source_path": "dist/vendor/three/examples/jsm/postprocessing/RenderPass.js",
+      "sha256": "fd91229aacc5830e3984b0f2bdefcf566163ea028f4c1f1ab233fa6665a133ac"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/SSAARenderPass.js",
+      "source_path": "dist/vendor/three/examples/jsm/postprocessing/SSAARenderPass.js",
+      "sha256": "cd2b8e83b32e806091117dfbeff1f8f4e78df0175a4a3acd865b9989df1c420b"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/ShaderPass.js",
+      "source_path": "dist/vendor/three/examples/jsm/postprocessing/ShaderPass.js",
+      "sha256": "e2500a5913b26bbf5148ceaae644c6edcff06a18b01494ee37bf856353d2ab9d"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/TAARenderPass.js",
+      "source_path": "dist/vendor/three/examples/jsm/postprocessing/TAARenderPass.js",
+      "sha256": "9382601b054937b1e55459302a2f6031e576eb090de5aab7521b2e7bc39c8ba2"
+    },
+    {
+      "path": "vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js",
+      "source_path": "dist/vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js",
+      "sha256": "d92742959879b461f25348b2abddc7ca0d48527e7718340bcfa29fa771e2799a"
+    },
+    {
+      "path": "vendor/three/examples/jsm/shaders/CopyShader.js",
+      "source_path": "dist/vendor/three/examples/jsm/shaders/CopyShader.js",
+      "sha256": "a33057d5ac91c43304c186ac0e8816e62bb2ed471d3a00ff3018dfd5c0389718"
+    },
+    {
+      "path": "vendor/three/examples/jsm/shaders/GTAOShader.js",
+      "source_path": "dist/vendor/three/examples/jsm/shaders/GTAOShader.js",
+      "sha256": "d4b06ed5bbb7a177be6b0030986916f6f085721e2745e4632ab1773d02ca743c"
+    },
+    {
+      "path": "vendor/three/examples/jsm/shaders/LuminosityHighPassShader.js",
+      "source_path": "dist/vendor/three/examples/jsm/shaders/LuminosityHighPassShader.js",
+      "sha256": "5044f780b6e6cf863947f64c36fe1587132f7fbe395ada863cd1e5f0388dcf1e"
+    },
+    {
+      "path": "vendor/three/examples/jsm/shaders/OutputShader.js",
+      "source_path": "dist/vendor/three/examples/jsm/shaders/OutputShader.js",
+      "sha256": "353479f77a8d7e2629d49ccac9fc2f5dbfdda5442e0adf867b00377a2fcb0cb2"
+    },
+    {
+      "path": "vendor/three/examples/jsm/shaders/PoissonDenoiseShader.js",
+      "source_path": "dist/vendor/three/examples/jsm/shaders/PoissonDenoiseShader.js",
+      "sha256": "e01b574599d31ae3b9f08c6112da72c06bbd536ccbde094fd46e4bebe579e473"
+    },
+    {
+      "path": "world.js",
+      "source_path": "dist/world.js",
+      "sha256": "c1395b77250c2a0400ceaaba76a29b4036e6ac9f413b4fea3d1e4cc95a7fc8e1"
+    }
+  ]
+}

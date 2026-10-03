@@ -2,7 +2,7 @@
 
 [Open the screenshot gallery](https://actiondaveinri.github.io/)
 
-This is ActionDaveInRI’s main GitHub Pages website. The homepage displays screenshots, descriptions, and direct launch and source links for 22 games, apps and experiments. `projects.json` is the catalog; [PROJECTS.md](PROJECTS.md) is its generated directory.
+This is ActionDaveInRI’s main GitHub Pages website. The homepage displays screenshots, descriptions, and direct launch and source links for 23 games, apps and experiments. `projects.json` is the catalog; [PROJECTS.md](PROJECTS.md) is its generated directory.
 
 ## Repository layout
 
@@ -11,7 +11,7 @@ This is ActionDaveInRI’s main GitHub Pages website. The homepage displays scre
 - `scripts/`: gallery generation, release export and verification.
 - `versions.html`: the complete project directory.
 
-The collection includes First Light, Silt + Signal, Wayfarer, Star Cluster, Wreck Run, Bramblewild, Last Light, Wayfarer Pixel Study, Inkdrift, Blackpine, Breach Run and Island Three. Nebula Weave is preserved under `projects/nebula-weave/` outside the main gallery. Inkstar remains in Inkdrift’s archive.
+The collection includes First Light, Silt + Signal, Wayfarer, Hullwalker · EVA, Star Cluster, Wreck Run, Bramblewild, Last Light, Wayfarer Pixel Study, Inkdrift, Blackpine, Breach Run and Island Three. Nebula Weave is preserved under `projects/nebula-weave/` outside the main gallery. Inkstar remains in Inkdrift’s archive.
 
 [Spaceship](https://actiondaveinri.github.io/spaceship/) is the original spacecraft demo in its own [repository](https://github.com/ActionDaveInRI/spaceship). PETRI and the other projects already housed in dedicated repositories retain their own homes and launch URLs. The gallery links to those repositories directly.
 

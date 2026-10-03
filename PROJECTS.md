@@ -9,6 +9,7 @@ The repository root is the screenshot gallery at your main GitHub Pages address.
 | [First Light](https://actiondaveinri.github.io/projects/first-light/) | v0.10.2 | [ActionDaveInRI.github.io/projects/first-light](https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/tree/main/projects/first-light) |
 | [Silt + Signal](https://actiondaveinri.github.io/projects/silt-and-signal/) | v9 | [ActionDaveInRI.github.io/projects/silt-and-signal](https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/tree/main/projects/silt-and-signal) |
 | [Wayfarer](https://actiondaveinri.github.io/projects/wayfarer/) | v30 | [ActionDaveInRI.github.io/projects/wayfarer](https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/tree/main/projects/wayfarer) |
+| [Hullwalker · EVA](https://actiondaveinri.github.io/projects/hullwalker/) | v3 | [ActionDaveInRI.github.io/projects/hullwalker](https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/tree/main/projects/hullwalker) |
 | [Star Cluster · Geographic Explorer](https://actiondaveinri.github.io/projects/star-cluster/) | v11 | [ActionDaveInRI.github.io/projects/star-cluster](https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/tree/main/projects/star-cluster) |
 | [Wreck Run](https://actiondaveinri.github.io/projects/wreck-run/) | v1 | [ActionDaveInRI.github.io/projects/wreck-run](https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/tree/main/projects/wreck-run) |
 | [Bramblewild](https://actiondaveinri.github.io/projects/bramblewild/) | v19 | [ActionDaveInRI.github.io/projects/bramblewild](https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/tree/main/projects/bramblewild) |
@@ -37,6 +38,6 @@ Recovered Sites releases include source provenance in their own folders. Publish
 
 First Light v0.10.2 is in [projects/first-light/](projects/first-light/), including editable source and tests. Use its Export save / Import save feature to move progress between hosts.
 
-15 of 22 gallery projects have real screenshots.
+16 of 23 gallery projects have real screenshots.
 
 See [gallery verification](GALLERY-QA.md) and [release instructions](RELEASING.md).

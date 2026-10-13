@@ -7,72 +7,160 @@ import {makeWorld,closestSurface} from './world.js';
 import {createAstronaut} from './astronaut.js';
 import {SoftwareRenderer} from './software-renderer.js';
 import {EVAAudio} from './audio.js';
+import {createTether,connectTether,releaseTether,stepTether,cableClear} from './tether.js';
+import {createTetherRig} from './tether-rig.js';
 const $=id=>document.getElementById(id),V=(x=0,y=0,z=0)=>new T.Vector3(x,y,z),UP=V(0,1,0);const canvas=$('scene');
 let renderer;try{renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});}catch(e){renderer=new SoftwareRenderer({canvas});$('quality').textContent='COMPAT';$('quality').title='Compatibility graphics: WebGL is unavailable in this browser.';}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.outputColorSpace=T.SRGBColorSpace;
 const scene=new T.Scene();scene.background=new T.Color(0x020509);const camera=new T.PerspectiveCamera(55,innerWidth/innerHeight,.08,4000);const world=makeWorld(scene);const astronaut=createAstronaut();astronaut.group.traverse(o=>{if(o.isMesh)o.userData.animated=true;});scene.add(astronaut.group);const composer=renderer.software?null:new EffectComposer(renderer);if(composer){composer.addPass(new RenderPass(scene,camera));composer.addPass(new UnrealBloomPass(new T.Vector2(innerWidth,innerHeight),.28,.48,1.05));composer.addPass(new OutputPass());}if(renderer.software)world.enableSoftware();
 const audio=new EVAAudio();const state={pos:V(0,.02,12),normal:UP.clone(),forward:V(0,0,-1),velocity:V(),groundVelocity:V(),moveIntent:V(),gazeDirection:V(0,0,-1),turnRate:0,poseEpoch:0,hull:world.main,mode:'attached',airTime:0,checkpoint:V(0,.02,12),checkpointNormal:UP.clone(),checkpointHull:world.main,stage:0,active:false,paused:false,complete:false,charge:0,charging:false,walkSpeed:0,rcs:0,downThrust:false,braking:false,muted:false,auto:false,autoTime:0,launches:0,landings:0};
+const tether=createTether(),tetherRig=createTetherRig(scene);
+let touchReel=0,anchorCandidate=null,lastSnagNotice=-10;
+state.trial=false;state.trialPhase=0;
 const bodyForward=V(0,0,-1);const visualQ=new T.Quaternion(),basis=new T.Matrix4(),keys=new Set();let yaw=0,pitch=.35,clock=new T.Clock(),time=0,toastTimer=0,drag=null,joy={x:0,y:0},touchBrake=false,touchDown=false,gameButtons={},landing=null,quality=true,autoStep=0,frameMs=16.7,completionAudioUntil=0,lookActiveUntil=0,bodyTurnVelocity=0,lastTurnSign=1;
 const ring=new T.Mesh(new T.RingGeometry(.42,.48,48),new T.MeshBasicMaterial({color:0x96ffdd,side:T.DoubleSide,transparent:true,opacity:.85,depthWrite:false}));scene.add(ring);const ray=new T.Raycaster();const pathGeo=new T.BufferGeometry().setFromPoints(Array.from({length:33},()=>V()));const path=new T.Line(pathGeo,new T.LineDashedMaterial({color:0x99ffdc,dashSize:.3,gapSize:.25,transparent:true,opacity:.45,depthWrite:false}));scene.add(path);path.visible=false;
 const rayBoxes=world.colliders.map(h=>{const mesh=new T.Mesh(new T.BoxGeometry(h.half.x*2,h.half.y*2,h.half.z*2),new T.MeshBasicMaterial({visible:false}));mesh.position.copy(h.center);mesh.userData.hull=h;mesh.updateMatrixWorld();return mesh;});
 function notify(text,duration=4000){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),duration)}
-function reset(){state.poseEpoch++;state.groundVelocity.set(0,0,0);state.moveIntent.set(0,0,0);bodyTurnVelocity=0;lookActiveUntil=0;keys.clear();touchDown=touchBrake=false;state.rcs=0;state.downThrust=false;state.braking=false;astronaut.setJets(0);state.pos.set(0,.03,12);state.normal.copy(UP);state.forward.set(0,0,-1);bodyForward.copy(state.forward);state.velocity.set(0,0,0);state.hull=world.main;state.mode='attached';state.stage=0;state.complete=false;state.checkpoint.copy(state.pos);state.checkpointNormal.copy(UP);state.checkpointHull=world.main;state.airTime=0;state.charging=false;state.autoTime=0;state.launches=0;state.landings=0;autoStep=0;yaw=0;pitch=.35;world.nodes.forEach(n=>{n.done=false;n.screen.material.color.setHex(0xff9f4f);n.ring.material.color.setHex(0xffc37e)});$('complete').classList.add('hidden');updateMission();}
-function start(watch=false){audio.start();state.active=true;state.paused=false;state.auto=watch;state.autoTime=0;autoStep=0;$('intro').classList.add('hidden');document.body.classList.remove('preview');reset();notify(watch?'GUIDED EVA · Move or drag at any time to take control.':'Walk the hull. Your boots follow its surface.',5000)}
-function pause(value){if(!state.active)return;completionAudioUntil=0;if(!value&&!state.muted)audio.start();state.groundVelocity.set(0,0,0);state.moveIntent.set(0,0,0);bodyTurnVelocity=0;state.paused=value;keys.clear();joy.x=joy.y=0;touchDown=touchBrake=false;state.rcs=0;state.downThrust=false;state.braking=false;astronaut.setJets(0);state.charging=false;$('menu').classList.toggle('hidden',!value);$('pause').textContent=value?'▶':'Ⅱ';audio.update({paused:value});}
+function reset(){releaseTether(tether);tether.power=100;touchReel=0;state.trial=false;state.trialPhase=0;astronaut.resetLanding();state.poseEpoch++;state.groundVelocity.set(0,0,0);state.moveIntent.set(0,0,0);bodyTurnVelocity=0;lookActiveUntil=0;keys.clear();touchDown=touchBrake=false;state.rcs=0;state.downThrust=false;state.braking=false;astronaut.setJets(0);state.pos.set(0,.03,12);state.normal.copy(UP);state.forward.set(0,0,-1);bodyForward.copy(state.forward);state.velocity.set(0,0,0);state.hull=world.main;state.mode='attached';state.stage=0;state.complete=false;state.checkpoint.copy(state.pos);state.checkpointNormal.copy(UP);state.checkpointHull=world.main;state.airTime=0;state.charging=false;state.autoTime=0;state.launches=0;state.landings=0;autoStep=0;yaw=0;pitch=.35;world.nodes.forEach(n=>{n.done=false;n.screen.material.color.setHex(0xff9f4f);n.ring.material.color.setHex(0xffc37e)});$('complete').classList.add('hidden');updateMission();}
+function start(watch=false){$('restart').textContent='RESTART MISSION';$('menu').classList.add('hidden');$('pause').textContent='Ⅱ';audio.start();state.active=true;state.paused=false;state.auto=watch;state.autoTime=0;autoStep=0;$('intro').classList.add('hidden');document.body.classList.remove('preview');reset();notify(watch?'GUIDED EVA · Move or drag at any time to take control.':'Walk the hull. Your boots follow its surface.',5000)}
+function pause(value){if(!state.active)return;completionAudioUntil=0;if(!value&&!state.muted)audio.start();state.groundVelocity.set(0,0,0);state.moveIntent.set(0,0,0);bodyTurnVelocity=0;state.paused=value;keys.clear();joy.x=joy.y=0;touchDown=touchBrake=false;touchReel=0;state.rcs=0;state.downThrust=false;state.braking=false;astronaut.setJets(0);state.charging=false;$('menu').classList.toggle('hidden',!value);$('pause').textContent=value?'▶':'Ⅱ';audio.update({paused:value});}
 function takeControl(){if(state.auto){state.auto=false;notify('Manual control. R recalls you to safe footing.',2500)}}
-function updateMission(){const texts=['Bring the power bus online.','Restore the detached relay.','Return to the Morrow.','EVA complete.'];const subs=['Follow the amber service line. Walk up to the power node.','Push off across the gap. The uplink is on the array’s right side.','Cross back to the main hull and enter the airlock.','The hull is yours to explore.'];$('task').textContent=texts[state.stage];$('tasksub').textContent=subs[state.stage];for(let i=0;i<3;i++){$('step'+i).className=i<state.stage?'done':i===state.stage?'active':'';}}
-function service(){if(!state.active||state.paused)return;const n=world.nodes[state.stage];if(!n)return;if(state.mode!=='attached'||state.pos.distanceTo(n.position)>2.8){notify('Get within 2.8 m of the service node, with boots attached.',2500);return;}n.done=true;n.screen.material.color.setHex(0x8effcd);n.ring.material.color.setHex(0x8effcd);state.stage++;audio.event(state.stage===3?'win':'service');updateMission();if(state.stage===1){notify('Power restored. Cross to the detached array.',4200);}if(state.stage===2){notify('Signal acquired. Make your way back to the airlock.',4500);}if(state.stage===3){completionAudioUntil=performance.now()+2600;state.complete=true;state.auto=false;state.paused=true;$('complete').classList.remove('hidden');}}
-function recall(){state.poseEpoch++;state.groundVelocity.set(0,0,0);bodyTurnVelocity=0;touchDown=false;state.rcs=0;state.downThrust=false;astronaut.setJets(0);state.pos.copy(state.checkpoint);state.normal.copy(state.checkpointNormal);state.hull=state.checkpointHull;state.velocity.set(0,0,0);state.mode='attached';state.airTime=0;state.charging=false;state.forward.projectOnPlane(state.normal);if(state.forward.length()<.1)state.forward.set(0,0,-1).projectOnPlane(state.normal);state.forward.normalize();bodyForward.copy(state.forward);audio.event('recall');notify('Safety recall · last secure footing',2500);}
-function attach(hit){state.poseEpoch++;state.groundVelocity.set(0,0,0);state.rcs=0;state.downThrust=false;astronaut.setJets(0);const turn=new T.Quaternion().setFromUnitVectors(state.normal,hit.normal);state.forward.applyQuaternion(turn).projectOnPlane(hit.normal).normalize();bodyForward.applyQuaternion(turn).projectOnPlane(hit.normal).normalize();state.pos.copy(hit.point).addScaledVector(hit.normal,.035);state.normal.copy(hit.normal);state.hull=hit.hull;state.velocity.set(0,0,0);state.mode='attached';state.landings++;state.checkpoint.copy(state.pos);state.checkpointNormal.copy(state.normal);state.checkpointHull=state.hull;audio.event('attach');notify('MAGNETS LOCKED · '+hit.hull.name,2200);}
+function updateMission(){
+ if(state.trial){
+  const titles=['Clip in. Push off.','Let the cable catch.','An arc, powered by your push.','Release. Keep your momentum.','Boots down. Try another arc.'];
+  const descriptions=['Already clipped to A1. Hold Space, then release to push out past the edge.','Coast until the line is taut. WASD adds thrust; Shift brakes.','Z reels in · X pays out. Press G to release into free drift.','Hold C to approach the hull. Your boots latch on contact.','A harder touchdown bends the knees more. G clips to a nearby clear anchor.'];
+  $('task').textContent=titles[state.trialPhase];$('tasksub').textContent=descriptions[state.trialPhase];
+  ['01 · PUSH','02 · SWING','03 · LAND'].forEach((label,i)=>{const el=$('step'+i);el.textContent=label;const step=state.trialPhase<2?0:state.trialPhase<3?1:2;el.className=i<step?'done':i===step?'active':'';});
+  return;
+ }
+ ['01 · POWER','02 · RELAY','03 · RETURN'].forEach((label,i)=>$('step'+i).textContent=label);
+const texts=['Bring the power bus online.','Restore the detached relay.','Return to the Morrow.','EVA complete.'];const subs=['Follow the amber service line. Walk up to the power node.','Push off across the gap. The uplink is on the array’s right side.','Cross back to the main hull and enter the airlock.','The hull is yours to explore.'];$('task').textContent=texts[state.stage];$('tasksub').textContent=subs[state.stage];for(let i=0;i<3;i++){$('step'+i).className=i<state.stage?'done':i===state.stage?'active':'';}}
+function service(){if(!state.active||state.paused)return;if(state.trial){notify('Tether practice · use G to clip / release, C to land.',2500);return;}const n=world.nodes[state.stage];if(!n)return;if(state.mode!=='attached'||state.pos.distanceTo(n.position)>2.8){notify('Get within 2.8 m of the service node, with boots attached.',2500);return;}n.done=true;n.screen.material.color.setHex(0x8effcd);n.ring.material.color.setHex(0x8effcd);state.stage++;audio.event(state.stage===3?'win':'service');updateMission();if(state.stage===1){notify('Power restored. Cross to the detached array.',4200);}if(state.stage===2){notify('Signal acquired. Make your way back to the airlock.',4500);}if(state.stage===3){completionAudioUntil=performance.now()+2600;state.complete=true;state.auto=false;state.paused=true;$('complete').classList.remove('hidden');}}
+function recall(){if(state.trial){startTetherTrial();notify('TETHER TRIAL RESET · Clipped and ready to push off.',2800);return;}releaseTether(tether);touchReel=0;astronaut.resetLanding();state.poseEpoch++;state.groundVelocity.set(0,0,0);bodyTurnVelocity=0;touchDown=false;state.rcs=0;state.downThrust=false;astronaut.setJets(0);state.pos.copy(state.checkpoint);state.normal.copy(state.checkpointNormal);state.hull=state.checkpointHull;state.velocity.set(0,0,0);state.mode='attached';state.airTime=0;state.charging=false;state.forward.projectOnPlane(state.normal);if(state.forward.length()<.1)state.forward.set(0,0,-1).projectOnPlane(state.normal);state.forward.normalize();bodyForward.copy(state.forward);audio.event('recall');notify('Safety recall · last secure footing',2500);}
+function attach(hit){const impact=Math.max(0,-state.velocity.dot(hit.normal));state.poseEpoch++;astronaut.land({speed:impact});state.groundVelocity.set(0,0,0);state.rcs=0;state.downThrust=false;astronaut.setJets(0);const turn=new T.Quaternion().setFromUnitVectors(state.normal,hit.normal);state.forward.applyQuaternion(turn).projectOnPlane(hit.normal).normalize();bodyForward.applyQuaternion(turn).projectOnPlane(hit.normal).normalize();state.pos.copy(hit.point).addScaledVector(hit.normal,.035);state.normal.copy(hit.normal);state.hull=hit.hull;const contactRight=new T.Vector3().crossVectors(bodyForward,state.normal).normalize();basis.makeBasis(contactRight,state.normal,bodyForward.clone().negate());visualQ.setFromRotationMatrix(basis);astronaut.group.quaternion.copy(visualQ);state.velocity.set(0,0,0);state.mode='attached';state.landings++;state.checkpoint.copy(state.pos);state.checkpointNormal.copy(state.normal);state.checkpointHull=state.hull;audio.event('attach');if(state.trial&&state.trialPhase>=3){state.trialPhase=4;updateMission();}notify('MAGNETS LOCKED · '+hit.hull.name,2200);}
 function cameraDirection(){const f=state.forward.clone().applyAxisAngle(state.normal,yaw);return f.normalize();}
-function launch(target=landing,amount=state.charge){if(state.mode!=='attached'||!state.active||state.paused)return;const strength=Math.min(1,Math.max(.2,amount));if(target&&target.distance<48&&target.distance>3){const aim=target.point.clone().addScaledVector(target.normal,.22);state.velocity.copy(aim).sub(state.pos).normalize().multiplyScalar(4.5+strength*3.5);}else{const f=cameraDirection();state.velocity.copy(f).multiplyScalar(3+strength*3.5).addScaledVector(state.normal,1.8+strength*2.6);}
- state.launchHull=state.hull;state.clearedLaunchHull=false;state.pos.addScaledVector(state.normal,.3);state.mode='floating';state.airTime=0;state.charging=false;state.launches++;audio.event('detach');notify('FREE DRIFT · C thrusts to hull · Shift brakes · R recalls',2800);}
+function launch(target=landing,amount=state.charge){if(state.mode!=='attached'||!state.active||state.paused)return;const strength=Math.min(1,Math.max(.2,amount));if(tether.anchor){
+ const radial=harnessPosition().sub(tether.anchor.position).normalize();
+ let tangent=cameraDirection().projectOnPlane(radial);
+ if(tangent.lengthSq()<.02)tangent=new T.Vector3().crossVectors(state.normal,radial);
+ tangent.normalize().multiplyScalar(3+strength*3.5).addScaledVector(state.normal,.9+strength*.6);
+ state.velocity.copy(tangent);
+ }else if(target&&target.distance<48&&target.distance>3){const aim=target.point.clone().addScaledVector(target.normal,.22);state.velocity.copy(aim).sub(state.pos).normalize().multiplyScalar(4.5+strength*3.5);}else{const f=cameraDirection();state.velocity.copy(f).multiplyScalar(3+strength*3.5).addScaledVector(state.normal,1.8+strength*2.6);}
+ state.launchHull=state.hull;state.clearedLaunchHull=false;state.pos.addScaledVector(state.normal,.3);state.mode='floating';state.airTime=0;state.charging=false;state.launches++;audio.event('detach');if(state.trial){state.trialPhase=1;updateMission();}notify(tether.anchor?'CLIPPED · Let the cable catch · G releases into free drift':'FREE DRIFT · C thrusts to hull · Shift brakes · R recalls',3200);}
 function beginCharge(){if(state.mode==='attached'&&state.active&&!state.paused){state.charging=true;state.charge=0;}}
 function endCharge(){if(state.charging){launch();state.charging=false;}}
-function input(dt){let x=(keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0)+joy.x,y=(keys.has('KeyW')?1:0)-(keys.has('KeyS')?1:0)-joy.y;let brake=keys.has('ShiftLeft')||keys.has('ShiftRight')||touchBrake;let down=keys.has('KeyC')||touchDown;
- const gp=navigator.getGamepads?.();const pad=gp&&Array.from(gp).find(p=>p?.connected);if(pad){const dead=v=>Math.abs(v)<.14?0:(Math.abs(v)-.14)/.86*Math.sign(v);x+=dead(pad.axes[0]||0);y-=dead(pad.axes[1]||0);const rx=dead(pad.axes[2]||0),ry=dead(pad.axes[3]||0);if(Math.abs(x)+Math.abs(y)+Math.abs(rx)+Math.abs(ry)>.15)takeControl();if(Math.abs(rx)+Math.abs(ry)>.03)lookActiveUntil=time+.85;yaw-=rx*dt*2.2;pitch=T.MathUtils.clamp(pitch+ry*dt*1.4,-.6,1.2);brake||=pad.buttons[1]?.pressed;const hullTrigger=pad.buttons[6]?.pressed||(pad.buttons[6]?.value||0)>.2;down||=hullTrigger;if(hullTrigger)takeControl();for(const [b,act] of [[2,service],[3,recall],[9,()=>pause(!state.paused)]]){const down=pad.buttons[b]?.pressed;if(down&&!gameButtons[b])act();gameButtons[b]=down;}const pushDown=pad.buttons[0]?.pressed;if(pushDown&&!gameButtons[0]){takeControl();beginCharge()}if(!pushDown&&gameButtons[0])endCharge();gameButtons[0]=pushDown;}
- if(down)takeControl();const len=Math.hypot(x,y);if(len>1){x/=len;y/=len}return {x,y,brake,down};}
+function input(dt){let x=(keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0)+joy.x,y=(keys.has('KeyW')?1:0)-(keys.has('KeyS')?1:0)-joy.y;let brake=keys.has('ShiftLeft')||keys.has('ShiftRight')||touchBrake;let down=keys.has('KeyC')||touchDown;let reel=(keys.has('KeyZ')?1:0)-(keys.has('KeyX')?1:0)+touchReel;
+ const gp=navigator.getGamepads?.();const pad=gp&&Array.from(gp).find(p=>p?.connected);if(pad){const dead=v=>Math.abs(v)<.14?0:(Math.abs(v)-.14)/.86*Math.sign(v);x+=dead(pad.axes[0]||0);y-=dead(pad.axes[1]||0);const rx=dead(pad.axes[2]||0),ry=dead(pad.axes[3]||0);if(Math.abs(x)+Math.abs(y)+Math.abs(rx)+Math.abs(ry)>.15)takeControl();if(Math.abs(rx)+Math.abs(ry)>.03)lookActiveUntil=time+.85;yaw-=rx*dt*2.2;pitch=T.MathUtils.clamp(pitch+ry*dt*1.4,-.6,1.2);brake||=pad.buttons[1]?.pressed;const hullTrigger=pad.buttons[6]?.pressed||(pad.buttons[6]?.value||0)>.2;down||=hullTrigger;if(hullTrigger)takeControl();for(const [b,act] of [[2,service],[3,recall],[5,toggleTether],[9,()=>pause(!state.paused)]]){const down=pad.buttons[b]?.pressed;if(down&&!gameButtons[b])act();gameButtons[b]=down;}const pushDown=pad.buttons[0]?.pressed;if(pushDown&&!gameButtons[0]){takeControl();beginCharge()}if(!pushDown&&gameButtons[0])endCharge();gameButtons[0]=pushDown;reel+=(pad.buttons[4]?.pressed?1:0)-(pad.buttons[7]?.pressed?1:0);}
+ if(down)takeControl();const len=Math.hypot(x,y);if(len>1){x/=len;y/=len}return {x,y,brake,down,reel:T.MathUtils.clamp(reel,-1,1)};}
 function walk(direction,speed,dt){const oldNormal=state.normal.clone();const candidate=state.pos.clone().addScaledVector(direction,speed*dt);const hit=closestSurface(state.hull,candidate);state.pos.copy(hit.point).addScaledVector(hit.normal,.035);const q=new T.Quaternion().setFromUnitVectors(oldNormal,hit.normal);state.forward.applyQuaternion(q).projectOnPlane(hit.normal).normalize();bodyForward.applyQuaternion(q).projectOnPlane(hit.normal).normalize();state.normal.copy(hit.normal);state.walkSpeed=speed;
  state.moveIntent.copy(direction).applyQuaternion(q).projectOnPlane(state.normal).normalize();state.groundVelocity.applyQuaternion(q);
 
  if(hit.normal.dot(oldNormal)>.99){state.checkpoint.copy(state.pos);state.checkpointNormal.copy(state.normal);state.checkpointHull=state.hull;}}
-function simulate(dt){const inp=input(dt);state.walkSpeed=0;state.moveIntent.set(0,0,0);state.rcs=0;state.downThrust=false;state.braking=false;if(!state.active||state.paused)return;if(state.auto){autoEVA(dt);return;}const f=cameraDirection().projectOnPlane(state.normal).normalize(),r=new T.Vector3().crossVectors(f,state.normal).normalize(),dir=f.multiplyScalar(inp.y).addScaledVector(r,inp.x);const moving=dir.length()>.03;
+// The physical cable attaches at the suit waist, not at the boot pivot.
+function harnessPosition(){return state.pos.clone().addScaledVector(state.normal,1.05);}
+function nearestAnchor(){
+ const harness=harnessPosition();
+ return tetherRig.anchors.filter(a=>a.position.distanceTo(harness)<=14&&cableClear(a.position,harness,world.colliders))
+  .sort((a,b)=>a.position.distanceToSquared(harness)-b.position.distanceToSquared(harness))[0]||null;
+}
+function toggleTether(){
+ if(!state.active||state.paused)return;
+ takeControl();
+ if(tether.anchor){
+  releaseTether(tether);touchReel=0;
+  if(state.trial&&state.mode==='floating'){state.trialPhase=3;updateMission();}
+  notify('CABLE RELEASED · Your current velocity is unchanged.',3000);
+ }else{
+  const anchor=nearestAnchor();
+  if(!anchor){notify('No clear anchor within 14 m. Move closer to a glowing eyelet.',3200);return;}
+  connectTether(tether,anchor,harnessPosition());
+  notify('CLIPPED · '+anchor.name+' · Push off to start an arc.',3200);
+ }
+}
+function startTetherTrial(){
+ start(false);state.trial=true;state.trialPhase=0;
+ state.pos.set(7.1,.035,17.8);state.checkpoint.copy(state.pos);
+ state.forward.set(1,0,0);bodyForward.copy(state.forward);yaw=0;pitch=.28;
+ connectTether(tether,tetherRig.anchors[0],harnessPosition());
+ updateMission();$('restart').textContent='RESTART TETHER TRIAL';
+ notify('ANCHOR A1 CLIPPED · Hold Space, then release to push past the edge.',5000);
+}
+function snag(message){
+ tether.snagged=true;
+ if(time-lastSnagNotice>3){notify(message,2800);lastSnagNotice=time;}
+}
+function simulate(dt){
+ const inp=input(dt);state.walkSpeed=0;state.moveIntent.set(0,0,0);state.rcs=0;state.downThrust=false;state.braking=false;
+ if(!state.active||state.paused)return;
+ if(state.auto){autoEVA(dt);return;}
+ const f=cameraDirection().projectOnPlane(state.normal).normalize(),r=new T.Vector3().crossVectors(f,state.normal).normalize();
+ const dir=f.multiplyScalar(inp.y).addScaledVector(r,inp.x),moving=dir.length()>.03;
+ tether.snagged=false;
  if(state.mode==='attached'){
+   const old={pos:state.pos.clone(),normal:state.normal.clone(),forward:state.forward.clone(),body:bodyForward.clone(),checkpoint:state.checkpoint.clone(),checkpointNormal:state.checkpointNormal.clone()};
    const targetVelocity=dir.clone().multiplyScalar(inp.brake?2.8:1.5);
    state.groundVelocity.lerp(targetVelocity,1-Math.exp(-dt*(moving?9:16))).projectOnPlane(state.normal);
    if(state.groundVelocity.length()>.025)walk(state.groundVelocity.clone().normalize(),state.groundVelocity.length(),dt);
    else state.groundVelocity.set(0,0,0);
+   if(tether.anchor){
+     const harness=harnessPosition(),distance=harness.distanceTo(tether.anchor.position);
+     // Planted boots resist the winch; it can take up slack or pay out here.
+     stepTether(tether,harness.clone(),V(),dt,inp.reel>0&&distance>=tether.length-.06?0:inp.reel);
+     if(distance>tether.length+.04||!cableClear(tether.anchor.position,harness,world.colliders)){
+       state.pos.copy(old.pos);state.normal.copy(old.normal);state.forward.copy(old.forward);bodyForward.copy(old.body);
+       state.checkpoint.copy(old.checkpoint);state.checkpointNormal.copy(old.checkpointNormal);
+       state.groundVelocity.set(0,0,0);state.walkSpeed=0;state.moveIntent.set(0,0,0);
+       snag('CABLE LIMIT · X pays out · G releases / re-anchors.');
+     }
+   }
  }else{
    if(moving)state.moveIntent.copy(dir).normalize();
-   state.airTime+=dt;
    state.downThrust=!!inp.down;state.braking=!!inp.brake;
-   // Hull-relative thrust, including underneath the ship. Preserve real velocity.
-   // Damping sideways drift makes the hold-to-return control forgiving near edges.
-   if(inp.down){
-     const contact=closestSurface(state.hull,state.pos);
-     const toward=contact.point.clone().sub(state.pos).normalize();
-     const inward=state.velocity.dot(toward);
-     const tangent=state.velocity.clone().addScaledVector(toward,-inward);
-     state.velocity.addScaledVector(tangent,Math.exp(-dt*1.6)-1);
-     const targetSpeed=Math.min(4,1.1+contact.distance*1.25);
-     state.velocity.addScaledVector(toward,T.MathUtils.clamp(targetSpeed-inward,-6.8*dt,6.8*dt));
-   }
-   if(moving)state.velocity.addScaledVector(dir,dt*2.3);
-   if(inp.brake)state.velocity.multiplyScalar(Math.exp(-dt*2.4));
-   state.rcs=inp.down?1:inp.brake&&state.velocity.length()>.03?.85:moving?.65:0;
-   state.velocity.clampLength(0,10);state.pos.addScaledVector(state.velocity,dt);
-   if(state.launchHull&&closestSurface(state.launchHull,state.pos).distance>1)state.clearedLaunchHull=true;
-   if(state.airTime>.12){
-     let best=null;
-     for(const h of world.colliders){
-       const hit=closestSurface(h,state.pos);
-       const returning=inp.down&&h===state.hull&&state.velocity.dot(hit.normal)<0;
-       if(h===state.launchHull&&!state.clearedLaunchHull&&!returning)continue;
-       if(state.airTime<.42&&!returning)continue;
-       if(hit.distance<(returning?.30:.58)&&(!best||hit.distance<best.distance))best=hit;
+   // Substeps bound high-speed catches and hull contact at low display rates.
+   const count=Math.max(1,Math.ceil(dt*120)),h=dt/count;
+   for(let i=0;i<count&&state.mode==='floating';i++){
+     const previous=state.pos.clone();state.airTime+=h;
+     if(inp.down){
+       const contact=closestSurface(state.hull,state.pos),toward=contact.point.clone().sub(state.pos).normalize();
+       const inward=state.velocity.dot(toward),tangent=state.velocity.clone().addScaledVector(toward,-inward);
+       state.velocity.addScaledVector(tangent,Math.exp(-h*1.6)-1);
+       const targetSpeed=Math.min(4,1.1+contact.distance*1.25);
+       state.velocity.addScaledVector(toward,T.MathUtils.clamp(targetSpeed-inward,-6.8*h,6.8*h));
      }
-     if(best)attach(best);
+     if(moving)state.velocity.addScaledVector(dir,h*2.3);
+     if(inp.brake)state.velocity.multiplyScalar(Math.exp(-h*2.4));
+     state.velocity.clampLength(0,10);state.pos.addScaledVector(state.velocity,h);
+     if(tether.anchor){
+       const harness=harnessPosition();stepTether(tether,harness,state.velocity,h,inp.reel);
+       state.pos.copy(harness).addScaledVector(state.normal,-1.05);
+       if(!cableClear(tether.anchor.position,harness,world.colliders)){
+         state.pos.copy(previous);state.velocity.set(0,0,0);
+         // A straight tether cannot pass through an edge. Keep the last clear pose.
+         tether.length=Math.max(tether.length,harnessPosition().distanceTo(tether.anchor.position));
+         snag('CABLE SNAG · Steer clear, pay out, or G to release.');
+       }
+       if(tether.taut&&state.trial&&state.trialPhase<2){state.trialPhase=2;updateMission();}
+     }
+     if(state.launchHull&&closestSurface(state.launchHull,state.pos).distance>1)state.clearedLaunchHull=true;
+     if(state.airTime>.12){
+       let best=null;
+       for(const hull of world.colliders){
+         const hit=closestSurface(hull,state.pos),signed=state.pos.clone().sub(hit.point).dot(hit.normal);
+         const approaching=state.velocity.dot(hit.normal)<-.01;
+         const returning=inp.down&&hull===state.hull&&approaching;
+         if(hull===state.launchHull&&!state.clearedLaunchHull&&!returning&&signed>=0)continue;
+         if(signed<.18&&approaching&&(!best||signed<best.signed))best={...hit,signed};
+       }
+       if(best){
+         attach(best);
+         if(tether.anchor&&(!cableClear(tether.anchor.position,harnessPosition(),world.colliders)||harnessPosition().distanceTo(tether.anchor.position)>tether.length+.06)){
+           // Reorientation at a corner must not drag the cable through the hull.
+           releaseTether(tether);notify('MAGNETS LOCKED · Cable released at blocked corner.',2800);
+         }
+       }
+     }
    }
+   state.rcs=state.mode==='floating'?(inp.down?1:inp.brake&&state.velocity.length()>.03?.85:moving?.65:0):0;
    if(state.pos.distanceTo(state.checkpoint)>95)recall();
  }
  if(state.charging)state.charge=Math.min(1,state.charge+dt*.8);
@@ -121,11 +209,11 @@ function target(){ray.setFromCamera(new T.Vector2(0,0),camera);const hits=ray.in
  if(!landing&&state.mode==='attached'&&state.stage===1&&state.pos.z<-7){const p=V(2,1.5,-28);const v=p.clone().sub(camera.position).normalize();const look=camera.getWorldDirection(V());if(v.dot(look)>.88)landing={point:p,normal:UP.clone(),distance:p.distanceTo(state.pos),hull:world.relay};}
  ring.visible=!!landing&&state.active&&!state.paused;path.visible=ring.visible&&state.charging;
  if(landing){ring.position.copy(landing.point).addScaledVector(landing.normal,.055);ring.quaternion.setFromUnitVectors(V(0,0,1),landing.normal);ring.scale.setScalar(1+Math.sin(time*3)*.07);$('landingHint').textContent=(state.mode==='attached'?'LANDING ':'SURFACE ')+landing.distance.toFixed(1)+' m';if(path.visible){const a=path.geometry.attributes.position;for(let i=0;i<33;i++){const p=state.pos.clone().addScaledVector(state.normal,.4).lerp(landing.point,i/32);a.setXYZ(i,p.x,p.y,p.z)}a.needsUpdate=true;path.computeLineDistances();}}else{$('landingHint').textContent=state.mode==='floating'?'C TO HULL · SHIFT TO BRAKE':'';}}
-function hud(){$('sound').title=state.muted?'Sound muted':audio.context?.state==='running'?'Sound enabled':'Sound enabled · starts on interaction';const downButton=$('down');downButton.disabled=state.mode!=='floating'||state.paused;downButton.classList.toggle('firing',state.downThrust);downButton.setAttribute('aria-pressed',String(state.downThrust));downButton.querySelector('small').textContent=state.mode==='attached'?'BOOTS ATTACHED':state.downThrust?'THRUSTING · RELEASE TO COAST':'HOLD C / LT';document.body.classList.toggle('floating',state.mode==='floating');$('mode').textContent=state.mode==='attached'?'MAGNETIC CONTACT':'FREE DRIFT';$('surfaceName').textContent=state.mode==='attached'?state.hull.name:(state.downThrust?'RCS TO HULL · '+state.hull.name:'RCS ONLINE · AUTO-LATCH ARMED');$('velocity').textContent=(state.mode==='floating'?state.velocity.length():state.walkSpeed).toFixed(1);$('charge').classList.toggle('visible',state.charging);$('charge').querySelector('i').style.width=state.charge*100+'%';const n=world.nodes[state.stage];const label=$('targetLabel');if(n&&state.active){const d=state.pos.distanceTo(n.position);$('distance').textContent=d.toFixed(0)+' m';const p=n.position.clone().addScaledVector(n.normal,1).project(camera);const visible=p.z<1&&p.x>-1&&p.x<1&&p.y>-1&&p.y<1;label.style.display=visible?'block':'none';label.style.left=(p.x*.5+.5)*innerWidth+'px';label.style.top=(-p.y*.5+.5)*innerHeight+'px';label.textContent='◇ '+n.label+' / '+d.toFixed(0)+'m'+(d<2.8?' · E TO SERVICE':'');$('interact').textContent=d<2.8?'SERVICE ✓':'SERVICE';}else{label.style.display='none';$('distance').textContent='—';}}
-function animate(){requestAnimationFrame(animate);const raw=clock.getDelta(),dt=Math.min(raw,.04);frameMs=frameMs*.98+raw*1000*.02;time+=dt;simulate(dt);updateFacing(dt);world.update(time,dt);const right=new T.Vector3().crossVectors(bodyForward,state.normal).normalize();basis.makeBasis(right,state.normal,bodyForward.clone().negate());const q=new T.Quaternion().setFromRotationMatrix(basis);visualQ.slerp(q,1-Math.exp(-dt*10));astronaut.group.position.copy(state.pos);astronaut.group.quaternion.copy(visualQ);const footfalls=astronaut.animate(time,state.walkSpeed,state.mode==='floating',animationContext());if(state.active&&!state.paused)for(const side of footfalls)audio.event('step',side*.3);updateCamera(dt);target();hud();audio.update({attached:state.mode==='attached',thrust:state.rcs,downThrust:state.downThrust?1:0,braking:state.braking,charge:state.charging?state.charge:0,speed:state.mode==='floating'?state.velocity.length():state.walkSpeed,paused:!state.active||document.hidden||(state.paused&&!(state.complete&&performance.now()<completionAudioUntil))});if(quality&&composer)composer.render();else renderer.render(scene,camera);}
-$('recall').onclick=()=>{takeControl();recall()};$('begin').onclick=()=>start(false);$('watch').onclick=()=>start(true);$('pause').onclick=()=>pause(!state.paused);$('help').onclick=()=>{if(!state.active)start(false);pause(true)};$('resume').onclick=()=>pause(false);$('restart').onclick=()=>{reset();pause(false)};$('replay').onclick=()=>{reset();pause(false)};$('explore').onclick=()=>{$('complete').classList.add('hidden');pause(false)};$('sound').onclick=()=>{state.muted=!state.muted;audio.setMuted(state.muted);$('sound').textContent=state.muted?'SOUND OFF':'SOUND ON';$('sound').setAttribute('aria-pressed',String(!state.muted));if(!state.muted)audio.start();};$('quality').onclick=()=>{if(renderer.software){notify('Compatibility graphics. Enable browser hardware acceleration for full visuals.',5500);return;}quality=!quality;renderer.setPixelRatio(quality?Math.min(devicePixelRatio,1.65):1);renderer.shadowMap.enabled=quality;$('quality').textContent=quality?'HIGH':'LITE';resize();};
+function hud(){$('sound').title=state.muted?'Sound muted':audio.context?.state==='running'?'Sound enabled':'Sound enabled · starts on interaction';const downButton=$('down');downButton.disabled=state.mode!=='floating'||state.paused;downButton.classList.toggle('firing',state.downThrust);downButton.setAttribute('aria-pressed',String(state.downThrust));downButton.querySelector('small').textContent=state.mode==='attached'?'BOOTS ATTACHED':state.downThrust?'THRUSTING · RELEASE TO COAST':'HOLD C / LT';document.body.classList.toggle('floating',state.mode==='floating');$('mode').textContent=state.mode==='attached'?'MAGNETIC CONTACT':tether.anchor?(tether.taut?'TETHER · TAUT':'TETHER · SLACK'):'FREE DRIFT';$('surfaceName').textContent=state.mode==='attached'?state.hull.name:(state.downThrust?'RCS TO HULL · '+state.hull.name:'RCS ONLINE · AUTO-LATCH ARMED');$('velocity').textContent=(state.mode==='floating'?state.velocity.length():state.walkSpeed).toFixed(1);$('charge').classList.toggle('visible',state.charging);$('charge').querySelector('i').style.width=state.charge*100+'%';const n=state.trial?null:world.nodes[state.stage];const label=$('targetLabel');if(n&&state.active){const d=state.pos.distanceTo(n.position);$('distance').textContent=d.toFixed(0)+' m';const p=n.position.clone().addScaledVector(n.normal,1).project(camera);const visible=p.z<1&&p.x>-1&&p.x<1&&p.y>-1&&p.y<1;label.style.display=visible?'block':'none';label.style.left=(p.x*.5+.5)*innerWidth+'px';label.style.top=(-p.y*.5+.5)*innerHeight+'px';label.textContent='◇ '+n.label+' / '+d.toFixed(0)+'m'+(d<2.8?' · E TO SERVICE':'');$('interact').textContent=d<2.8?'SERVICE ✓':'SERVICE';}else{label.style.display='none';$('distance').textContent='—';}}
+function animate(){requestAnimationFrame(animate);const raw=clock.getDelta(),dt=Math.min(raw,.04);frameMs=frameMs*.98+raw*1000*.02;time+=dt;simulate(dt);updateFacing(dt);world.update(time,dt);const right=new T.Vector3().crossVectors(bodyForward,state.normal).normalize();basis.makeBasis(right,state.normal,bodyForward.clone().negate());const q=new T.Quaternion().setFromRotationMatrix(basis);visualQ.slerp(q,1-Math.exp(-dt*10));astronaut.group.position.copy(state.pos);astronaut.group.quaternion.copy(visualQ);const footfalls=astronaut.animate(time,state.walkSpeed,state.mode==='floating',animationContext());if(state.active&&!state.paused)for(const side of footfalls)audio.event('step',side*.3);updateCamera(dt);target();hud();updateTetherHUD();audio.update({attached:state.mode==='attached',thrust:state.rcs,downThrust:state.downThrust?1:0,braking:state.braking,charge:state.charging?state.charge:0,speed:state.mode==='floating'?state.velocity.length():state.walkSpeed,paused:!state.active||document.hidden||(state.paused&&!(state.complete&&performance.now()<completionAudioUntil))});if(quality&&composer)composer.render();else renderer.render(scene,camera);}
+$('recall').onclick=()=>{takeControl();recall()};$('begin').onclick=()=>start(false);$('tetherTrial').onclick=startTetherTrial;$('tetherToggle').onclick=toggleTether;$('watch').onclick=()=>start(true);$('pause').onclick=()=>pause(!state.paused);$('help').onclick=()=>{if(!state.active)start(false);pause(true)};$('resume').onclick=()=>pause(false);$('restart').onclick=()=>{if(state.trial)startTetherTrial();else reset();pause(false)};$('replay').onclick=()=>{reset();pause(false)};$('explore').onclick=()=>{$('complete').classList.add('hidden');pause(false)};$('sound').onclick=()=>{state.muted=!state.muted;audio.setMuted(state.muted);$('sound').textContent=state.muted?'SOUND OFF':'SOUND ON';$('sound').setAttribute('aria-pressed',String(!state.muted));if(!state.muted)audio.start();};$('quality').onclick=()=>{if(renderer.software){notify('Compatibility graphics. Enable browser hardware acceleration for full visuals.',5500);return;}quality=!quality;renderer.setPixelRatio(quality?Math.min(devicePixelRatio,1.65):1);renderer.shadowMap.enabled=quality;$('quality').textContent=quality?'HIGH':'LITE';resize();};
 addEventListener('pointerdown',()=>{if(!state.muted)audio.start();},{passive:true});
-addEventListener('keydown',e=>{if(!state.muted)audio.start();if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(e.repeat)return;if(e.code==='Escape'){pause(!state.paused);return;}keys.add(e.code);if(!state.active)return;takeControl();if(e.code==='Space')beginCharge();if(e.code==='KeyE')service();if(e.code==='KeyR')recall();if(e.code==='KeyH')pause(!state.paused);});addEventListener('keyup',e=>{keys.delete(e.code);if(e.code==='Space')endCharge();});addEventListener('blur',()=>{keys.clear();joy.x=joy.y=0;if(state.active&&!state.paused)pause(true)});document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.active)pause(true)});
+addEventListener('keydown',e=>{if(!state.muted)audio.start();if((e.code==='Space'||e.code==='Enter')&&e.target?.closest?.('button'))return;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(e.repeat)return;if(e.code==='Escape'){pause(!state.paused);return;}keys.add(e.code);if(!state.active)return;takeControl();if(e.code==='Space')beginCharge();if(e.code==='KeyE')service();if(e.code==='KeyG')toggleTether();if(e.code==='KeyR')recall();if(e.code==='KeyH')pause(!state.paused);});addEventListener('keyup',e=>{keys.delete(e.code);if(e.code==='Space')endCharge();});addEventListener('blur',()=>{keys.clear();joy.x=joy.y=0;if(state.active&&!state.paused)pause(true)});document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.active)pause(true)});
 canvas.addEventListener('pointerdown',e=>{if(!state.active||state.paused)return;takeControl();drag={id:e.pointerId,x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);});canvas.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;lookActiveUntil=time+.85;yaw-=(e.clientX-drag.x)*.006;pitch=T.MathUtils.clamp(pitch+(e.clientY-drag.y)*.005,-.65,1.3);drag.x=e.clientX;drag.y=e.clientY;});canvas.addEventListener('pointerup',()=>drag=null);canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('contextmenu',e=>e.preventDefault());
 let stickId=null;function stickMove(e){const b=$('stick').getBoundingClientRect();joy.x=T.MathUtils.clamp((e.clientX-b.left-b.width/2)/40,-1,1);joy.y=T.MathUtils.clamp((e.clientY-b.top-b.height/2)/40,-1,1);$('stick').firstElementChild.style.transform=`translate(${joy.x*30}px,${joy.y*30}px)`;}
 $('stick').onpointerdown=e=>{takeControl();stickId=e.pointerId;$('stick').setPointerCapture(e.pointerId);stickMove(e);};$('stick').onpointermove=e=>{if(e.pointerId===stickId)stickMove(e)};const clearStick=()=>{stickId=null;joy.x=joy.y=0;$('stick').firstElementChild.style.transform='';};$('stick').onpointerup=clearStick;$('stick').onpointercancel=clearStick;
@@ -138,10 +226,47 @@ $('down').onkeydown=e=>{if(e.code==='Space'||e.code==='Enter'){e.preventDefault(
 $('down').onkeyup=e=>{if(e.code==='Space'||e.code==='Enter'){e.preventDefault();e.stopPropagation();releaseDown();}};
 $('down').onblur=releaseDown;
 
+
+function updateTetherHUD(){
+ anchorCandidate=tether.anchor||nearestAnchor();
+ const locked=!!tether.anchor;
+ $('tetherToggle').disabled=state.paused||!state.active||(!locked&&!anchorCandidate);
+ $('tetherToggle').textContent=locked?'RELEASE · G':'CLIP IN · G';
+ $('tetherToggle').setAttribute('aria-pressed',String(locked));
+ $('tetherName').textContent=anchorCandidate?.name||'NO CLEAR ANCHOR WITHIN 14 M';
+ $('tetherStatus').textContent=locked?(tether.snagged?'SNAGGED':tether.taut?'TAUT':'SLACK'):'UNCLIPPED';
+ $('tetherLength').textContent=locked?tether.length.toFixed(1)+' m':'—';
+ $('tetherPower').textContent=Math.round(tether.power)+'%';
+ $('reelIn').disabled=!locked||state.paused||tether.power<=0;
+ $('reelOut').disabled=!locked||state.paused||tether.power<=0;
+ $('tetherPanel').classList.toggle('taut',locked&&tether.taut);
+ $('tetherPanel').classList.toggle('snagged',tether.snagged);
+ $('reelIn').classList.toggle('firing',locked&&(touchReel>0||keys.has('KeyZ')));
+ $('reelOut').classList.toggle('firing',locked&&(touchReel<0||keys.has('KeyX')));
+ // Render to the animated waist, including the brief landing compression.
+ astronaut.group.updateMatrixWorld(true);
+ const waist=astronaut.group.getObjectByName('Waist').getWorldPosition(V());
+ tetherRig.update(tether,waist,anchorCandidate);
+ const label=$('anchorLabel');
+ if(anchorCandidate&&state.active&&!state.paused){
+   const p=anchorCandidate.position.clone().add(V(0,.5,0)).project(camera);
+   label.hidden=!(p.z<1&&p.z>-1&&Math.abs(p.x)<.93&&Math.abs(p.y)<.83);
+   label.style.left=(p.x*.5+.5)*innerWidth+'px';label.style.top=(-p.y*.5+.5)*innerHeight+'px';
+   label.textContent='◎ '+anchorCandidate.name.split(' · ')[0]+(locked?' · CLIPPED':' · G TO CLIP');
+ }else label.hidden=true;
+}
+for(const [id,amount] of [['reelIn',1],['reelOut',-1]]){
+ const button=$(id),release=()=>{if(touchReel===amount)touchReel=0;};
+ button.onpointerdown=e=>{if(button.disabled)return;e.preventDefault();takeControl();touchReel=amount;button.setPointerCapture(e.pointerId);};
+ button.onpointerup=release;button.onpointercancel=release;button.onlostpointercapture=release;button.onblur=release;
+ button.onkeydown=e=>{if(e.code==='Space'||e.code==='Enter'){e.preventDefault();e.stopPropagation();if(!button.disabled){takeControl();touchReel=amount;}}};
+ button.onkeyup=e=>{if(e.code==='Space'||e.code==='Enter'){e.preventDefault();e.stopPropagation();release();}};
+}
+
 function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);composer?.setSize(innerWidth,innerHeight)}addEventListener('resize',resize);
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();pause(true);notify('Graphics paused. Reload to restore the spacewalk.',100000);});
 document.body.classList.add('preview');updateMission();animate();
 // Structured controls for an agent, plus observable state for reproducible traversal checks.
-const snapshot=()=>({mode:state.mode,position:state.pos.toArray(),normal:state.normal.toArray(),stage:state.stage,active:state.active,paused:state.paused,auto:state.auto,autoStep,launches:state.launches,landings:state.landings,hull:state.hull.name,bodyForward:bodyForward.toArray(),gaze:state.gazeDirection.toArray(),turnRate:state.turnRate,rcs:state.rcs,downThrust:state.downThrust,velocity:state.velocity.toArray(),muted:state.muted,audioState:audio.context?.state||'waiting-for-gesture',audioError:audio.lastError?.message||null,frameMs,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles});
-window.hullwalker={snapshot,start,pause,recall};
+const snapshot=()=>({trial:state.trial,trialPhase:state.trialPhase,tether:{anchor:tether.anchor?.name||null,length:tether.length,taut:tether.taut,snagged:tether.snagged,power:tether.power},mode:state.mode,position:state.pos.toArray(),normal:state.normal.toArray(),stage:state.stage,active:state.active,paused:state.paused,auto:state.auto,autoStep,launches:state.launches,landings:state.landings,hull:state.hull.name,bodyForward:bodyForward.toArray(),gaze:state.gazeDirection.toArray(),turnRate:state.turnRate,rcs:state.rcs,downThrust:state.downThrust,velocity:state.velocity.toArray(),muted:state.muted,audioState:audio.context?.state||'waiting-for-gesture',audioError:audio.lastError?.message||null,frameMs,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles});
+window.hullwalker={snapshot,start,startTetherTrial,pause,recall,toggleTether};
 if(document.modelContext?.registerTool){for(const tool of [{name:'eva_status',description:'Read magnetic-boot contact, mission progress and location.',inputSchema:{type:'object',properties:{}},execute:async()=>({content:[{type:'text',text:JSON.stringify(snapshot())}]})},{name:'start_guided_eva',description:'Start a guided spacewalk through the EVA mission.',inputSchema:{type:'object',properties:{}},execute:async()=>{start(true);return {content:[{type:'text',text:'Guided EVA started. Move to take control.'}]}}}]){try{document.modelContext.registerTool(tool)}catch{}}}

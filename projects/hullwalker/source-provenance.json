@@ -1,22 +1,22 @@
 {
   "source_site": "https://hullwalker-eva.x-nihilo.chatgpt.site",
   "source_project_id": "appgprj_6abc32e03f58819183e66216bc06649b",
-  "source_version": 3,
-  "source_commit": "0c7cee44007adef9393c3fd7c0116272525c0c91",
-  "exported_at": "2026-10-03",
+  "source_version": 4,
+  "source_commit": "a7d791ce000adb39f904864d384077df4a55e8a9",
+  "exported_at": "2026-10-13",
   "runtime_source_path": "dist",
   "adaptation": "None; the complete tracked dist/ runtime is copied byte-for-byte.",
   "screenshot_source": "Hullwalker-natural-EVA-motion.jpg",
   "screenshot_version": 3,
   "screenshot_method": "Actual v3 gameplay captured with the built-in Canvas compatibility renderer.",
   "external_runtime_requests": false,
-  "preserved_source_commits": 3,
+  "preserved_source_commits": 4,
   "source_history": "history/source-history.bundle",
   "runtime_files": [
     {
       "path": "astronaut.js",
       "source_path": "dist/astronaut.js",
-      "sha256": "d9c701df20f42f6d7862fc4c662549f22b798c9fd98203dae743cbc982a51114"
+      "sha256": "d3a2d5378675e9a39c7dbe4b9133d6f44a24fc627c1c1662b2dbd0d82f41b396"
     },
     {
       "path": "audio.js",
@@ -26,12 +26,12 @@
     {
       "path": "index.html",
       "source_path": "dist/index.html",
-      "sha256": "13f0356305d1e327b0f8f3d75453b235b7c7d56d74fa7bad1e992b64a51d3621"
+      "sha256": "c7fcb2471109473e2a27bb5058e25a176d698aeaab5c27014c17485403950410"
     },
     {
       "path": "main.js",
       "source_path": "dist/main.js",
-      "sha256": "1a4ee59d3ca9e59f69cc8f1297d115be7d1d237afc13d0cb460e28a9285cb231"
+      "sha256": "24a4a0806cfc497b2d9c05c2cc6725c47d25c57975301b5418ef24bf98d17be6"
     },
     {
       "path": "scene-kit.js",
@@ -46,7 +46,17 @@
     {
       "path": "style.css",
       "source_path": "dist/style.css",
-      "sha256": "1e2627348eae959dbc28b317a4e6bc9d8de8c1f6aa67b4e6927fe1fd4e7d6716"
+      "sha256": "39f8466ddfc738540d18d3ceb580a50846e612a4dcc8ec13f868185bbba4182b"
+    },
+    {
+      "path": "tether-rig.js",
+      "source_path": "dist/tether-rig.js",
+      "sha256": "2c9dbdbaf87e14eb6ce3c070b4cc87106072d2172324937e5fec63522592d498"
+    },
+    {
+      "path": "tether.js",
+      "source_path": "dist/tether.js",
+      "sha256": "409d7fc303f0a4d0df929e4106d77e811556c13f666e54799463ffd49f38e6b8"
     },
     {
       "path": "vendor/three/LICENSE",

@@ -80,7 +80,7 @@
     "repo": "ActionDaveInRI.github.io",
     "directory": "projects/hullwalker",
     "category": "Space & flight",
-    "description": "Walk the hull with magnetic boots, push off into free drift, and steer with RCS to restore the Morrow’s power and relay.",
+    "description": "Walk the hull with magnetic boots, swing on a tether, reel in or release into free drift, and restore the Morrow’s power and relay.",
     "launch": "https://actiondaveinri.github.io/projects/hullwalker/",
     "live": "https://actiondaveinri.github.io/projects/hullwalker/",
     "source": "https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/tree/main/projects/hullwalker",
@@ -96,10 +96,11 @@
     "requiresLogin": false,
     "hosting": "github-pages",
     "originalSite": "https://hullwalker-eva.x-nihilo.chatgpt.site",
-    "sourceVersion": 3,
-    "sourceCommit": "0c7cee44007adef9393c3fd7c0116272525c0c91",
+    "sourceVersion": 4,
+    "sourceCommit": "a7d791ce000adb39f904864d384077df4a55e8a9",
     "section": "current",
-    "note": "Complete byte-identical v3 standalone runtime with bundled Three.js, an actual v3 gameplay screenshot, and all three original source commits preserved."
+    "note": "Complete byte-identical v4 tether runtime with bundled Three.js and all four original source commits preserved. Preview shows v3 gameplay.",
+    "previewLabel": "Preview: v3 · Play: v4 with tether"
   },
   {
     "id": "star-cluster",

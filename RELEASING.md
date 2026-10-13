@@ -112,3 +112,9 @@ Keep editable sources, selected runtimes, previews, provenance and archives toge
 The main-site generator rebuilds the two local gallery aliases in `pages-redirects.json`. Legacy `/spaceship/` routes are maintained separately in the `spaceship` repository. Retain those mappings when adding releases; redirects preserve queries and fragments. See [MIGRATION.md](MIGRATION.md) for the ordered cutover and rollback.
 
 Run all layout/exporter regression tests with `python3 -m unittest discover -s scripts -p 'test_*.py'`. After the normal Pages deployment succeeds, verify the public layout with `python3 scripts/check_pages.py --base https://actiondaveinri.github.io/`. Roll back with a normal revert if those checks fail.
+
+## Hullwalker portable release
+
+Hullwalker’s selected release is Sites v4 (tether trial), source `a7d791ce000adb39f904864d384077df4a55e8a9`, at [projects/hullwalker/](projects/hullwalker/). This version’s development deployment was confirmed successful before export. Its complete tracked `dist/` is copied byte-for-byte with no runtime adaptation. The generic exporter currently does not handle Hullwalker.
+
+For a later release, select a clean exact saved source commit, run `node --test tests/*.test.mjs`, and export its tracked `dist/` to the project directory. Update `source-provenance.json` hashes, the development README, the full source-history bundle, release/history documentation, and the catalog. Preserve older source commits. Run the gallery generator and repository checks, then publish the reviewed release to `main` and verify the live runtime hashes. The current preview remains an explicitly labeled v3 capture.

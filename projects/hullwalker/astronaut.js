@@ -225,6 +225,8 @@ export function createAstronaut() {
   }
   let thrust=0, jetDirection=1, smoothSpeed=0, floatBlend=0,lastTime=null;
   let lastEpoch=-1,wasAirborne=false,nextFoot=-1,settleDelay=0;
+  let pendingLanding=null,landingAge=Infinity,landingSpeed=0,landingPeak=0;
+  let absorbTime=.12,recoveryTime=.4,landingWeight=0;
   let gazeTurnSign=1,lookYaw=0,lookPitch=0,chestYaw=0,chestPitch=0,leanX=0,leanZ=0;
   const lastRoot=new THREE.Vector3(),lastUp=new THREE.Vector3(0,1,0);
   const unitUp=new THREE.Vector3(0,1,0),unitForward=new THREE.Vector3(0,0,-1);
@@ -235,6 +237,15 @@ export function createAstronaut() {
       footQ:new THREE.Quaternion(),progress:1,swinging:false,duration:.23});
   }
   function setJets(strength,direction=1){thrust=THREE.MathUtils.clamp(strength||0,0,1);jetDirection=direction;}
+  // Supply inward speed along the contact normal, not total drift speed. A fast
+  // sideways skim should not look like a hard feet-first impact.
+  function land({speed=0}={}){
+    pendingLanding=Number.isFinite(speed)?THREE.MathUtils.clamp(speed,0,12):0;
+  }
+  function resetLanding(){
+    pendingLanding=null;landingAge=Infinity;landingSpeed=0;landingPeak=0;landingWeight=0;
+    floatBlend=0;body.position.y=0;
+  }
   function animate(t,speed=0,airborne=false,pose={}){
     let dt=lastTime===null?1/60:Math.min(.05,Math.max(0,t-lastTime));lastTime=t;
     if(pose.paused)dt=0;
@@ -248,12 +259,33 @@ export function createAstronaut() {
     const walk=clamp(smoothSpeed/1.5,0,1)*(1-floatBlend),run=clamp((smoothSpeed-1.7)/1.1,0,1);
     const turn=clamp((pose.turnRate||0)/2.6,-1,1);
     const footfalls=[];
+    const epochChanged=lastEpoch!==(pose.epoch??0);
     const reset=lastEpoch!==(pose.epoch??0)||root.distanceTo(lastRoot)>1.3||lastUp.dot(up)<.94||(!airborne&&wasAirborne);
     const project=(point)=>pose.projectFoot?pose.projectFoot(point):point;
     const neutral=(leg)=>project(new THREE.Vector3(leg.side*.13,0,0).applyQuaternion(rootQ).add(root));
     if(reset){
       for(const leg of legs){leg.plant.copy(neutral(leg));leg.from.copy(leg.plant);leg.to.copy(leg.plant);leg.swinging=false;leg.progress=1;leg.footQ.copy(rootQ);leg.heading.copy(unitForward).applyQuaternion(rootQ);}
       nextFoot=-1;settleDelay=0;
+    }
+    // Teleports clear an old impact; an explicit contact event survives the
+    // caller's pose-epoch change so the new landing starts at its actual boots.
+    if(epochChanged&&pendingLanding===null){landingAge=Infinity;landingWeight=0;landingPeak=0;}
+    if(!airborne&&pendingLanding!==null){
+      landingSpeed=pendingLanding;pendingLanding=null;landingAge=0;
+      landingPeak=.025+.22*(1-Math.exp(-landingSpeed/3.5));
+      absorbTime=.105+Math.min(landingSpeed,8)*.0075;
+      recoveryTime=.28+Math.min(landingSpeed,8)*.05;
+      // Magnetic boots take the load immediately. Keeping the old floating-leg
+      // blend here would pull both feet away from their new contact points.
+      floatBlend=0;
+    }
+    if(airborne){landingAge=Infinity;landingWeight=0;pendingLanding=null;}
+    else if(Number.isFinite(landingAge)){
+      landingAge+=dt;
+      const u=clamp(landingAge/absorbTime,0,1);
+      const recovery=clamp((landingAge-absorbTime)/recoveryTime,0,1);
+      landingWeight=landingAge<absorbTime?u*u*(3-2*u):1-recovery*recovery*(3-2*recovery);
+      if(landingAge>=absorbTime+recoveryTime){landingAge=Infinity;landingWeight=0;}
     }
     lastEpoch=pose.epoch??0;lastRoot.copy(root);lastUp.copy(up);wasAirborne=airborne;
 
@@ -265,13 +297,13 @@ export function createAstronaut() {
     chestYaw+=(clamp(lookYaw*.42,-.42,.42)-chestYaw)*damp(6);
     chestPitch+=(lookPitch*.23-chestPitch)*damp(5);
     head.rotation.y=clamp(lookYaw-chestYaw,-.90,.90);
-    head.rotation.x=lookPitch-chestPitch;
+    head.rotation.x=lookPitch-chestPitch+landingWeight*.045;
     head.rotation.z=-turn*.025;
 
     if(!airborne&&dt>0){
       settleDelay=Math.max(0,settleDelay-dt);
       // A boot remains at a world-space contact while its partner takes a step.
-      if(!legs.some(leg=>leg.swinging)&&settleDelay===0){
+      if(!legs.some(leg=>leg.swinging)&&settleDelay===0&&landingAge>=absorbTime){
         let selected=null,best=0;
         for(const leg of legs){
           const rest=neutral(leg),offset=rest.clone().sub(leg.plant).projectOnPlane(up);
@@ -315,14 +347,16 @@ export function createAstronaut() {
       const horizontal=Math.hypot(plantedLocal.x-leg.hip.position.x,plantedLocal.z);
       pelvisHeight=Math.min(pelvisHeight,.149+Math.sqrt(Math.max(.01,.777*.777-horizontal*horizontal))-leg.hip.position.y);
     }
-    pelvisHeight=clamp(pelvisHeight,-.16,0);
+    // Lower the hips while the world-space boot targets stay fixed; the leg IK
+    // below supplies real knee flexion instead of sinking the whole character.
+    pelvisHeight=clamp(pelvisHeight-landingPeak*landingWeight,-.30,0);
     // Lower promptly to keep a loaded knee within reach; rise gently after settling.
     body.position.y=pelvisHeight<body.position.y?pelvisHeight:THREE.MathUtils.lerp(body.position.y,pelvisHeight,damp(8));
     const inputLocal=(pose.thrustDirection?.clone()||new THREE.Vector3()).applyQuaternion(invQ);
     const jet=airborne?(pose.thrust||0):0;
     leanX+=((-walk*.025+floatBlend*(inputLocal.z*jet*.08+(pose.braking?-.045:.018)))-leanX)*damp(5);
     leanZ+=((turn*-.025+floatBlend*inputLocal.x*jet*-.075)-leanZ)*damp(5);
-    torso.rotation.set(chestPitch+leanX,chestYaw,leanZ+support*.016*liftEnvelope*walk);
+    torso.rotation.set(chestPitch+leanX-landingWeight*.14,chestYaw,leanZ+support*.016*liftEnvelope*walk);
     torso.scale.y=1+Math.sin(t*1.65)*.0018;
     pelvis.rotation.y=chestYaw*.12-turn*.025;
 
@@ -354,15 +388,16 @@ export function createAstronaut() {
       const opposite=legs.find(l=>l.side!==arm.side);
       const swing=-opposite.stride*.18*walk;
       const relaxed=-.27+arm.side*.035+Math.sin(t*.73+arm.side)*.018;
-      const targetX=swing+floatBlend*(relaxed+inputLocal.z*jet*.09);
-      const targetZ=arm.side*(.105+floatBlend*(.18+jet*.065))+turn*.075;
-      arm.shoulder.rotation.x+=(targetX-arm.shoulder.rotation.x)*damp(7);
-      arm.shoulder.rotation.z+=(targetZ-arm.shoulder.rotation.z)*damp(7);
-      arm.elbow.rotation.x+=(-.18-floatBlend*.24-Math.max(0,-swing)*.35-(pose.braking?.09:0)-arm.elbow.rotation.x)*damp(6);
+      const targetX=swing+floatBlend*(relaxed+inputLocal.z*jet*.09)-landingWeight*.38;
+      const targetZ=arm.side*(.105+floatBlend*(.18+jet*.065)+landingWeight*.21)+turn*.075;
+      arm.shoulder.rotation.x+=(targetX-arm.shoulder.rotation.x)*damp(landingWeight>0?16:7);
+      arm.shoulder.rotation.z+=(targetZ-arm.shoulder.rotation.z)*damp(landingWeight>0?16:7);
+      arm.elbow.rotation.x+=(-.18-floatBlend*.24-Math.max(0,-swing)*.35-(pose.braking?.09:0)-landingWeight*.36-arm.elbow.rotation.x)*damp(landingWeight>0?16:6);
       arm.hand.rotation.x=.04+floatBlend*.10;arm.hand.rotation.z=arm.side*floatBlend*.06;
     }
     jets.forEach((j,i)=>{j.visible=thrust>.01;j.position.y=jetDirection<0?.255:-.291;j.rotation.z=jetDirection<0?Math.PI:0;j.scale.set(1,thrust*(.83+Math.sin(t*57+i*2)*.12),1);});
     group.userData.pose={headYaw:head.rotation.y,chestYaw:torso.rotation.y,headPitch:head.rotation.x,
+      landing:{speed:landingSpeed,compression:landingPeak*landingWeight,active:Number.isFinite(landingAge)},
       feet:legs.map(l=>({side:l.side,swinging:l.swinging,plant:l.plant.toArray(),progress:l.progress}))};
     return footfalls;
   }
@@ -370,5 +405,5 @@ export function createAstronaut() {
   group.userData.height=1.89;
   group.userData.forward=new THREE.Vector3(0,0,-1);
   group.userData.materials=mats;
-  return {group,animate,setJets};
+  return {group,animate,setJets,land,resetLanding};
 }

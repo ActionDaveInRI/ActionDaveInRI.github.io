@@ -1,6 +1,6 @@
 # Hullwalker — EVA
 
-A standalone Three.js magnetic-boots traversal demo, September 29, 2026.
+A standalone Three.js magnetic-boots traversal demo, updated October 10, 2026.
 
 Walk any face of the Morrow's hull, hold/release Space to push off toward the visible landing marker, use RCS to steer and brake, and auto-latch to another hull. Restore the dorsal power bus and relay-side uplink, then return to the airlock. A guided EVA demonstrates the complete loop; movement takes over immediately.
 
@@ -18,7 +18,7 @@ Controls: WASD movement; mouse drag view; Space hold/release push; Shift sprint/
 - Three.js and postprocessing: vendored from the user's Island Three release, with upstream LICENSE.
 - New: articulated astronaut, EVA controller, rounded hull contact, launch/latch logic, mission, procedural plating/planet, UI and guided route.
 
-## Validation
+## Original release validation
 
 Simulation tested using actual Three math and hull geometry at 25/30/60/144 Hz: the guided route completes both launches and latches, side traversal, and all three objectives. Manual WASD and full hull circuits preserve contact to within 0.035m. Actual browser interaction checked through the compatibility renderer; accelerated WebGL could not be visually inspected in the test browser because it exposes no WebGL context. Physical touch/gamepad devices were not available. WebMCP was unavailable in the test browser; the optional tools are feature-detected.
 
@@ -37,3 +37,18 @@ EVA facing now follows deliberate movement and camera look, with helmet/chest an
 Walking uses world-space boot contacts, alternating projected footsteps, touchdown prediction/retargeting, 3D leg IK, turn-in-place steps, supporting-leg weight shift, and opposing arm balance. Ground acceleration and stopping are smoothed; walk is 1.5 m/s and faster movement 2.8 m/s. Feet settle after stopping instead of instantly resetting a periodic pose.
 
 Validation: gaze/turn math, EVA strafe/reversal, camera independence, unchanged free-drift momentum, hullward RCS and the full guided route pass. Planted rendered boot transforms checked through walking, fast movement, stops and 180-degree turns; gaze yaw/pitch signs checked on the articulated model. Browser compatibility graphics checked, without WebGL or subjective full-speed motion verification on a hardware-accelerated device.
+
+
+## October 10 — tether trial and touchdown
+
+Choose **TRY THE TETHER** to spawn at the starboard edge, already clipped to A1. Hold/release Space to push into an arc, G to release without changing velocity, and hold C to return to magnetic contact. R restarts this practice setup. The original mission and guided EVA remain available from the opening screen.
+
+- G / gamepad RB: clip to the nearest visible anchor within 14 m, or release.
+- Z / LB: hold to reel in. X / RT: hold to pay out. Both have on-screen hold buttons.
+- Four raised eyelets provide clear anchor positions on the main hull and relay.
+- The HUD shows cable length, slack/taut/snared state and remaining winch power. The spool holds 2–28 m; reset restores power.
+- Cable motion uses a unilateral distance constraint, with bounded powered winching and physics substeps up to 120 Hz. A catch removes outward velocity, keeps its tangent, and release preserves the complete remaining velocity.
+- The first cable is straight, without wrapping around obstacles. Obstructed anchor connections are rejected; a snag stops the movement at its last clear position. Releasing or steering clear recovers control. Decorative ship geometry is not a physical collider; cable clearance uses the same rounded main hull volumes as EVA movement.
+- Magnetic contact captures inward normal speed before stopping the body. Planted-foot IK bends the knees and lowers the hips in proportion to impact, with chest/arm balance and slower recovery. A sideways skim does not cause an exaggerated crouch.
+
+Run the repeatable checks with `node --test tests/*.test.mjs`. The numerical tests cover tether constraints and power, cable visibility, complete trial traversal, and the actual articulated landing rig. They do not assess subjective camera/play feel, graphics or real touch/gamepad hardware. No browser-control surface was available for this update, so browser visual QA remains to be done on the playable build.

@@ -55,3 +55,13 @@ The browser checks used the actual deployed GitHub Pages addresses; local intera
 The existing Sites deployments and source repositories were not edited. Their former GitHub launcher pages are archived in each game's `history/sites-launcher.html`. Full original source history is recoverable with `git clone` from each `history/source-history.bundle`; the bundle includes the original hosting configuration, documentation and tests where present. Version manifests map all published versions to original commit IDs.
 
 GitHub Pages and Sites have different origins. Existing browser saves remain on the original Sites origin and are not automatically transferred. Save keys and game save formats are unchanged.
+# Hullwalker tether release — October 13, 2026
+
+Selected Sites v4, source `a7d791ce000adb39f904864d384077df4a55e8a9`; its original Sites deployment was confirmed successful. Exported all 30 tracked `dist/` files byte-for-byte to `projects/hullwalker/`, retaining the no-login, locally vendored runtime. The public launch URL is unchanged.
+
+- All 19 existing source checks passed, including the tether trial at 30/120 FPS, momentum-preserving release, hullward return, reeling, hull/cable clearance, normal mission launch, recall, and articulated touchdown.
+- All 16 gallery/exporter regression tests passed after fetching the repository history needed by their baseline checks.
+- The standalone checker passed for the existing Wayfarer and Silt + Signal releases; the Pages layout checker passed for 23 projects, 2 compatibility pages, and 196 local routes/resources.
+- Independently restored the Hullwalker source-history bundle and verified all four source commits are retained, its head is the selected v4 commit, and every exported runtime file matches that source and its recorded SHA-256. The Pages dependency traversal resolves both new tether modules and the vendored Three.js modules.
+- Catalog, generated gallery, directory, release notes, and history identify v4. The retained screenshot is explicitly labeled as v3; no new screenshot is claimed.
+- Browser-control tooling was unavailable in this environment, so this publication did not repeat visual gameplay, audio listening, or physical touch/gamepad checks. Existing source simulations and portable-resource checks passed; live HTTP verification follows publication.

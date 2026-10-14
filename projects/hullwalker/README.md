@@ -1,15 +1,19 @@
-# Hullwalker · EVA
+# Hullwalker · Boarding Action
 
 [Play](./) · [Gallery](../../) · [Original working Site](https://hullwalker-eva.x-nihilo.chatgpt.site)
 
-Walk the Morrow’s hull with magnetic boots, push off into free drift, and use a tether to catch your outward motion and swing around an anchor. Reel in, pay out, or release into free drift. The original power-node → relay → airlock mission and guided EVA are also available.
+Retake the Morrow’s airlock from three mobile boarders. Use magnetic boots, open-space flight, hull cover and tether swings. The squad includes a flanker who traverses sidewalls and the underside, and a raider who crosses between structures. Clear the team, then reach the hatch with boots attached and press E.
 
-Selected public release: **Sites v4 — tether trial**, source commit `a7d791ce000adb39f904864d384077df4a55e8a9`, exported October 13, 2026. The complete tracked `dist/` runtime is byte-identical to the saved source. It runs without sign-in or external CDN requests. Three.js and its MIT license are included.
+Selected public release: **Sites v6 — combat and separated camera controls**, source commit `dfd30fdd7f48aefb99ce767ac0c494241f87f929`, exported October 14, 2026. All 32 tracked `dist/` files are byte-identical to the saved source. No sign-in or external CDN is required; Three.js and its MIT license are bundled.
 
-Choose **TRY THE TETHER** on the opening screen to start already clipped to anchor A1. Hold/release **Space** to push off, **G** to clip/release, **Z** to reel in, **X** to pay out, **C** to thrust toward the hull, and **R** to restart the trial. WASD moves, mouse drag looks, Shift sprints/brakes, and E services mission nodes. Touch and gamepad controls are included. Sound starts after an input gesture.
+Choose **RETAKE THE AIRLOCK**. **WASD** moves, **Q** reloads, **Space** pushes off/thrusts up, **Ctrl** thrusts down, **C** thrusts to the hull, and **Shift** runs/brakes. **G** clips/releases; **Z/X** reel in/pay out. **R** restarts.
 
-The cable is straight and does not wrap around obstacles. A snag stops movement at its last clear position; release or steer clear to recover.
+**Mouse:** dragging looks without shooting when the cursor is not captured. Hold **F** or the **FIRE** button to shoot independently. **MOUSE LOOK** enables free mouse look and left-click firing where browser capture is available; right-click focuses aim.
 
-The real `preview.jpg` gameplay capture remains from v3 using the built-in Canvas compatibility renderer; it predates the tether. The full four-commit source history, including the previous v3 release, is preserved in [history/](history/). Original development notes are in [source/README.md](source/README.md).
+**Phone/tablet:** left stick moves, canvas drag looks, and the separate FIRE button shoots. FOCUS toggles aim; reload, push-off, brake, vertical thrust, hull return and tether actions have touch controls. Both portrait and landscape layouts are included. Sound starts after an input gesture.
 
-Serve the gallery checkout with `python3 -m http.server 8000`, then open `/projects/hullwalker/`.
+The optional tether trial, original EVA repair mission and guided route remain available. The cable is straight and does not wrap around corners; release or steer clear of snags.
+
+The gallery’s `preview.jpg` remains an explicitly labeled v3 gameplay capture from the Canvas compatibility renderer. It predates combat. All six original source commits, including v4, are preserved in [history/](history/). Development notes are in [source/README.md](source/README.md).
+
+Automated production-code checks and offline mesh renders were inspected. Simultaneous touch movement/look/fire passed simulated input checks. Hardware-accelerated rendering, actual phone layout/performance, and subjective control feel have not been verified on a physical device for this release.

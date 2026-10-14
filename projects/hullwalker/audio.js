@@ -316,12 +316,54 @@ export class EVAAudio {
   event(name, pan = 0) {
     if (!this._canPlay()) return;
     const c = this.context;
-    const cooldown = { step: 0.15, attach: 0.25, detach: 0.18, service: 0.4, win: 2, recall: 0.4, rcs: 0.12 }[name];
+    const cooldown = { step: 0.15, attach: 0.25, detach: 0.18, service: 0.4, win: 2, recall: 0.4, rcs: 0.12,
+      shot:.075, enemyShot:.09, impact:.07, hurt:.16, reload:.5, empty:.3, down:.25 }[name];
     if (cooldown === undefined || c.currentTime - (this._lastEvent.get(name) ?? -Infinity) < cooldown) return;
     this._lastEvent.set(name, c.currentTime);
     const variance = 0.93 + Math.random() * 0.14;
     let v;
     switch (name) {
+      case 'shot':
+        // Receiver/stock conduction inside the suit, with a short mechanical tail.
+        v = this._voice(pan, .30);
+        this._hitNoise(v, 'highpass', 1700, .23, .045);
+        this._hitTone(v, 'triangle', 155, 42, .26, .13, 0, 1700);
+        this._hitNoise(v, 'bandpass', 780, .19, .10, .006, .8, true);
+        this._hitNoise(v, 'bandpass', 2900, .065, .033, .068);
+        break;
+      case 'enemyShot':
+        // Suit threat sonification: a dry directional snap, not atmospheric echo.
+        v = this._voice(pan, .22);
+        this._hitNoise(v, 'bandpass', 2300, .09, .045);
+        this._hitTone(v, 'triangle', 240, 100, .045, .08, 0, 1200);
+        break;
+      case 'impact':
+        v = this._voice(pan, .20);
+        this._hitNoise(v, 'highpass', 2600, .10, .055);
+        this._hitTone(v, 'sine', 1350, 880, .035, .075);
+        break;
+      case 'hurt':
+        v = this._voice(pan, .40);
+        this._hitNoise(v, 'lowpass', 410, .22, .22, 0, .7, true);
+        this._hitTone(v, 'sine', 102, 38, .24, .27);
+        this._hitTone(v, 'sine', 560, 500, .04, .12, .09);
+        break;
+      case 'reload':
+        v = this._voice(0, 1.45);
+        this._hitNoise(v, 'bandpass', 1300, .09, .08);
+        this._hitNoise(v, 'bandpass', 650, .12, .09, .75);
+        this._hitNoise(v, 'highpass', 2400, .13, .065, 1.22);
+        this._hitTone(v, 'triangle', 350, 145, .08, .055, 1.23);
+        break;
+      case 'empty':
+        v = this._voice(0, .12);
+        this._hitNoise(v, 'bandpass', 1300, .10, .03);
+        break;
+      case 'down':
+        v = this._voice(pan, .45);
+        this._hitTone(v, 'sine', 1000, 650, .035, .14);
+        this._hitTone(v, 'sine', 1400, 1150, .025, .12, .09);
+        break;
       case 'step':
         v = this._voice(pan, 0.46);
         // Soft weight/contact, damped plate resonance, second-stage magnetic catch.

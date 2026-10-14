@@ -2,25 +2,33 @@ import * as THREE from 'three';
 
 // A 1.87 m EVA suit. Feet are at local y=0; the visor faces local -Z.
 // All rigid suit pieces are batched by material, retaining articulated joints.
-export function createAstronaut() {
+export function createAstronaut(options={}) {
+  const lowDetail=options.detail==='low';
+  const enemy=options.faction==='enemy'||options.faction==='boarding';
+  const colors={shell:enemy?0x63727d:0xcbd4d2,white:enemy?0xa4afb4:0xe8e4d9,
+    accent:enemy?0xc54236:0xc54d23,cloth:enemy?0x46545e:0xbf5932,
+    reinforcement:enemy?0x82909a:0xc6c8bc,lights:enemy?0xff704c:0x39d7d5,...options.colors};
   const group = new THREE.Group();
-  group.name = 'EVA / Kestrel pressure suit';
+  group.name = options.name || (enemy?'EVA / Boarding pressure suit':'EVA / Kestrel pressure suit');
   const body = new THREE.Group();
   group.add(body);
   const mats = {
-    shell: new THREE.MeshStandardMaterial({color: 0xcbd4d2, metalness: .38, roughness: .43}),
-    white: new THREE.MeshStandardMaterial({color: 0xe8e4d9, metalness: .14, roughness: .56}),
-    orange: new THREE.MeshStandardMaterial({color: 0xc54d23, metalness: .12, roughness: .57}),
-    cloth: new THREE.MeshStandardMaterial({color:0xbf5932,metalness:0,roughness:.94}),
-    reinforcement: new THREE.MeshStandardMaterial({color:0xc6c8bc,metalness:0,roughness:.91}),
+    shell: new THREE.MeshStandardMaterial({color: colors.shell, metalness: .38, roughness: .43}),
+    white: new THREE.MeshStandardMaterial({color: colors.white, metalness: .14, roughness: .56}),
+    orange: new THREE.MeshStandardMaterial({color: colors.accent, metalness: .12, roughness: .57}),
+    cloth: new THREE.MeshStandardMaterial({color:colors.cloth,metalness:0,roughness:.94}),
+    reinforcement: new THREE.MeshStandardMaterial({color:colors.reinforcement,metalness:0,roughness:.91}),
     fabric: new THREE.MeshStandardMaterial({color: 0x303a40, roughness: .96}),
     dark: new THREE.MeshStandardMaterial({color: 0x111b25, metalness: .38, roughness: .55}),
     metal: new THREE.MeshStandardMaterial({color: 0x657781, metalness: .85, roughness: .3}),
     gold: new THREE.MeshStandardMaterial({color: 0x9e7432, metalness: .88, roughness: .24}),
     visor: new THREE.MeshPhysicalMaterial({color: 0x66552d, metalness: 1, roughness: .12, clearcoat: 1, clearcoatRoughness: .06}),
-    cyan: new THREE.MeshStandardMaterial({color: 0x39d7d5, emissive: 0x14b3c6, emissiveIntensity: 2.6, metalness: .4, roughness: .3}),
+    cyan: new THREE.MeshStandardMaterial({color: colors.lights, emissive: colors.lights, emissiveIntensity: 2.6, metalness: .4, roughness: .3}),
     red: new THREE.MeshStandardMaterial({color: 0xff6645, emissive: 0xdf2510, emissiveIntensity: 1.8, roughness: .4}),
   };
+  // Distant squad members use fewer tessellation steps and material batches.
+  // The same articulated rig is retained, including both weapon hands.
+  if(lowDetail){mats.white=mats.shell;mats.reinforcement=mats.shell;mats.fabric=mats.dark;mats.metal=mats.dark;mats.gold=mats.dark;mats.red=mats.cyan;}
   const geoCache = new Map();
   const rigid = [];
   function part(name, parent=body, x=0,y=0,z=0) {
@@ -37,18 +45,18 @@ export function createAstronaut() {
     s.lineTo(x+ww+r,y+hh);s.quadraticCurveTo(x+ww+r,y+hh+r,x+ww,y+hh+r);
     s.lineTo(x,y+hh+r);s.quadraticCurveTo(x-r,y+hh+r,x-r,y+hh);
     s.lineTo(x-r,y);s.quadraticCurveTo(x-r,y-r,x,y-r);
-    const g=new THREE.ExtrudeGeometry(s,{depth:d-2*r,steps:1,bevelEnabled:true,bevelSegments:2,bevelThickness:r,bevelSize:r*.42,curveSegments:4});
+    const g=new THREE.ExtrudeGeometry(s,{depth:d-2*r,steps:1,bevelEnabled:true,bevelSegments:lowDetail?1:2,bevelThickness:r,bevelSize:r*.42,curveSegments:lowDetail?2:4});
     g.translate(0,0,-d/2+r);geoCache.set(key,g);return g;
   }
   function box(p,w,h,d,mat,x=0,y=0,z=0,r=.018,rz=0){return mesh(p,rounded(w,h,d,r),mat,x,y,z,0,0,rz);}
-  const sphere = new THREE.SphereGeometry(1,20,14);
+  const sphere = new THREE.SphereGeometry(1,lowDetail?12:20,lowDetail?8:14);
   function ell(p,sx,sy,sz,mat,x=0,y=0,z=0){const m=mesh(p,sphere,mat,x,y,z);m.scale.set(sx,sy,sz);return m;}
-  function cyl(p,r1,r2,h,mat,x=0,y=0,z=0,rx=0,rz=0){return mesh(p,new THREE.CylinderGeometry(r1,r2,h,12),mat,x,y,z,rx,0,rz);}
-  function ring(p,r,t,mat,x=0,y=0,z=0,rx=0,ry=0){return mesh(p,new THREE.TorusGeometry(r,t,6,20),mat,x,y,z,rx,ry,0);}
-  function hose(p,pts,r,mat){return mesh(p,new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(v=>new THREE.Vector3(...v))),20,r,7,false),mat);}
+  function cyl(p,r1,r2,h,mat,x=0,y=0,z=0,rx=0,rz=0){return mesh(p,new THREE.CylinderGeometry(r1,r2,h,lowDetail?8:12),mat,x,y,z,rx,0,rz);}
+  function ring(p,r,t,mat,x=0,y=0,z=0,rx=0,ry=0){return mesh(p,new THREE.TorusGeometry(r,t,lowDetail?4:6,lowDetail?12:20),mat,x,y,z,rx,ry,0);}
+  function hose(p,pts,r,mat){return mesh(p,new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(v=>new THREE.Vector3(...v))),lowDetail?10:20,r,lowDetail?5:7,false),mat);}
   // Shaped pressure fabric: fuller thigh/calf, tapered cuffs and irregular folds.
   function fabricLimb(parent,length,profile,material) {
-    const g=new THREE.CylinderGeometry(1,1,length,20,18);
+    const g=new THREE.CylinderGeometry(1,1,length,lowDetail?10:20,lowDetail?9:18);
     const a=g.attributes.position;
     for(let i=0;i<a.count;i++){
       const u=THREE.MathUtils.clamp((length/2-a.getY(i))/length,0,1);
@@ -64,8 +72,8 @@ export function createAstronaut() {
   }
   function patchTexture() {
     const c=document.createElement('canvas');c.width=256;c.height=128;const ctx=c.getContext('2d');
-    ctx.fillStyle='#18252e';ctx.fillRect(0,0,256,128);ctx.fillStyle='#d2e3dc';ctx.font='bold 23px monospace';ctx.fillText('KESTREL / 04',14,34);
-    ctx.fillStyle='#bd5930';ctx.fillRect(14,48,228,5);ctx.fillStyle='#cdd3cb';ctx.font='16px monospace';ctx.fillText('EXTRAVEHICULAR',14,80);ctx.fillText('HULL OPERATIONS',14,104);
+    ctx.fillStyle='#18252e';ctx.fillRect(0,0,256,128);ctx.fillStyle='#d2e3dc';ctx.font='bold 23px monospace';ctx.fillText(enemy?'BREACH / 07':'KESTREL / 04',14,34);
+    ctx.fillStyle='#bd5930';ctx.fillRect(14,48,228,5);ctx.fillStyle='#cdd3cb';ctx.font='16px monospace';ctx.fillText('EXTRAVEHICULAR',14,80);ctx.fillText(enemy?'BOARDING TEAM':'HULL OPERATIONS',14,104);
     const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;return tex;
   }
   const torso=part('Pressure torso',body,0,1.22,0);
@@ -99,7 +107,7 @@ export function createAstronaut() {
   const head=part('Helmet',torso,0,.43,0);
   ell(head,.214,.222,.207,mats.white);
   // Wrapped visor with a double perimeter seal, inset gold-coated glazing.
-  const panel=(radius,material,thetaStart=.28*Math.PI,thetaLen=.49*Math.PI)=>mesh(head,new THREE.SphereGeometry(radius,30,18,Math.PI*1.065,Math.PI*.87,thetaStart,thetaLen),material,0,0,-.009);
+  const panel=(radius,material,thetaStart=.28*Math.PI,thetaLen=.49*Math.PI)=>mesh(head,new THREE.SphereGeometry(radius,lowDetail?16:30,lowDetail?10:18,Math.PI*1.065,Math.PI*.87,thetaStart,thetaLen),material,0,0,-.009);
   panel(.217,mats.dark,.23*Math.PI,.56*Math.PI);
   panel(.220,mats.gold,.266*Math.PI,.493*Math.PI);
   panel(.223,mats.visor);
@@ -193,6 +201,36 @@ export function createAstronaut() {
     arms.push({shoulder,elbow,hand,side});
   }
 
+  // Compact gas-operated carbine, carried close to the suit. The weapon has
+  // actual grip sockets: the arm solver below must meet them, not merely point
+  // both forearms in the same general direction.
+  const weapon=part('EVA carbine',body,.11,1.32,-.12);
+  weapon.visible=false;
+  box(weapon,.092,.11,.31,mats.dark,0,0,0,.014);
+  box(weapon,.076,.064,.20,mats.shell,0,.02,.01,.009);
+  box(weapon,.066,.062,.25,mats.dark,0,.015,-.249,.009);
+  box(weapon,.048,.013,.43,mats.metal,0,.065,-.1,.003);
+  box(weapon,.075,.102,.105,mats.dark,0,-.092,.005,.01,0);
+  box(weapon,.045,.135,.06,mats.dark,0,-.145,-.04,.008);
+  box(weapon,.043,.107,.05,mats.dark,0,-.10,-.16,.008);
+  box(weapon,.05,.055,.20,mats.dark,0,.012,.231,.009);
+  box(weapon,.075,.13,.043,mats.fabric,0,.012,.342,.012);
+  cyl(weapon,.018,.018,.24,mats.metal,0,.017,-.472,Math.PI/2);
+  cyl(weapon,.028,.028,.072,mats.dark,0,.017,-.608,Math.PI/2);
+  box(weapon,.059,.055,.086,mats.dark,0,.097,-.025,.008);
+  box(weapon,.025,.009,.017,mats.cyan,0,.099,-.07,.002);
+  box(weapon,.014,.035,.08,mats.orange,.048,0,-.012,.003);
+  if(!lowDetail)for(let n=0;n<5;n++)box(weapon,.072,.012,.012,mats.metal,0,.052,-.17-n*.032,.002);
+  const muzzle=new THREE.Object3D();muzzle.name='Muzzle';muzzle.position.set(0,.017,-.647);weapon.add(muzzle);
+  const gripSockets={};
+  for(const arm of arms){
+    const socket=new THREE.Object3D();socket.name=arm.side>0?'Trigger grip':'Support grip';
+    socket.position.set(0,-.073,arm.side>0?.025:-.16);weapon.add(socket);
+    gripSockets[arm.side]=socket;
+    arm.hand.name=arm.side<0?'Left glove':'Right glove';
+    arm.palm=new THREE.Vector3(0,-.045,-.007);
+  }
+
   // Merge each rigid node's opaque pieces by material (animation stays skeletal).
   function batch(node) {
     const byMaterial=new Map();
@@ -228,6 +266,42 @@ export function createAstronaut() {
   let pendingLanding=null,landingAge=Infinity,landingSpeed=0,landingPeak=0;
   let absorbTime=.12,recoveryTime=.4,landingWeight=0;
   let gazeTurnSign=1,lookYaw=0,lookPitch=0,chestYaw=0,chestPitch=0,leanX=0,leanZ=0;
+  let armedBlend=0,aimBlend=0,recoilBlend=0,hitBlend=0,deathBlend=0;
+  const flightVelocity=new THREE.Vector3(),flightAcceleration=new THREE.Vector3();
+  const gunQ=new THREE.Quaternion(),gunTargetQ=new THREE.Quaternion();
+  const downAxis=new THREE.Vector3(0,-1,0),zero=new THREE.Vector3();
+  const gunMatrix=new THREE.Matrix4();
+  // Analytic two-bone IK in world coordinates, with outward/downward elbow
+  // poles. Bone lengths never stretch, even when the caller turns the root.
+  function solveWeaponArm(arm,blend){
+    const shoulder=arm.shoulder.getWorldPosition(new THREE.Vector3());
+    const grip=gripSockets[arm.side].getWorldPosition(new THREE.Vector3());
+    const handQ=weapon.getWorldQuaternion(new THREE.Quaternion());
+    handQ.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(0,0,arm.side*.075)));
+    const wrist=grip.clone().sub(arm.palm.clone().applyQuaternion(handQ));
+    const delta=wrist.clone().sub(shoulder),distance=delta.length();
+    const axis=delta.normalize(),L1=.300,L2=.266;
+    const d=THREE.MathUtils.clamp(distance,.04,L1+L2-.0005);
+    // The elbow pole travels with the upper torso, not with the camera.
+    const pole=new THREE.Vector3(arm.side*(arm.side<0?.55:.76),-.82,arm.side<0?-.78:.14).applyQuaternion(torso.getWorldQuaternion(new THREE.Quaternion()));
+    pole.addScaledVector(axis,-pole.dot(axis)).normalize();
+    const along=(L1*L1-L2*L2+d*d)/(2*d);
+    const bend=Math.sqrt(Math.max(0,L1*L1-along*along));
+    const elbow=shoulder.clone().addScaledVector(axis,along).addScaledVector(pole,bend);
+    const effectiveWrist=shoulder.clone().addScaledVector(axis,d);
+    const upperQ=new THREE.Quaternion().setFromUnitVectors(downAxis,elbow.clone().sub(shoulder).normalize());
+    const lowerQ=new THREE.Quaternion().setFromUnitVectors(downAxis,effectiveWrist.clone().sub(elbow).normalize());
+    const parentQ=torso.getWorldQuaternion(new THREE.Quaternion());
+    arm.shoulder.quaternion.slerp(parentQ.invert().multiply(upperQ),blend);
+    arm.elbow.quaternion.slerp(upperQ.clone().invert().multiply(lowerQ),blend);
+    arm.hand.quaternion.slerp(lowerQ.clone().invert().multiply(handQ),blend);
+  }
+  function getMuzzleWorldPosition(target=new THREE.Vector3()){
+    group.updateMatrixWorld(true);return muzzle.getWorldPosition(target);
+  }
+  function getMuzzleWorldDirection(target=new THREE.Vector3()){
+    group.updateMatrixWorld(true);return target.set(0,0,-1).applyQuaternion(muzzle.getWorldQuaternion(new THREE.Quaternion()));
+  }
   const lastRoot=new THREE.Vector3(),lastUp=new THREE.Vector3(0,1,0);
   const unitUp=new THREE.Vector3(0,1,0),unitForward=new THREE.Vector3(0,0,-1);
   for(const leg of legs){
@@ -251,6 +325,18 @@ export function createAstronaut() {
     if(pose.paused)dt=0;
     const damp=(rate)=>1-Math.exp(-dt*rate),clamp=THREE.MathUtils.clamp;
     const root=group.position,rootQ=group.quaternion,invQ=rootQ.clone().invert();
+    armedBlend+=((pose.armed?1:0)-armedBlend)*damp(12);
+    aimBlend+=(clamp(pose.aiming||0,0,1)-aimBlend)*damp(11);
+    recoilBlend+=(clamp(pose.recoil||0,0,1)-recoilBlend)*damp(45);
+    hitBlend+=(clamp(pose.hit||0,0,1)-hitBlend)*damp(24);
+    deathBlend+=((pose.dead?1:0)-deathBlend)*damp(4);
+    weapon.visible=armedBlend>.01;
+    const suppliedVelocity=(pose.velocity||pose.groundVelocity||zero).clone().applyQuaternion(invQ);
+    const suppliedAcceleration=(pose.acceleration||zero).clone().applyQuaternion(invQ);
+    flightVelocity.lerp(suppliedVelocity,damp(4));
+    flightAcceleration.lerp(suppliedAcceleration,damp(7));
+    flightAcceleration.clampLength(0,8);
+    const combatBrace=armedBlend*(.025+aimBlend*.023);
     const up=unitUp.clone().applyQuaternion(rootQ);
     const groundV=pose.groundVelocity?.clone()||new THREE.Vector3();
     const actualSpeed=groundV.length();
@@ -292,13 +378,13 @@ export function createAstronaut() {
     // Look first, turn shoulders next; root orientation is controlled independently.
     const gaze=(pose.gaze?.clone()||unitForward.clone().applyQuaternion(rootQ)).applyQuaternion(invQ);
     let rawYaw=Math.atan2(-gaze.x,-gaze.z);if(Math.abs(pose.turnRate||0)>.05)gazeTurnSign=Math.sign(pose.turnRate);if(Math.abs(rawYaw)>2.8)rawYaw=gazeTurnSign*Math.abs(rawYaw);const desiredYaw=clamp(rawYaw,-1.25,1.25);
-    const desiredPitch=clamp(Math.atan2(gaze.y,Math.hypot(gaze.x,gaze.z)),-.5,.5);
+    const desiredPitch=clamp(Math.atan2(gaze.y,Math.hypot(gaze.x,gaze.z)),-.85,.85);
     lookYaw+=(desiredYaw-lookYaw)*damp(13);lookPitch+=(desiredPitch-lookPitch)*damp(11);
-    chestYaw+=(clamp(lookYaw*.42,-.42,.42)-chestYaw)*damp(6);
-    chestPitch+=(lookPitch*.23-chestPitch)*damp(5);
+    chestYaw+=(clamp(lookYaw*(.42+armedBlend*.20)-armedBlend*.42,-.95,.75)-chestYaw)*damp(8);
+    chestPitch+=(lookPitch*(.23+armedBlend*.14)-chestPitch)*damp(7);
     head.rotation.y=clamp(lookYaw-chestYaw,-.90,.90);
-    head.rotation.x=lookPitch-chestPitch+landingWeight*.045;
-    head.rotation.z=-turn*.025;
+    head.rotation.x=lookPitch-chestPitch+landingWeight*.045+recoilBlend*.025-hitBlend*.075-deathBlend*.3;
+    head.rotation.z=-turn*.025+hitBlend*.06-deathBlend*.18;
 
     if(!airborne&&dt>0){
       settleDelay=Math.max(0,settleDelay-dt);
@@ -341,7 +427,7 @@ export function createAstronaut() {
     const liftEnvelope=activeLeg?Math.sin(activeLeg.progress*Math.PI):0;
     // Weight shifts onto the planted boot, with only a small vertical rise.
     body.position.x+=(support*.016*walk-body.position.x)*damp(8);
-    let pelvisHeight=-.068*walk-.022*run+liftEnvelope*.008*walk;
+    let pelvisHeight=-.068*walk-.022*run+liftEnvelope*.008*walk-combatBrace*(1-floatBlend);
     for(const leg of legs)if(!leg.swinging&&!airborne){
       const plantedLocal=leg.plant.clone().sub(root).applyQuaternion(invQ);
       const horizontal=Math.hypot(plantedLocal.x-leg.hip.position.x,plantedLocal.z);
@@ -354,11 +440,13 @@ export function createAstronaut() {
     body.position.y=pelvisHeight<body.position.y?pelvisHeight:THREE.MathUtils.lerp(body.position.y,pelvisHeight,damp(8));
     const inputLocal=(pose.thrustDirection?.clone()||new THREE.Vector3()).applyQuaternion(invQ);
     const jet=airborne?(pose.thrust||0):0;
-    leanX+=((-walk*.025+floatBlend*(inputLocal.z*jet*.08+(pose.braking?-.045:.018)))-leanX)*damp(5);
-    leanZ+=((turn*-.025+floatBlend*inputLocal.x*jet*-.075)-leanZ)*damp(5);
-    torso.rotation.set(chestPitch+leanX-landingWeight*.14,chestYaw,leanZ+support*.016*liftEnvelope*walk);
+    const moveLocal=groundV.clone().applyQuaternion(invQ);
+    const lateralStride=clamp(moveLocal.x/2,-1,1),forwardStride=clamp(-moveLocal.z/2,-1,1);
+    leanX+=((-forwardStride*walk*.035+combatBrace+floatBlend*(inputLocal.z*jet*.08+flightAcceleration.z*.009+(pose.braking?-.045:.018)))-leanX)*damp(5);
+    leanZ+=((turn*-.025-lateralStride*walk*.035+floatBlend*(inputLocal.x*jet*-.075-flightAcceleration.x*.012))-leanZ)*damp(5);
+    torso.rotation.set(chestPitch+leanX-landingWeight*.14+recoilBlend*.055-hitBlend*.095-deathBlend*.42,chestYaw,leanZ+support*.016*liftEnvelope*walk+hitBlend*.04+deathBlend*.1);
     torso.scale.y=1+Math.sin(t*1.65)*.0018;
-    pelvis.rotation.y=chestYaw*.12-turn*.025;
+    pelvis.rotation.y=chestYaw*.12-turn*.025-lateralStride*walk*.05;
 
     for(const leg of legs){
       let foot=leg.plant.clone(),footQ=leg.footQ.clone();
@@ -370,14 +458,18 @@ export function createAstronaut() {
       // Ankle at sole + boot height; solve a 3D bend plane for turning/side steps.
       const footUp=unitUp.clone().applyQuaternion(footQ);
       const local=foot.addScaledVector(footUp,.149).sub(root).applyQuaternion(invQ).sub(body.position).sub(leg.hip.position);
-      const lateral=clamp(local.x,-.27,.27),vertical=local.y;
+      const lateral=local.x,vertical=local.y;
       const roll=Math.atan2(lateral,-vertical),y=-Math.hypot(lateral,vertical),z=local.z;
       const L1=.385,L2=.4,d=Math.min(.782,Math.hypot(y,z));
       const knee=-Math.acos(clamp((d*d-L1*L1-L2*L2)/(2*L1*L2),-1,1));
       const hip=Math.atan2(-z,-y)-Math.atan2(L2*Math.sin(knee),L1+L2*Math.cos(knee));
       const drift=Math.sin(t*.63+leg.side*1.7)*.026;
-      leg.hip.rotation.set(THREE.MathUtils.lerp(hip,.24+leg.side*.05+drift+jet*.035,floatBlend),0,THREE.MathUtils.lerp(roll,leg.side*(.07+jet*.015),floatBlend),'ZXY');
-      leg.knee.rotation.x=THREE.MathUtils.lerp(knee,-.59+leg.side*.09-drift*1.6+(pose.braking?-.09:0),floatBlend);
+      // Thrust changes the attitude of the loose limbs before the root catches
+      // up. Braking draws the knees in; lateral corrections spread one leg.
+      const flightTuck=clamp(flightVelocity.z*.011-flightAcceleration.z*.012,-.08,.12);
+      const flightSpread=clamp(flightAcceleration.x*.014,-.1,.1);
+      leg.hip.rotation.set(THREE.MathUtils.lerp(hip,.24+leg.side*.05+drift+jet*.035+flightTuck+armedBlend*.04,floatBlend),0,THREE.MathUtils.lerp(roll,leg.side*(.07+jet*.015)-flightSpread,floatBlend),'ZXY');
+      leg.knee.rotation.x=THREE.MathUtils.lerp(knee,-.59+leg.side*.09-drift*1.6-flightTuck*1.8+(pose.braking?-.09:0),floatBlend);
       const chain=rootQ.clone().multiply(leg.hip.quaternion).multiply(leg.knee.quaternion);
       const plantedQ=chain.invert().multiply(footQ);
       const relaxedQ=new THREE.Quaternion().setFromEuler(new THREE.Euler(.17+drift,0,-leg.side*.035));
@@ -390,13 +482,50 @@ export function createAstronaut() {
       const relaxed=-.27+arm.side*.035+Math.sin(t*.73+arm.side)*.018;
       const targetX=swing+floatBlend*(relaxed+inputLocal.z*jet*.09)-landingWeight*.38;
       const targetZ=arm.side*(.105+floatBlend*(.18+jet*.065)+landingWeight*.21)+turn*.075;
+      arm.shoulder.rotation.y+=(0-arm.shoulder.rotation.y)*damp(10);
+      arm.elbow.rotation.y+=(0-arm.elbow.rotation.y)*damp(10);
+      arm.elbow.rotation.z+=(0-arm.elbow.rotation.z)*damp(10);
       arm.shoulder.rotation.x+=(targetX-arm.shoulder.rotation.x)*damp(landingWeight>0?16:7);
       arm.shoulder.rotation.z+=(targetZ-arm.shoulder.rotation.z)*damp(landingWeight>0?16:7);
       arm.elbow.rotation.x+=(-.18-floatBlend*.24-Math.max(0,-swing)*.35-(pose.braking?.09:0)-landingWeight*.36-arm.elbow.rotation.x)*damp(landingWeight>0?16:6);
-      arm.hand.rotation.x=.04+floatBlend*.10;arm.hand.rotation.z=arm.side*floatBlend*.06;
+      arm.hand.rotation.set(.04+floatBlend*.10,0,arm.side*floatBlend*.06);
+    }
+    if(armedBlend>.001){
+      // Keep the stock in the shoulder pocket while the barrel and helmet
+      // acquire the same world direction. Hip-fire is a lower ready pose;
+      // aiming raises the receiver, tightens the stance and removes most sway.
+      const localGaze=gaze.clone().normalize();
+      gunMatrix.lookAt(zero,localGaze,unitUp);
+      gunTargetQ.setFromRotationMatrix(gunMatrix);
+      gunQ.slerp(gunTargetQ,damp(aimBlend>.5?20:14));
+      const recoilQ=new THREE.Quaternion().setFromEuler(new THREE.Euler(recoilBlend*.045-deathBlend*.65,0,-hitBlend*.025));
+      weapon.quaternion.copy(gunQ).multiply(recoilQ);
+      const shoulderPocket=new THREE.Vector3(.21,0,.035).applyQuaternion(gunQ);
+      weapon.position.set(shoulderPocket.x,1.33-combatBrace+shoulderPocket.y-.035*(1-aimBlend),shoulderPocket.z-.285);
+      weapon.position.add(new THREE.Vector3(0,0,recoilBlend*.032).applyQuaternion(gunQ));
+      // Keep both wrist targets inside their spheres of reach. A common small
+      // translation preserves the rigid weapon and grip separation; it prevents
+      // a stretched support arm when looking far sideways or sharply upward.
+      group.updateMatrixWorld(true);
+      for(let pass=0;pass<3;pass++){
+        let correction=new THREE.Vector3(),count=0;
+        for(const arm of arms){
+          const shoulder=arm.shoulder.getWorldPosition(new THREE.Vector3());
+          const grip=gripSockets[arm.side].getWorldPosition(new THREE.Vector3());
+          const q=weapon.getWorldQuaternion(new THREE.Quaternion()).multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(0,0,arm.side*.075)));
+          const wrist=grip.sub(arm.palm.clone().applyQuaternion(q));
+          const delta=wrist.sub(shoulder),excess=delta.length()-.547;
+          if(excess>0){correction.addScaledVector(delta.normalize(),-excess);count++;}
+        }
+        if(!count)break;
+        weapon.position.add(correction.multiplyScalar(1/count).applyQuaternion(invQ));
+        group.updateMatrixWorld(true);
+      }
+      for(const arm of arms)solveWeaponArm(arm,armedBlend>.995?1:armedBlend);
     }
     jets.forEach((j,i)=>{j.visible=thrust>.01;j.position.y=jetDirection<0?.255:-.291;j.rotation.z=jetDirection<0?Math.PI:0;j.scale.set(1,thrust*(.83+Math.sin(t*57+i*2)*.12),1);});
     group.userData.pose={headYaw:head.rotation.y,chestYaw:torso.rotation.y,headPitch:head.rotation.x,
+      combat:{armed:armedBlend,aiming:aimBlend,recoil:recoilBlend,hit:hitBlend,dead:deathBlend},
       landing:{speed:landingSpeed,compression:landingPeak*landingWeight,active:Number.isFinite(landingAge)},
       feet:legs.map(l=>({side:l.side,swinging:l.swinging,plant:l.plant.toArray(),progress:l.progress}))};
     return footfalls;
@@ -405,5 +534,5 @@ export function createAstronaut() {
   group.userData.height=1.89;
   group.userData.forward=new THREE.Vector3(0,0,-1);
   group.userData.materials=mats;
-  return {group,animate,setJets,land,resetLanding};
+  return {group,animate,setJets,land,resetLanding,weapon,muzzle,gripSockets,getMuzzleWorldPosition,getMuzzleWorldDirection};
 }

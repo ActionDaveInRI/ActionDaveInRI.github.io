@@ -76,11 +76,11 @@
   },
   {
     "id": "hullwalker",
-    "title": "Hullwalker · EVA",
+    "title": "Hullwalker · Boarding Action",
     "repo": "ActionDaveInRI.github.io",
     "directory": "projects/hullwalker",
     "category": "Space & flight",
-    "description": "Walk the hull with magnetic boots, swing on a tether, reel in or release into free drift, and restore the Morrow’s power and relay.",
+    "description": "Retake the Morrow’s airlock in zero-G combat. Walk the hull, flank underneath, swing on a tether, and fight a mobile boarding team. Touch controls and optional tether practice included.",
     "launch": "https://actiondaveinri.github.io/projects/hullwalker/",
     "live": "https://actiondaveinri.github.io/projects/hullwalker/",
     "source": "https://github.com/ActionDaveInRI/ActionDaveInRI.github.io/tree/main/projects/hullwalker",
@@ -96,11 +96,11 @@
     "requiresLogin": false,
     "hosting": "github-pages",
     "originalSite": "https://hullwalker-eva.x-nihilo.chatgpt.site",
-    "sourceVersion": 4,
-    "sourceCommit": "a7d791ce000adb39f904864d384077df4a55e8a9",
+    "sourceVersion": 6,
+    "sourceCommit": "dfd30fdd7f48aefb99ce767ac0c494241f87f929",
     "section": "current",
-    "note": "Complete byte-identical v4 tether runtime with bundled Three.js and all four original source commits preserved. Preview shows v3 gameplay.",
-    "previewLabel": "Preview: v3 · Play: v4 with tether"
+    "note": "Complete byte-identical v6 combat and camera-control runtime with bundled Three.js and all six original source commits preserved. Preview shows v3 gameplay.",
+    "previewLabel": "Preview: v3 · Play: v6 combat"
   },
   {
     "id": "star-cluster",

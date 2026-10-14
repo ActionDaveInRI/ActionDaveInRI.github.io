@@ -34,7 +34,7 @@ Use real game captures and record the preview version when it differs from the s
 
 The selected public games run without ChatGPT sign-in. Their original Sites projects and access settings remain separate. Each game records its release source and adaptations in its README and provenance. Later development edits do not automatically publish here.
 
-Hullwalker’s selected public release is Sites v4 (tether trial), source `a7d791ce000adb39f904864d384077df4a55e8a9`. Its four source commits are preserved; the gallery preview is explicitly labeled as v3.
+Hullwalker’s selected public release is Sites v6 (boarding combat and camera controls), source `dfd30fdd7f48aefb99ce767ac0c494241f87f929`. Its six source commits are preserved; the gallery preview remains explicitly labeled as v3. Touch controls are included.
 
 This repository inherits the complete `spaceship` Git history through `8d38d42dfab8e99e70031a0a5831b5e18fc6fad5`. Existing source-history bundles and archives remain intact, including Wayfarer’s 30 and Silt + Signal’s 9 source commits. No game code was changed for the website move.
 

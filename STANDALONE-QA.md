@@ -65,3 +65,12 @@ Selected Sites v4, source `a7d791ce000adb39f904864d384077df4a55e8a9`; its origin
 - Independently restored the Hullwalker source-history bundle and verified all four source commits are retained, its head is the selected v4 commit, and every exported runtime file matches that source and its recorded SHA-256. The Pages dependency traversal resolves both new tether modules and the vendored Three.js modules.
 - Catalog, generated gallery, directory, release notes, and history identify v4. The retained screenshot is explicitly labeled as v3; no new screenshot is claimed.
 - Browser-control tooling was unavailable in this environment, so this publication did not repeat visual gameplay, audio listening, or physical touch/gamepad checks. Existing source simulations and portable-resource checks passed; live HTTP verification follows publication.
+
+# Hullwalker combat release — October 14, 2026
+
+Selected deployed Sites v6, source `dfd30fdd7f48aefb99ce767ac0c494241f87f929`. Exported all 32 tracked runtime files byte-for-byte, including combat.js and combat-world.js. Public path remains `/projects/hullwalker/`. Catalog and history documents now describe combat and the corrected look/fire controls; preview remains labeled v3.
+
+- Development verification: 45 automated checks after the camera fix, covering production combat, geometry, rig transforms, input lifecycle and existing tether behavior. Offline production-mesh renders were inspected; these are not WebGL/browser checks.
+- Additional phone-focused check: simulated 390×844 coarse-pointer environment with simultaneous joystick, canvas-look, and FIRE. Releasing each pointer preserves the others; canvas look never fires or requests mouse capture; pause clears all controls. All 14 full-entry tests in that temporary expanded suite passed.
+- Browser gameplay and physical phone/gamepad checks were not performed for this release. Actual phone layout, performance and subjective control feel remain unverified.
+- All previous source history is retained in the six-commit bundle. Release source/runtime hashes and local Pages dependencies are verified before publishing.

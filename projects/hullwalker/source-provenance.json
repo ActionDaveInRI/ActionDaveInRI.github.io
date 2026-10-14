@@ -1,37 +1,47 @@
 {
   "source_site": "https://hullwalker-eva.x-nihilo.chatgpt.site",
   "source_project_id": "appgprj_6abc32e03f58819183e66216bc06649b",
-  "source_version": 4,
-  "source_commit": "a7d791ce000adb39f904864d384077df4a55e8a9",
-  "exported_at": "2026-10-13",
+  "source_version": 6,
+  "source_commit": "dfd30fdd7f48aefb99ce767ac0c494241f87f929",
+  "exported_at": "2026-10-14",
   "runtime_source_path": "dist",
   "adaptation": "None; the complete tracked dist/ runtime is copied byte-for-byte.",
   "screenshot_source": "Hullwalker-natural-EVA-motion.jpg",
   "screenshot_version": 3,
   "screenshot_method": "Actual v3 gameplay captured with the built-in Canvas compatibility renderer.",
   "external_runtime_requests": false,
-  "preserved_source_commits": 4,
+  "preserved_source_commits": 6,
   "source_history": "history/source-history.bundle",
   "runtime_files": [
     {
       "path": "astronaut.js",
       "source_path": "dist/astronaut.js",
-      "sha256": "d3a2d5378675e9a39c7dbe4b9133d6f44a24fc627c1c1662b2dbd0d82f41b396"
+      "sha256": "579db62d56aba4900d3ff52bdcbe40babea23241536c1ab666297885dc2d82a2"
     },
     {
       "path": "audio.js",
       "source_path": "dist/audio.js",
-      "sha256": "cec68cc06ab89a92c7da6932dab2eecd9ebeec2e562912c092d8d9a862ea5ef9"
+      "sha256": "19a00338f02ea740ee068cc6f62a691c5ea3de2edd09c3f9d2b04628cb87473d"
+    },
+    {
+      "path": "combat-world.js",
+      "source_path": "dist/combat-world.js",
+      "sha256": "44ce571367434d3c5de32ad79dee88d803b6b546eea0c04a8968663b4533f86c"
+    },
+    {
+      "path": "combat.js",
+      "source_path": "dist/combat.js",
+      "sha256": "a966143ce8c3f28cdef2e881c560ea9ef0fb76a2ab27aeee984591a18ceafc84"
     },
     {
       "path": "index.html",
       "source_path": "dist/index.html",
-      "sha256": "c7fcb2471109473e2a27bb5058e25a176d698aeaab5c27014c17485403950410"
+      "sha256": "8870d5e2193a2e43a8244e9d9bd590114938e8e021034b3f42794a306e5a3f3d"
     },
     {
       "path": "main.js",
       "source_path": "dist/main.js",
-      "sha256": "24a4a0806cfc497b2d9c05c2cc6725c47d25c57975301b5418ef24bf98d17be6"
+      "sha256": "850bcbfe32dd1ceb5d481a7192491333b1941ba652af00a9574da2164a673fc7"
     },
     {
       "path": "scene-kit.js",
@@ -46,7 +56,7 @@
     {
       "path": "style.css",
       "source_path": "dist/style.css",
-      "sha256": "39f8466ddfc738540d18d3ceb580a50846e612a4dcc8ec13f868185bbba4182b"
+      "sha256": "3daf16fc60b1832f5a5e9ef46de3a078a362f06008f7420eb36c8683ec6f163e"
     },
     {
       "path": "tether-rig.js",
@@ -161,7 +171,7 @@
     {
       "path": "world.js",
       "source_path": "dist/world.js",
-      "sha256": "c1395b77250c2a0400ceaaba76a29b4036e6ac9f413b4fea3d1e4cc95a7fc8e1"
+      "sha256": "de836ae4267c2b2c394664306a6d2b4dd1d5bb5ec3c2f6217f7d6b02a4ce34c9"
     }
   ]
 }

@@ -52,3 +52,61 @@ Choose **TRY THE TETHER** to spawn at the starboard edge, already clipped to A1.
 - Magnetic contact captures inward normal speed before stopping the body. Planted-foot IK bends the knees and lowers the hips in proportion to impact, with chest/arm balance and slower recovery. A sideways skim does not cause an exaggerated crouch.
 
 Run the repeatable checks with `node --test tests/*.test.mjs`. The numerical tests cover tether constraints and power, cable visibility, complete trial traversal, and the actual articulated landing rig. They do not assess subjective camera/play feel, graphics or real touch/gamepad hardware. No browser-control surface was available for this update, so browser visual QA remains to be done on the playable build.
+
+## October 14 — Boarding action
+
+The primary entry is now **RETAKE THE AIRLOCK**, a single-player combat encounter.
+Three boarding suits patrol and reposition through the upper hull, sidewalls,
+underside, and a sheared service pod. The raider makes physical EVA transfers.
+Clear the squad, then reach the hatch with magnetic boots attached and press E.
+Tether practice, the original repair mission, and guided EVA remain selectable.
+
+### Combat controls
+
+- WASD: walk / directional RCS; Shift: run / brake.
+- Mouse: free look when captured. Without capture, left/right drag looks only.
+  LMB fires only while captured. Hold F or FIRE to shoot in either mode.
+  MOUSE LOOK explicitly requests capture; starting or acquiring control never fires.
+- RMB: focused aim. Q: reload. A magazine holds 24 rounds; reserve is unlimited.
+- Space: hold/release push-off when attached; hold to thrust upward in flight.
+- Ctrl: downward RCS. C: thrust back toward the last hull.
+- G: clip/release; Z/X: reel in/pay out. Look toward an eyelet to prioritize it.
+- E: secure the cleared airlock. R: restart encounter. Escape: pause.
+- Touch: left movement stick, canvas drag to look, FIRE hold, FOCUS toggle,
+  RELOAD, PUSH OFF, BRAKE, UP/DOWN and hull-return controls. Expand the tether
+  drawer for reels. Cancellation, blur and pause clear held inputs.
+- Gamepad: sticks move/look; RT fire; LT focus; A push/up; B brake; X reload;
+  Y interact; LB hull return; RB tether; D-pad left/right reel, down thrust down.
+  Start pauses/resumes. Gamepad gameplay input is frozen while paused.
+
+The rifle uses a camera target followed by a separate muzzle trace, so seeing
+around cover does not allow shooting through it. Enemy rounds are swept physical
+projectiles with a visible aim warning and burst gaps. Suit integrity recovers
+five seconds after the last hit. Cover geometry blocks both movement and shots.
+The camera has a hull collision sweep, with closer shoulder framing for focus.
+Weapon, impact and reload sounds are synthesized locally.
+
+Character work adds an actual rifle, two-handed wrist/grip IK, a shouldered
+stance, distributed recoil and hit response, more responsive airborne limbs,
+and armed foot placement for strafing/backpedaling. It also fixes pre-existing
+side-step foot sliding. Enemy suits use reduced geometry and material batches.
+
+### Release verification and limits
+
+`node --test tests/*.test.mjs` exercises actual production geometry, rig transforms,
+physics and entry-point event wiring (browser rendering/audio are mocked). Tests
+cover cover occlusion at the muzzle, reload/death/restart, physical enemy routes,
+projectile damage, touch/pause/gamepad input lifecycle, combat collision, tether
+regressions, grip contact and planted feet on multiple hull orientations.
+
+Actual production meshes and the combat camera were also inspected through
+an offline CPU render. This does not verify hardware-accelerated WebGL, audible
+mix, real browser layout, phone/gamepad hardware, frame rate or subjective combat
+feel. No browser-control surface was available for this release.
+
+### October 14 camera-control correction
+
+Uncaptured mouse dragging is now camera-only. This fixes the fallback path that
+previously fired while trying to look around. F provides an independent trigger,
+and the MOUSE LOOK button enables standard free-mouse/LMB controls when the
+browser permits capture. HUD hints reflect the actual capture state.

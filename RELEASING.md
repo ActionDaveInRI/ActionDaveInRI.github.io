@@ -115,6 +115,6 @@ Run all layout/exporter regression tests with `python3 -m unittest discover -s s
 
 ## Hullwalker portable release
 
-Hullwalker’s selected release is Sites v6 (boarding combat and camera controls), source `dfd30fdd7f48aefb99ce767ac0c494241f87f929`, at [projects/hullwalker/](projects/hullwalker/). This version’s development deployment was confirmed successful before export. Its complete tracked `dist/` is copied byte-for-byte with no runtime adaptation. The generic exporter currently does not handle Hullwalker.
+Hullwalker’s selected release is Sites v7 (boarding combat with the phone sightline fix), source `bfbec0121c836d749aff7eba4529ca2f36b1a87c`, at [projects/hullwalker/](projects/hullwalker/). This version’s development deployment was confirmed successful before export. Its complete tracked `dist/` is copied byte-for-byte with no runtime adaptation. The generic exporter currently does not handle Hullwalker.
 
 For a later release, select a clean exact saved source commit, run `node --test tests/*.test.mjs`, and export its tracked `dist/` to the project directory. Update `source-provenance.json` hashes, the development README, the full source-history bundle, release/history documentation, and the catalog. Preserve older source commits. Run the gallery generator and repository checks, then publish the reviewed release to `main` and verify the live runtime hashes. The current preview remains an explicitly labeled v3 capture.

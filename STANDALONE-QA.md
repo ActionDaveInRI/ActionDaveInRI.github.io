@@ -74,3 +74,12 @@ Selected deployed Sites v6, source `dfd30fdd7f48aefb99ce767ac0c494241f87f929`. E
 - Additional phone-focused check: simulated 390×844 coarse-pointer environment with simultaneous joystick, canvas-look, and FIRE. Releasing each pointer preserves the others; canvas look never fires or requests mouse capture; pause clears all controls. All 14 full-entry tests in that temporary expanded suite passed.
 - Browser gameplay and physical phone/gamepad checks were not performed for this release. Actual phone layout, performance and subjective control feel remain unverified.
 - All previous source history is retained in the six-commit bundle. Release source/runtime hashes and local Pages dependencies are verified before publishing.
+
+# Hullwalker phone sightline fix — October 14, 2026
+
+Selected deployed Sites v7, source `bfbec0121c836d749aff7eba4529ca2f36b1a87c`. The complete 32-file runtime is copied byte-for-byte. The hotfix changes main.js and style.css: combat entry/retry clears both introductory notices, phone combat hides the duplicate objective, status stays in a compact top strip, and other brief notices remain touch-through near the top edge.
+
+- All 45 existing source checks passed. Independent actual-entry checks verified that startup and loss-to-retry clear inherited or stale toasts, and the third kill shows SECURE AIRLOCK. Static CSS was reviewed at 375x667, 320x568, 390x844 with a 47px top inset, and 844x390 with a 47px left inset: the 20px notice slot retains a 6px gap above the HUD. Browser rendering and device performance remain unverified; no new screenshot is claimed.
+- Export hashes match the exact source; the refreshed bundle was independently cloned and its HEAD, all seven source commits, and every runtime blob were verified. The v4 tether and v6 combat/camera source history remain recoverable.
+- Gallery generation completed for 23 projects and 2 compatibility pages. The standalone checks passed for Wayfarer and Silt + Signal; the Pages layout check passed for all 198 local routes/resources. Hullwalker was separately verified against its exact source and provenance hashes.
+- The gallery preview remains explicitly labeled v3. Physical-phone rendering/performance, audio, gamepad hardware and subjective control feel are not claimed by these automated checks.

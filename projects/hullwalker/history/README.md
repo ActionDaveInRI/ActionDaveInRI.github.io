@@ -1,11 +1,12 @@
 # Original Hullwalker source history
 
-All six saved source commits are preserved in `source-history.bundle`.
+All seven saved source commits are preserved in `source-history.bundle`.
 
-Restore with `git clone source-history.bundle hullwalker-source`. The selected v6 combat/camera release is `dfd30fdd7f48aefb99ce767ac0c494241f87f929`.
+Restore with `git clone source-history.bundle hullwalker-source`. The selected v7 phone sightline release is `bfbec0121c836d749aff7eba4529ca2f36b1a87c`.
 
 | Sites version | Source commit | Change |
 |---|---|---|
+| 7 | `bfbec0121c836d749aff7eba4529ca2f36b1a87c` | Clear phone combat sightline; compact top status and shorter touch-through notices |
 | 6 | `dfd30fdd7f48aefb99ce767ac0c494241f87f929` | Combat release with independent look/fire and optional mouse capture |
 | 5 | `557f1035535ea39d3cbffbd43f8983c78dfd9896` | Mobile boarding squad, physical cover, rifle and kinesthetic character animation |
 | 4 | `a7d791ce000adb39f904864d384077df4a55e8a9` | Tether trial, winch controls, and responsive touchdown |

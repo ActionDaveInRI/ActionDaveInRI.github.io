@@ -1,8 +1,8 @@
 {
   "source_site": "https://hullwalker-eva.x-nihilo.chatgpt.site",
   "source_project_id": "appgprj_6abc32e03f58819183e66216bc06649b",
-  "source_version": 6,
-  "source_commit": "dfd30fdd7f48aefb99ce767ac0c494241f87f929",
+  "source_version": 7,
+  "source_commit": "bfbec0121c836d749aff7eba4529ca2f36b1a87c",
   "exported_at": "2026-10-14",
   "runtime_source_path": "dist",
   "adaptation": "None; the complete tracked dist/ runtime is copied byte-for-byte.",
@@ -10,7 +10,7 @@
   "screenshot_version": 3,
   "screenshot_method": "Actual v3 gameplay captured with the built-in Canvas compatibility renderer.",
   "external_runtime_requests": false,
-  "preserved_source_commits": 6,
+  "preserved_source_commits": 7,
   "source_history": "history/source-history.bundle",
   "runtime_files": [
     {
@@ -41,7 +41,7 @@
     {
       "path": "main.js",
       "source_path": "dist/main.js",
-      "sha256": "850bcbfe32dd1ceb5d481a7192491333b1941ba652af00a9574da2164a673fc7"
+      "sha256": "a57438cf8861a6c6d3ffd17ef80a0f33d5d2977928a81e2274e8dfae96df6160"
     },
     {
       "path": "scene-kit.js",
@@ -56,7 +56,7 @@
     {
       "path": "style.css",
       "source_path": "dist/style.css",
-      "sha256": "3daf16fc60b1832f5a5e9ef46de3a078a362f06008f7420eb36c8683ec6f163e"
+      "sha256": "b5c0921d5d4be1eed6c1f83c27ee2825b007a96e2bda0f54e179128fdf5271b8"
     },
     {
       "path": "tether-rig.js",

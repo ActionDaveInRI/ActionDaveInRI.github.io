@@ -96,11 +96,11 @@
     "requiresLogin": false,
     "hosting": "github-pages",
     "originalSite": "https://hullwalker-eva.x-nihilo.chatgpt.site",
-    "sourceVersion": 6,
-    "sourceCommit": "dfd30fdd7f48aefb99ce767ac0c494241f87f929",
+    "sourceVersion": 7,
+    "sourceCommit": "bfbec0121c836d749aff7eba4529ca2f36b1a87c",
     "section": "current",
-    "note": "Complete byte-identical v6 combat and camera-control runtime with bundled Three.js and all six original source commits preserved. Preview shows v3 gameplay.",
-    "previewLabel": "Preview: v3 · Play: v6 combat"
+    "note": "Complete byte-identical v7 combat runtime with the phone sightline fix, bundled Three.js, and all seven original source commits preserved. Preview shows v3 gameplay.",
+    "previewLabel": "Preview: v3 · Play: v7 combat"
   },
   {
     "id": "star-cluster",

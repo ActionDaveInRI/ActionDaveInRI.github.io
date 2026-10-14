@@ -104,3 +104,21 @@ body.preview #combatHUD,body.preview #combatControls,body.preview #verticalContr
 /* Mouse capture is optional. Uncaptured dragging always remains camera-only. */
 #mouseLook{display:none}body.combat #mouseLook{display:block}body.combat #mouseLook[aria-pressed="true"]{color:#bce5d4;border-color:#8cbbb24d}
 @media(pointer:coarse){body.combat #mouseLook{display:none}}
+
+/* Phone combat keeps the briefing off the playfield. Status notices share a
+   small edge slot above the essential HUD, never the aiming or thumb area. */
+@media(max-width:650px),(max-height:500px){
+ body.combat{--combat-top:max(16px,env(safe-area-inset-top));--combat-left:max(16px,env(safe-area-inset-left));--combat-right:max(16px,env(safe-area-inset-right))}
+ body.combat header{top:var(--combat-top);left:var(--combat-left);right:var(--combat-right)}
+ body.combat #objective{display:none}
+ body.combat #toast{top:calc(var(--combat-top) + 46px);bottom:auto;left:var(--combat-left);right:var(--combat-right);transform:none;width:auto;max-width:none;padding:3px 9px;font-size:10px;line-height:14px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;background:#071822a6}
+ body.combat #combatHUD{top:calc(var(--combat-top) + 72px);left:var(--combat-left);right:var(--combat-right)}
+ body.combat #tetherPanel{top:calc(var(--combat-top) + 132px)}
+}
+@media(max-height:500px) and (min-width:651px){
+ body.combat{--combat-top:max(12px,env(safe-area-inset-top));--combat-left:max(18px,env(safe-area-inset-left));--combat-right:max(18px,env(safe-area-inset-right))}
+ body.combat #toast{top:calc(var(--combat-top) + 38px);right:auto;width:252px}
+ body.combat #combatHUD{top:calc(var(--combat-top) + 64px);right:auto}
+ body.combat #tetherPanel{top:calc(var(--combat-top) + 46px);right:var(--combat-right)}
+ body.combat #tetherPanel.expanded{right:calc(var(--combat-right) + 187px)}
+}

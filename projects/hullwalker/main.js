@@ -54,7 +54,7 @@ state.trial=false;state.trialPhase=0;
 const bodyForward=V(0,0,-1);const visualQ=new T.Quaternion(),basis=new T.Matrix4(),keys=new Set();let yaw=0,pitch=.35,clock=new T.Clock(),time=0,toastTimer=0,drag=null,joy={x:0,y:0},touchBrake=false,touchDown=false,gameButtons={},landing=null,quality=true,autoStep=0,frameMs=16.7,completionAudioUntil=0,lookActiveUntil=0,bodyTurnVelocity=0,lastTurnSign=1;
 const ring=new T.Mesh(new T.RingGeometry(.42,.48,48),new T.MeshBasicMaterial({color:0x96ffdd,side:T.DoubleSide,transparent:true,opacity:.85,depthWrite:false}));scene.add(ring);const ray=new T.Raycaster();const pathGeo=new T.BufferGeometry().setFromPoints(Array.from({length:33},()=>V()));const path=new T.Line(pathGeo,new T.LineDashedMaterial({color:0x99ffdc,dashSize:.3,gapSize:.25,transparent:true,opacity:.45,depthWrite:false}));scene.add(path);path.visible=false;
 const rayBoxes=world.colliders.map(h=>{const mesh=new T.Mesh(new T.BoxGeometry(h.half.x*2,h.half.y*2,h.half.z*2),new T.MeshBasicMaterial({visible:false}));mesh.position.copy(h.center);mesh.userData.hull=h;mesh.updateMatrixWorld();return mesh;});
-function notify(text,duration=4000){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),duration)}
+function notify(text,duration=4000){if(state.combat&&matchMedia('(max-width:650px), (max-height:500px)').matches)duration=Math.min(duration,2200);$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),duration)}
 function reset(){$('hint').textContent='WASD steer · drag look · SPACE push · G clip / release · Z / X reel · C to hull · Shift brake · R recall';combat.stop();state.combat=false;clearCombatInput();document.body.classList.remove('combat','aiming');$('combatResult').classList.add('hidden');combatResultShown=false;refreshRayBoxes();releaseTether(tether);tether.power=100;touchReel=0;state.trial=false;state.trialPhase=0;astronaut.resetLanding();state.poseEpoch++;state.groundVelocity.set(0,0,0);state.moveIntent.set(0,0,0);bodyTurnVelocity=0;lookActiveUntil=0;keys.clear();touchDown=touchBrake=false;state.rcs=0;state.downThrust=false;state.braking=false;astronaut.setJets(0);state.pos.set(0,.03,12);state.normal.copy(UP);state.forward.set(0,0,-1);bodyForward.copy(state.forward);state.velocity.set(0,0,0);state.hull=world.main;state.mode='attached';state.stage=0;state.complete=false;state.checkpoint.copy(state.pos);state.checkpointNormal.copy(UP);state.checkpointHull=world.main;state.airTime=0;state.charging=false;state.autoTime=0;state.launches=0;state.landings=0;autoStep=0;yaw=0;pitch=.35;world.nodes.forEach(n=>{n.done=false;n.screen.material.color.setHex(0xff9f4f);n.ring.material.color.setHex(0xffc37e)});$('complete').classList.add('hidden');updateMission();}
 function start(watch=false){$('restart').textContent='RESTART MISSION';$('menu').classList.add('hidden');$('pause').textContent='Ⅱ';audio.start();state.active=true;state.paused=false;state.auto=watch;state.autoTime=0;autoStep=0;$('intro').classList.add('hidden');document.body.classList.remove('preview');reset();notify(watch?'GUIDED EVA · Move or drag at any time to take control.':'Walk the hull. Your boots follow its surface.',5000)}
 function pause(value){if(!state.active||combatResultShown&&!value)return;clearCombatInput();drag=null;state.paused=value;if(value&&document.pointerLockElement===canvas)document.exitPointerLock?.();completionAudioUntil=0;if(!value&&!state.muted)audio.start();state.groundVelocity.set(0,0,0);state.moveIntent.set(0,0,0);bodyTurnVelocity=0;state.paused=value;keys.clear();joy.x=joy.y=0;touchDown=touchBrake=false;touchReel=0;state.rcs=0;state.downThrust=false;state.braking=false;astronaut.setJets(0);state.charging=false;$('menu').classList.toggle('hidden',!value);$('pause').textContent=value?'▶':'Ⅱ';audio.update({paused:value});}
@@ -68,7 +68,9 @@ function startCombat(){
  state.mode='attached';state.gazeDirection.copy(state.forward);yaw=0;pitch=.10;
  $('hint').textContent='WASD move · mouse look · LMB fire · RMB focus · Q reload · Space push / up · Ctrl down · C hull · G tether · R restart';document.body.classList.add('combat');$('combatResult').classList.add('hidden');$('restart').textContent='RESTART FIREFIGHT';
  $('tetherPanel').classList.remove('expanded');refreshRayBoxes();updateMission();updateCamera(1);
- notify('BOARDERS AT THE AIRLOCK · Fire with left mouse / FIRE. Q reloads. R restarts.',5500);
+ // The opening briefing already explains the encounter. Clear the inherited
+ // EVA toast too, so starting or retrying leaves the sightline unobstructed.
+ clearTimeout(toastTimer);$('toast').classList.remove('show');$('toast').textContent='';
  requestLookLock();
 }
 function updateMission(){
@@ -362,7 +364,7 @@ function combatHUD(){
  $('suitHealth').textContent=Math.ceil(combat.health);$('healthFill').style.width=combat.health+'%';
  $('ammoCount').textContent=String(combat.ammo).padStart(2,'0');
  $('weaponState').textContent=combat.reloadRemaining>0?'RELOADING':combat.ammo===0?'Q · RELOAD':combatAim>.5?'FOCUSED':'M-24 · AUTO';
- $('boarderCount').textContent=(3-combat.kills)+' BOARDERS';
+ $('boarderCount').textContent=combat.kills===3?'SECURE AIRLOCK':(3-combat.kills)+' BOARDERS';
  $('damageFlash').style.opacity=String(combat.hit*.65);$('hitmarker').style.opacity=String(combat.hitmarker);
  document.body.classList.toggle('aiming',combatAim>.4);$('aim').setAttribute('aria-pressed',String(touchAim||mouseAim||padAim));
  updateMission();

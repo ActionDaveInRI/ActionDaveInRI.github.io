@@ -110,3 +110,13 @@ Uncaptured mouse dragging is now camera-only. This fixes the fallback path that
 previously fired while trying to look around. F provides an independent trigger,
 and the MOUSE LOOK button enables standard free-mouse/LMB controls when the
 browser permits capture. HUD hints reflect the actual capture state.
+
+### October 14 phone sightline correction
+
+Starting or retrying combat no longer shows the boarding announcement or the
+inherited EVA toast. On phone-sized screens the duplicate mission heading is
+hidden; health, ammunition and boarders remain in a compact strip near the top.
+After the last boarder, that strip says **SECURE AIRLOCK**. Other combat notices
+use a single-line, touch-through slot above it and clear within 2.2 seconds.
+Portrait and landscape positions respect the top safe area. The briefing
+remains on the opening screen, and controls remain in Pause.
